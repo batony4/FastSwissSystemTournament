@@ -45,11 +45,11 @@ class Player(
 
     fun getMatchesPlayed() = matchResults.size
     fun getMatchesWon() = matchResults.values.sumOf { it.winsMy }
-    fun getSetsWon() = matchResults.values.sumOf { it.setsMy }
+    fun getSetsDiff() = matchResults.values.sumOf { it.setsMy - it.setsOther }
 
     // TODO реализовать коэффициент Бергера в качестве третьего параметра, и добавить также в сравнение
     // TODO деление на ноль. в случае 0 матчей проставлять средние значения
-    fun getAveragePointsPerMatch() = (getMatchesWon().toDouble() / getMatchesPlayed()) to (getSetsWon().toDouble() / getMatchesPlayed())
+    fun getAveragePointsPerMatch() = (getMatchesWon().toDouble() / getMatchesPlayed()) to (getSetsDiff().toDouble() / getMatchesPlayed())
 
     fun isPlaysNow() = activeMatchWith != null
 
