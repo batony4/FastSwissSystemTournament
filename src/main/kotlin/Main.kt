@@ -41,11 +41,11 @@ class Player(
 ) : Comparable<Player> {
 
     var activeMatchWith: String? = null // игрок, с которым сейчас идёт матч
-    val matchResults = ArrayList<PlayerMatchResult>()
+    val matchResults = HashMap<String, PlayerMatchResult>()
 
     fun getMatchesPlayed() = matchResults.size
-    fun getMatchesWon() = matchResults.sumOf { it.winsMy }
-    fun getSetsWon() = matchResults.sumOf { it.setsMy }
+    fun getMatchesWon() = matchResults.values.sumOf { it.winsMy }
+    fun getSetsWon() = matchResults.values.sumOf { it.setsMy }
 
     // TODO реализовать коэффициент Бергера в качестве третьего параметра, и добавить также в сравнение
     // TODO деление на ноль. в случае 0 матчей проставлять средние значения
@@ -62,7 +62,7 @@ class Player(
 
     fun endMatch(setsMy: Int, setsOther: Int) {
         activeMatchWith?.let { otherPlayer ->
-            matchResults.add(PlayerMatchResult(otherPlayer, setsMy, setsOther))
+            matchResults[otherPlayer] = PlayerMatchResult(otherPlayer, setsMy, setsOther)
             activeMatchWith = null
         } ?: throw IllegalStateException("Не играем сейчас")
     }
@@ -81,6 +81,21 @@ class Player(
     }
 
     override fun toString() = name
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Player) return false
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
+
 }
 
 fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: Int): Pair<Player, Player>? {
@@ -99,7 +114,7 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
                     .map { player2 -> player1 to player2 }
             }
             .filter { (player1, player2) -> // проверяем, что не играли раньше
-                player1.matchResults.none { it.otherPlayer == player2.name }
+                player1.matchResults.none { it.value.otherPlayer == player2.name }
             }
             // TODO когда сравниваю, учитывать не только разницу мест,
             //  но и разницу очков, сетов и Бергера, а то сейчас выбрал пару соседних мест, но с разными очками.
