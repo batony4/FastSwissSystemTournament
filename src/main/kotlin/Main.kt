@@ -33,10 +33,10 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
     val sorted = allPlayers.sorted()
     val allEligible = sorted
         .filter { !it.isPlaysNow() }
-        .filter { it.getMatchesPlayed() < tournamentMatchesPerPlayerCnt }
+        .filter { it.matchesPlayed < tournamentMatchesPerPlayerCnt }
 
     for (maxMatchesPlayed in 0 until tournamentMatchesPerPlayerCnt) {
-        val curEligible = allEligible.filter { it.getMatchesPlayed() <= maxMatchesPlayed }
+        val curEligible = allEligible.filter { it.matchesPlayed <= maxMatchesPlayed }
 
         val bestMatch = curEligible
             .flatMap { player1 ->

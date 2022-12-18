@@ -1,5 +1,3 @@
-import kotlin.math.abs
-
 class Player(
     val name: String,
 ) : Comparable<Player> {
@@ -7,17 +5,21 @@ class Player(
     var activeMatchWith: String? = null // игрок, с которым сейчас идёт матч
     val matchResults = HashMap<String, PlayerMatchResult>()
 
-    fun getMatchesPlayed() = matchResults.size
-    fun getMatchesWon() = matchResults.values.sumOf { it.winsMy }
-    fun getSetsDiff() = matchResults.values.sumOf { it.setsMy - it.setsOther }
+    val matchesPlayed by lazy { matchResults.size }
+    val matchesWon by lazy { matchResults.values.sumOf { it.winsMy } }
+    val setsDiff by lazy { matchResults.values.sumOf { it.setsMy - it.setsOther } }
 
-    // TODO реализовать коэффициент Бергера в качестве третьего параметра, и добавить также в сравнение
-    fun getAveragePointsPerMatch() = getMatchesPlayed().let { matchesPlayed ->
-        if (matchesPlayed > 0) {
-            (getMatchesWon().toDouble() / matchesPlayed) to (getSetsDiff().toDouble() / matchesPlayed)
-        } else {
-            0.5 to 0.0
-        }
+    val score by lazy {
+        Score(
+            matchesPlayed = matchesPlayed,
+            wins = matchesWon,
+            setsDiff = setsDiff,
+
+            // TODO реализовать коэффициент Бергера
+            0,
+            0,
+            0,
+        )
     }
 
     fun isPlaysNow() = activeMatchWith != null
@@ -36,18 +38,7 @@ class Player(
         } ?: throw IllegalStateException("Не играем сейчас")
     }
 
-    override fun compareTo(other: Player): Int {
-        val myPoints = getAveragePointsPerMatch()
-        val otherPoints = other.getAveragePointsPerMatch()
-
-        if (abs(myPoints.first - otherPoints.first) < 1e-9) {
-            return myPoints.first.compareTo(otherPoints.first)
-        }
-        if (abs(myPoints.second - otherPoints.second) < 1e-9) {
-            return myPoints.second.compareTo(otherPoints.second)
-        }
-        return 0
-    }
+    override fun compareTo(other: Player) = score.compareTo(other.score)
 
     override fun toString() = name
 
