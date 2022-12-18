@@ -16,18 +16,18 @@ data class Score(
     val bergerSetsDiffAvg = if (bergerMatchesPlayed > 0) bergerSetsDiff.toDouble() / bergerMatchesPlayed else 0.0
 
     override fun compareTo(other: Score): Int {
-        if (abs(winsAvg - other.winsAvg) < 1e-9) {
+        if (abs(winsAvg - other.winsAvg) > 1e-9) {
             return winsAvg.compareTo(other.winsAvg)
         }
-        if (abs(setsDiffAvg - other.setsDiffAvg) < 1e-9) {
+        if (abs(setsDiffAvg - other.setsDiffAvg) > 1e-9) {
             return setsDiffAvg.compareTo(other.setsDiffAvg)
         }
 
-        if (abs(bergerWinsAvg - other.bergerWinsAvg) < 1e-9) {
+        if (abs(bergerWinsAvg - other.bergerWinsAvg) > 1e-9) {
             return bergerWinsAvg.compareTo(other.bergerWinsAvg)
         }
 
-        if (abs(bergerSetsDiffAvg - other.bergerSetsDiffAvg) < 1e-9) {
+        if (abs(bergerSetsDiffAvg - other.bergerSetsDiffAvg) > 1e-9) {
             return bergerSetsDiffAvg.compareTo(other.bergerSetsDiffAvg)
         }
 
