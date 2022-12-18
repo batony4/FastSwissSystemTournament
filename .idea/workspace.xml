@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Убрал деление на ноль.">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/Score.kt" afterDir="false" />
+    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Упростил код, но теперь он рассчитан на один прогон.">
       <change afterPath="$PROJECT_DIR$/tournament.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Player.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Player.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +102,14 @@
       <option name="project" value="LOCAL" />
       <updated>1671362100637</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Упростил код, но теперь он рассчитан на один прогон.">
+      <created>1671362887203</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1671362887203</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -113,6 +118,7 @@
     <MESSAGE value="Исправил сеты на разницу (вместо количества выигранных)." />
     <MESSAGE value="Рефакторинг: выделил классы в отдельные файлы." />
     <MESSAGE value="Убрал деление на ноль." />
-    <option name="LAST_COMMIT_MESSAGE" value="Убрал деление на ноль." />
+    <MESSAGE value="Упростил код, но теперь он рассчитан на один прогон." />
+    <option name="LAST_COMMIT_MESSAGE" value="Упростил код, но теперь он рассчитан на один прогон." />
   </component>
 </project>
