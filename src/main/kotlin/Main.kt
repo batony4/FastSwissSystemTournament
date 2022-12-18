@@ -17,9 +17,10 @@ import kotlin.math.abs
 //  - можно указать любые произвольные сыгранные матчи (даже если они не рекомендовались) и это будет учтено нормально
 //  вот какой возможности нет — так это исключить игрока из турнира, если он уже сыграл хотя бы один матч.
 
+// TODO Диктофон! Реализовать алгоритм, который будет гарантировать, что всегда найдётся, с кем поиграть
 
 fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: Int): Pair<Player, Player>? {
-    val sorted = allPlayers.sorted()
+    val sorted = allPlayers.sorted().reversed()
     val allEligible = sorted
         .filter { !it.isPlaysNow() }
         .filter { it.matchesPlayed < tournamentMatchesPerPlayerCnt }
@@ -135,4 +136,46 @@ fun main() {
     inputFile.delete()
     outputFile.renameTo(inputFile)
 
+    outputTable(allPlayers)
+
+}
+
+fun outputTable(allPlayers: ArrayList<Player>) {
+    val sorted = allPlayers.sorted().reversed()
+    val maxNameLength = allPlayers.maxOf { it.name.length } + 2
+    print(
+        "Место ".padEnd(6)
+                + "Игрок".padEnd(maxNameLength)
+                + "Игр".padEnd(5)
+                + "Побед".padEnd(11)
+                + "Сетов".padEnd(13)
+                + "Б-Побед".padEnd(11)
+                + "Б-Сетов".padEnd(13)
+    )
+    repeat(sorted.size) { idx -> print(" ${idx + 1}".padEnd(5)) }
+    println()
+
+    for ((index, player) in sorted.withIndex()) {
+        print(
+            ("" + (index + 1) + ". ").padStart(6)
+                    + player.name.padEnd(maxNameLength)
+                    + (player.matchesPlayed.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
+                    + (player.score.wins.toString() + " (%.2f)".format(player.score.winsAvg)).padEnd(11)
+                    + ("%+d".format(player.score.setsDiff) + " (%+.2f)".format(player.score.setsDiffAvg)).padEnd(13)
+                    + (player.score.bergerWins.toString() + " (%.2f)".format(player.score.bergerWinsAvg)).padEnd(11)
+                    + ("%+d".format(player.score.bergerSetsDiff) + " (%+.2f)".format(player.score.bergerSetsDiffAvg)).padEnd(13)
+        )
+
+        for ((otherIndex, otherPlayer) in sorted.withIndex()) {
+            val match = player.matchResults[otherPlayer.name]
+            if (index == otherIndex) {
+                print(" X   ")
+            } else if (match != null) {
+                print("${match.setsMy}:${match.setsOther}".padEnd(5))
+            } else {
+                print(" •".padEnd(5))
+            }
+        }
+        println()
+    }
 }
