@@ -1,8 +1,11 @@
+/**
+ * Игрок, включая его статистику на турнире.
+ */
 class Player(
     val name: String,
 ) : Comparable<Player> {
 
-    var activeMatchWith: Player? = null // игрок, с которым сейчас идёт матч
+    private var activeMatchWith: Player? = null // игрок, с которым сейчас идёт матч
     val matchResults = HashMap<String, PlayerMatchResult>()
 
     val matchesPlayed by lazy { matchResults.size }

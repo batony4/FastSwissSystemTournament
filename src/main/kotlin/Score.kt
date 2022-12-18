@@ -1,5 +1,8 @@
 import kotlin.math.abs
 
+/**
+ * Текущий счёт участника.
+ */
 data class Score(
     val matchesPlayed: Int,
     val wins: Int,

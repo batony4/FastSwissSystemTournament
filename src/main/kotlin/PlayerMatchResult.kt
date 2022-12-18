@@ -1,3 +1,6 @@
+/**
+ * Результат конкретного матча с точки зрения определённого игрока.
+ */
 data class PlayerMatchResult(
     val otherPlayer: Player,
     val setsMy: Int,
