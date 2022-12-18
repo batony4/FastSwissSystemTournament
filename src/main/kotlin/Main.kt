@@ -35,7 +35,7 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
                     .map { player2 -> player1 to player2 }
             }
             .filter { (player1, player2) -> // проверяем, что не играли раньше
-                player1.matchResults.none { it.value.otherPlayer == player2.name }
+                player1.matchResults.none { it.value.otherPlayer == player2 }
             }
             // TODO когда сравниваю, учитывать не только разницу мест,
             //  но и разницу очков, сетов и Бергера, а то сейчас выбрал пару соседних мест, но с разными очками.
@@ -51,8 +51,8 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
 }
 
 fun startMatch(match: Pair<Player, Player>) {
-    match.first.startMatchWith(match.second.name)
-    match.second.startMatchWith(match.first.name)
+    match.first.startMatchWith(match.second)
+    match.second.startMatchWith(match.first)
 }
 
 fun endMatch(match: Pair<Player, Player>, sets: Pair<Int, Int>) {

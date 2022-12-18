@@ -2,7 +2,7 @@ class Player(
     val name: String,
 ) : Comparable<Player> {
 
-    var activeMatchWith: String? = null // игрок, с которым сейчас идёт матч
+    var activeMatchWith: Player? = null // игрок, с которым сейчас идёт матч
     val matchResults = HashMap<String, PlayerMatchResult>()
 
     val matchesPlayed by lazy { matchResults.size }
@@ -16,6 +16,7 @@ class Player(
             setsDiff = setsDiff,
 
             // TODO реализовать коэффициент Бергера
+//            matchResults.values.sumOf { it. }0,
             0,
             0,
             0,
@@ -24,7 +25,7 @@ class Player(
 
     fun isPlaysNow() = activeMatchWith != null
 
-    fun startMatchWith(otherPlayer: String) {
+    fun startMatchWith(otherPlayer: Player) {
         if (activeMatchWith != null) {
             throw IllegalStateException("Уже играем с $activeMatchWith")
         }
@@ -33,7 +34,7 @@ class Player(
 
     fun endMatch(setsMy: Int, setsOther: Int) {
         activeMatchWith?.let { otherPlayer ->
-            matchResults[otherPlayer] = PlayerMatchResult(otherPlayer, setsMy, setsOther)
+            matchResults[otherPlayer.name] = PlayerMatchResult(otherPlayer, setsMy, setsOther)
             activeMatchWith = null
         } ?: throw IllegalStateException("Не играем сейчас")
     }

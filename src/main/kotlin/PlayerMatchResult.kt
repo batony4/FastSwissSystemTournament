@@ -1,5 +1,5 @@
 data class PlayerMatchResult(
-    val otherPlayer: String,
+    val otherPlayer: Player,
     val setsMy: Int,
     val setsOther: Int,
 ) {
