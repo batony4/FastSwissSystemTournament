@@ -17,6 +17,11 @@ import kotlin.math.abs
 //  - можно указать любые произвольные сыгранные матчи (даже если они не рекомендовались) и это будет учтено нормально
 //  вот какой возможности нет — так это исключить игрока из турнира, если он уже сыграл хотя бы один матч.
 
+// TODO Объяснить значения всех полей в таблице. Например:
+//  - что такое коэффициент Бергера и как происходит сортировка (4 параметра),
+//  - что за числа в скобках,
+//  - что значит звёздочка в столбце с количеством сыгранных матчей
+
 // TODO Диктофон! Реализовать алгоритм, который будет гарантировать, что всегда найдётся, с кем поиграть
 
 fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: Int): Pair<Player, Player>? {
@@ -162,8 +167,8 @@ fun outputTable(allPlayers: ArrayList<Player>) {
                     + (player.matchesPlayed.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
                     + (player.score.wins.toString() + " (%.2f)".format(player.score.winsAvg)).padEnd(11)
                     + ("%+d".format(player.score.setsDiff) + " (%+.2f)".format(player.score.setsDiffAvg)).padEnd(13)
-                    + (player.score.bergerWins.toString() + " (%.2f)".format(player.score.bergerWinsAvg)).padEnd(11)
-                    + ("%+d".format(player.score.bergerSetsDiff) + " (%+.2f)".format(player.score.bergerSetsDiffAvg)).padEnd(13)
+                    + (player.bergerScore.wins.toString() + " (%.2f)".format(player.bergerScore.winsAvg)).padEnd(11)
+                    + ("%+d".format(player.bergerScore.setsDiff) + " (%+.2f)".format(player.bergerScore.setsDiffAvg)).padEnd(13)
         )
 
         for ((otherIndex, otherPlayer) in sorted.withIndex()) {

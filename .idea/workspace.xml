@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Исправление сравнения.">
+    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Реализовал коэффициент Бергера.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Player.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Player.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/PlayerMatchResult.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/PlayerMatchResult.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +146,21 @@
       <option name="project" value="LOCAL" />
       <updated>1671403721936</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Теперь в activeMatch сохраняется игрок, с которым играем, а не только его имя.">
+      <created>1671403956942</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1671403956942</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Реализовал коэффициент Бергера.">
+      <created>1671404339873</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1671404339873</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -161,6 +174,8 @@
     <MESSAGE value="Сделал ещё немного удобнее." />
     <MESSAGE value="Вывод текущей таблицы результатов." />
     <MESSAGE value="Исправление сравнения." />
-    <option name="LAST_COMMIT_MESSAGE" value="Исправление сравнения." />
+    <MESSAGE value="Теперь в activeMatch сохраняется игрок, с которым играем, а не только его имя." />
+    <MESSAGE value="Реализовал коэффициент Бергера." />
+    <option name="LAST_COMMIT_MESSAGE" value="Реализовал коэффициент Бергера." />
   </component>
 </project>

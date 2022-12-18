@@ -11,15 +11,17 @@ class Player(
 
     val score by lazy {
         Score(
-            matchesPlayed = matchesPlayed,
-            wins = matchesWon,
-            setsDiff = setsDiff,
+            matchesPlayed,
+            matchesWon,
+            setsDiff,
+        )
+    }
 
-            // TODO реализовать коэффициент Бергера
-//            matchResults.values.sumOf { it. }0,
-            0,
-            0,
-            0,
+    val bergerScore by lazy {
+        Score(
+            matchResults.values.sumOf { it.otherPlayer.score.matchesPlayed },
+            matchResults.values.sumOf { it.otherPlayer.score.wins },
+            matchResults.values.sumOf { it.otherPlayer.score.setsDiff },
         )
     }
 
@@ -39,7 +41,12 @@ class Player(
         } ?: throw IllegalStateException("Не играем сейчас")
     }
 
-    override fun compareTo(other: Player) = score.compareTo(other.score)
+    override fun compareTo(other: Player): Int {
+        val scoreCompare = score.compareTo(other.score)
+        if (scoreCompare != 0) return scoreCompare
+
+        return bergerScore.compareTo(other.bergerScore)
+    }
 
     override fun toString() = name
 
