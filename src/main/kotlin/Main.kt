@@ -29,9 +29,8 @@ import kotlin.math.abs
 
 // TODO Диктофон! Реализовать алгоритм, который будет гарантировать, что всегда найдётся, с кем поиграть
 
-fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: Int): Pair<Player, Player>? {
-    val sorted = allPlayers.sorted().reversed()
-    val allEligible = sorted
+fun generateNextMatch(allPlayersSorted: List<Player>, tournamentMatchesPerPlayerCnt: Int): Pair<Player, Player>? {
+    val allEligible = allPlayersSorted
         .filter { !it.isPlaysNow() }
         .filter { it.matchesPlayed < tournamentMatchesPerPlayerCnt }
 
@@ -39,9 +38,9 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
         val curEligible = allEligible.filter { it.matchesPlayed <= maxMatchesPlayed }
 
         val bestMatch = curEligible
-            .flatMap { player1 ->
+            .flatMapIndexed { i1, player1 ->
                 curEligible
-                    .filter { it != player1 }
+                    .filterIndexed { i2, _ -> i2 > i1 }
                     .map { player2 -> player1 to player2 }
             }
             .filter { (player1, player2) -> // проверяем, что не играли раньше
@@ -50,42 +49,43 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
             // TODO когда сравниваю, учитывать не только разницу мест,
             //  но и разницу очков, сетов и Бергера, а то сейчас выбрал пару соседних мест, но с разными очками.
             //  не забыть про возможное деление на ноль — проставлять средние значения, если матчей сыграно не было
-            .sortedBy { (player1, player2) -> abs(sorted.indexOf(player1) - sorted.indexOf(player2)) }
+            .sortedBy { (player1, player2) -> abs(allPlayersSorted.indexOf(player1) - allPlayersSorted.indexOf(player2)) }
             .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
 
-                val m = Array(allPlayers.size) { BooleanArray(allPlayers.size) }
-                val cnt = Array(allPlayers.size) { 0 }
+                val m = Array(allPlayersSorted.size) { BooleanArray(allPlayersSorted.size) }
+                val cnt = Array(allPlayersSorted.size) { 0 }
 
-                allPlayers.forEach { p1 ->
-                    val i1 = allPlayers.indexOf(p1)
+                allPlayersSorted.forEachIndexed { i1, p1 ->
                     p1.matchResults.forEach { (_, result) ->
-                        val i2 = allPlayers.indexOf(result.otherPlayer)
-                        m[i1][i2] = true
-                        cnt[i1]++
+                        val i2 = allPlayersSorted.indexOf(result.otherPlayer)
+                        if (i2 > i1) {
+                            m[i1][i2] = true
+                            cnt[i1]++
+                            cnt[i2]++
+                        }
                     }
 
                     p1.activeMatchWith?.let { p2 ->
-                        val i2 = allPlayers.indexOf(p2)
-                        m[i1][i2] = true
-                        cnt[i1]++
+                        val i2 = allPlayersSorted.indexOf(p2)
+                        if (i2 > i1) {
+                            m[i1][i2] = true
+                            cnt[i1]++
+                            cnt[i2]++
+                        }
                     }
                 }
 
-                val player1Index = allPlayers.indexOf(player1)
-                val player2Index = allPlayers.indexOf(player2)
+                val player1Index = allPlayersSorted.indexOf(player1)
+                val player2Index = allPlayersSorted.indexOf(player2)
                 m[player1Index][player2Index] = true
-                m[player2Index][player1Index] = true
                 cnt[player1Index]++
                 cnt[player2Index]++
 
-                val res = try {
-                    rec(m, cnt, tournamentMatchesPerPlayerCnt)
-                } finally {
-                    m[player1Index][player2Index] = false
-                    m[player2Index][player1Index] = false
-                    cnt[player1Index]--
-                    cnt[player2Index]--
-                }
+                val res = rec(m, cnt, tournamentMatchesPerPlayerCnt)
+
+                m[player1Index][player2Index] = false
+                cnt[player1Index]--
+                cnt[player2Index]--
 
                 res
             }
@@ -102,24 +102,24 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
  * Пытаемся симулировать, получится ли полностью составить план матчей с учётом этого матча.
  */
 fun rec(m: Array<BooleanArray>, cnt: Array<Int>, tournamentMatchesPerPlayerCnt: Int): Boolean {
-    var hasGamesToPlay = false
-    for (i in m.indices) {
-        if (cnt[i] >= tournamentMatchesPerPlayerCnt) continue
-        hasGamesToPlay = true
+    if (cnt.all { it == tournamentMatchesPerPlayerCnt }) {
+        return true
+    }
 
-        for (j in i + 1 until m.size) {
+    for (i in m.indices.shuffled()) {
+        if (cnt[i] >= tournamentMatchesPerPlayerCnt) continue
+
+        for (j in (i + 1 until m.size).shuffled()) {
             if (cnt[j] >= tournamentMatchesPerPlayerCnt) continue
 
             if (!m[i][j]) {
                 m[i][j] = true
-                m[j][i] = true
                 cnt[i]++
                 cnt[j]++
 
                 val res = rec(m, cnt, tournamentMatchesPerPlayerCnt)
 
                 m[i][j] = false
-                m[j][i] = false
                 cnt[i]--
                 cnt[j]--
 
@@ -130,7 +130,7 @@ fun rec(m: Array<BooleanArray>, cnt: Array<Int>, tournamentMatchesPerPlayerCnt: 
         }
     }
 
-    return !hasGamesToPlay
+    return false
 }
 
 fun startMatch(match: Pair<Player, Player>) {
@@ -144,7 +144,7 @@ fun endMatch(match: Pair<Player, Player>, sets: Pair<Int, Int>) {
 }
 
 private fun generateAndStartMatch(players: List<Player>, tournamentMatchesPerPlayerCnt: Int): Pair<Player, Player>? {
-    return generateNextMatch(players, tournamentMatchesPerPlayerCnt)?.also { startMatch(it) }
+    return generateNextMatch(players.sorted(), tournamentMatchesPerPlayerCnt)?.also { startMatch(it) }
 }
 
 /**
@@ -224,7 +224,7 @@ fun main() {
 }
 
 fun outputTable(allPlayers: ArrayList<Player>) {
-    val sorted = allPlayers.sorted().reversed()
+    val sorted = allPlayers.sorted()
     val maxNameLength = allPlayers.maxOf { it.name.length } + 2
     print(
         "Место ".padEnd(6)

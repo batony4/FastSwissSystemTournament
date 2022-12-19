@@ -13,10 +13,10 @@ data class Score(
 
     override fun compareTo(other: Score): Int {
         if (abs(winsAvg - other.winsAvg) > 1e-9) {
-            return winsAvg.compareTo(other.winsAvg)
+            return -winsAvg.compareTo(other.winsAvg)
         }
         if (abs(setsDiffAvg - other.setsDiffAvg) > 1e-9) {
-            return setsDiffAvg.compareTo(other.setsDiffAvg)
+            return -setsDiffAvg.compareTo(other.setsDiffAvg)
         }
 
         return 0
