@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="И ещё раз улучшил документацию.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Исключаю .idea из репозитория.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +40,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "/Users/batony4/Documents/programming/projects/Kotlin/FastSwissSystemTournament",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0"
@@ -335,7 +335,14 @@
       <option name="project" value="LOCAL" />
       <updated>1671463775121</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Исключаю .idea из репозитория.">
+      <created>1671479570915</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1671479570915</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -350,7 +357,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Рефакторинг: выделил классы в отдельные файлы." />
     <MESSAGE value="Убрал деление на ноль." />
     <MESSAGE value="Упростил код, но теперь он рассчитан на один прогон." />
     <MESSAGE value="Чтение и запись в файл." />
@@ -375,6 +381,7 @@
     <MESSAGE value="Улучшил документацию." />
     <MESSAGE value="Ещё дополнил документацию." />
     <MESSAGE value="И ещё раз улучшил документацию." />
-    <option name="LAST_COMMIT_MESSAGE" value="И ещё раз улучшил документацию." />
+    <MESSAGE value="Исключаю .idea из репозитория." />
+    <option name="LAST_COMMIT_MESSAGE" value="Исключаю .idea из репозитория." />
   </component>
 </project>
