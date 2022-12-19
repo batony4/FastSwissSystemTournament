@@ -42,11 +42,14 @@ class Tournament {
     fun generateAndStartMatch(): Pair<Player, Player>? = generateNextMatch()?.also { startMatch(it) }
 
     private fun startMatch(match: Pair<Player, Player>) {
+        if (!hasFreeTables()) throw IllegalStateException("Нет свободных столов")
+        tablesOccupied++
         match.first.startMatchWith(match.second)
         match.second.startMatchWith(match.first)
     }
 
     private fun endMatch(match: Pair<Player, Player>, sets: Pair<Int, Int>) {
+        tablesOccupied--
         match.first.endMatch(sets.first, sets.second)
         match.second.endMatch(sets.second, sets.first)
     }
