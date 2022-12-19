@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Рефакторинг: выделил некоторые методы.">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/Tournament.kt" afterDir="false" />
+    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Рефакторинг: выделил класс Tournament для механики турнира.">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/Simulation.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Tournament.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Tournament.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -252,7 +252,14 @@
       <option name="project" value="LOCAL" />
       <updated>1671455714719</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Рефакторинг: выделил класс Tournament для механики турнира.">
+      <created>1671456433568</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1671456433568</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -290,6 +297,7 @@
     <MESSAGE value="Улучшил документацию." />
     <MESSAGE value="Улучшил документацию. И вместо сравнения текущих мест, сравниваю процент побед. Так скорее во втором туре будет взята пара двух выигравших людей, чем худший из выигравших с лучшим из проигравших (они ведь тоже имеют разницу в 1 в турнирной таблице)." />
     <MESSAGE value="Рефакторинг: выделил некоторые методы." />
-    <option name="LAST_COMMIT_MESSAGE" value="Рефакторинг: выделил некоторые методы." />
+    <MESSAGE value="Рефакторинг: выделил класс Tournament для механики турнира." />
+    <option name="LAST_COMMIT_MESSAGE" value="Рефакторинг: выделил класс Tournament для механики турнира." />
   </component>
 </project>
