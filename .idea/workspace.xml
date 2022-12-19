@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Рефакторинг: выделил в отдельный класс симуляцию.">
+    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Улучшил документацию.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Tournament.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Tournament.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -266,7 +265,42 @@
       <option name="project" value="LOCAL" />
       <updated>1671457069952</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Рефакторинг: перенёс вывод текущей таблицы результатов в Tournament.">
+      <created>1671457198127</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1671457198127</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Улучшил документацию.">
+      <created>1671457341280</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1671457341280</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Улучшил документацию.">
+      <created>1671457494819</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1671457494819</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Улучшил документацию.">
+      <created>1671457737390</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1671457737390</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Улучшил документацию.">
+      <created>1671462277830</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1671462277830</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -281,7 +315,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Первая версия." />
     <MESSAGE value="Превратил matchResults в HashMap, чтобы быстрее находить, сыгран ли конкретный матч." />
     <MESSAGE value="Исправил сеты на разницу (вместо количества выигранных)." />
     <MESSAGE value="Рефакторинг: выделил классы в отдельные файлы." />
@@ -301,11 +334,12 @@
     <MESSAGE value="Полная табличка." />
     <MESSAGE value="Написал документацию." />
     <MESSAGE value="Написал про то, что программа следит за тем, чтобы сетка корректно рассчитывалась до конца." />
-    <MESSAGE value="Улучшил документацию." />
     <MESSAGE value="Улучшил документацию. И вместо сравнения текущих мест, сравниваю процент побед. Так скорее во втором туре будет взята пара двух выигравших людей, чем худший из выигравших с лучшим из проигравших (они ведь тоже имеют разницу в 1 в турнирной таблице)." />
     <MESSAGE value="Рефакторинг: выделил некоторые методы." />
     <MESSAGE value="Рефакторинг: выделил класс Tournament для механики турнира." />
     <MESSAGE value="Рефакторинг: выделил в отдельный класс симуляцию." />
-    <option name="LAST_COMMIT_MESSAGE" value="Рефакторинг: выделил в отдельный класс симуляцию." />
+    <MESSAGE value="Рефакторинг: перенёс вывод текущей таблицы результатов в Tournament." />
+    <MESSAGE value="Улучшил документацию." />
+    <option name="LAST_COMMIT_MESSAGE" value="Улучшил документацию." />
   </component>
 </project>
