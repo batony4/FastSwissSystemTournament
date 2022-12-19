@@ -11,54 +11,11 @@ fun generateNextMatch(allPlayersSorted: List<Player>, tournamentMatchesPerPlayer
     for (maxMatchesPlayed in 0 until tournamentMatchesPerPlayerCnt) {
         val curEligible = allEligible.filter { it.matchesPlayed <= maxMatchesPlayed }
 
-        val bestMatch = curEligible
-            .flatMapIndexed { i1, player1 ->
-                curEligible
-                    .filterIndexed { i2, _ -> i2 > i1 }
-                    .map { player2 -> player1 to player2 }
-            }
-            .filter { (player1, player2) -> // проверяем, что не играли раньше
-                player1.matchResults.none { it.value.otherPlayer == player2 }
-            }
-            .sortedBy { (player1, player2) -> abs(player1.score.winsAvg - player2.score.winsAvg) }
+        val bestMatch = createAllPairs(curEligible)
+            .filter { (player1, player2) -> !player1.isPlayedWith(player2) } // проверяем, что не играли раньше
+            .sortedBy { (player1, player2) -> abs(player1.score.winsAvg - player2.score.winsAvg) } // сортируем по близости игроков между собой
             .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
-
-                val m = Array(allPlayersSorted.size) { BooleanArray(allPlayersSorted.size) }
-                val cnt = Array(allPlayersSorted.size) { 0 }
-
-                allPlayersSorted.forEachIndexed { i1, p1 ->
-                    p1.matchResults.forEach { (_, result) ->
-                        val i2 = allPlayersSorted.indexOf(result.otherPlayer)
-                        if (i2 > i1) {
-                            m[i1][i2] = true
-                            cnt[i1]++
-                            cnt[i2]++
-                        }
-                    }
-
-                    p1.activeMatchWith?.let { p2 ->
-                        val i2 = allPlayersSorted.indexOf(p2)
-                        if (i2 > i1) {
-                            m[i1][i2] = true
-                            cnt[i1]++
-                            cnt[i2]++
-                        }
-                    }
-                }
-
-                val player1Index = allPlayersSorted.indexOf(player1)
-                val player2Index = allPlayersSorted.indexOf(player2)
-                m[player1Index][player2Index] = true
-                cnt[player1Index]++
-                cnt[player2Index]++
-
-                val res = rec(m, cnt, tournamentMatchesPerPlayerCnt)
-
-                m[player1Index][player2Index] = false
-                cnt[player1Index]--
-                cnt[player2Index]--
-
-                res
+                isPossibleToCreateCorrectTournamentStructureUntilTheEnd(allPlayersSorted, player1, player2, tournamentMatchesPerPlayerCnt)
             }
 
         if (bestMatch != null) {
@@ -69,13 +26,58 @@ fun generateNextMatch(allPlayersSorted: List<Player>, tournamentMatchesPerPlayer
     return null
 }
 
+private fun isPossibleToCreateCorrectTournamentStructureUntilTheEnd(
+    allPlayersSorted: List<Player>,
+    player1: Player,
+    player2: Player,
+    tournamentMatchesPerPlayerCnt: Int
+): Boolean {
+    val m = Array(allPlayersSorted.size) { BooleanArray(allPlayersSorted.size) } // матрица, кто с кем играл (j > i).
+    val cnt = Array(allPlayersSorted.size) { 0 }
+
+    allPlayersSorted.forEachIndexed { i1, p1 ->
+        p1.matchResults.forEach { (_, result) ->
+            val i2 = allPlayersSorted.indexOf(result.otherPlayer)
+            if (i2 > i1) play(m, cnt, i1, i2)
+        }
+
+        p1.activeMatchWith?.let { p2 ->
+            val i2 = allPlayersSorted.indexOf(p2)
+            if (i2 > i1) play(m, cnt, i1, i2)
+        }
+    }
+
+    val player1Index = allPlayersSorted.indexOf(player1)
+    val player2Index = allPlayersSorted.indexOf(player2)
+
+    play(m, cnt, player1Index, player2Index)
+    return rec(m, cnt, tournamentMatchesPerPlayerCnt).also { unplay(m, cnt, player1Index, player2Index) }
+}
+
+private fun play(m: Array<BooleanArray>, cnt: Array<Int>, i1: Int, i2: Int) {
+    m[i1][i2] = true
+    cnt[i1]++
+    cnt[i2]++
+}
+
+private fun unplay(m: Array<BooleanArray>, cnt: Array<Int>, i1: Int, i2: Int) {
+    m[i1][i2] = false
+    cnt[i1]--
+    cnt[i2]--
+}
+
+private fun createAllPairs(curEligible: List<Player>) = curEligible
+    .flatMapIndexed { i1, player1 ->
+        curEligible
+            .filterIndexed { i2, _ -> i2 > i1 }
+            .map { player2 -> player1 to player2 }
+    }
+
 /**
  * Пытаемся симулировать, получится ли полностью составить план матчей с учётом этого матча.
  */
 fun rec(m: Array<BooleanArray>, cnt: Array<Int>, tournamentMatchesPerPlayerCnt: Int): Boolean {
-    if (cnt.all { it == tournamentMatchesPerPlayerCnt }) {
-        return true
-    }
+    if (cnt.all { it == tournamentMatchesPerPlayerCnt }) return true
 
     for (i in m.indices.shuffled().sortedBy { cnt[it] }) {
         if (cnt[i] >= tournamentMatchesPerPlayerCnt) continue
@@ -84,19 +86,8 @@ fun rec(m: Array<BooleanArray>, cnt: Array<Int>, tournamentMatchesPerPlayerCnt: 
             if (cnt[j] >= tournamentMatchesPerPlayerCnt) continue
 
             if (!m[i][j]) {
-                m[i][j] = true
-                cnt[i]++
-                cnt[j]++
-
-                val res = rec(m, cnt, tournamentMatchesPerPlayerCnt)
-
-                m[i][j] = false
-                cnt[i]--
-                cnt[j]--
-
-                if (res) {
-                    return true
-                }
+                play(m, cnt, i, j)
+                if (rec(m, cnt, tournamentMatchesPerPlayerCnt).also { unplay(m, cnt, i, j) }) return true
             }
         }
     }

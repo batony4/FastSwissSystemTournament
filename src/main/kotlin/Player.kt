@@ -30,6 +30,8 @@ class Player(
 
     fun isPlaysNow() = activeMatchWith != null
 
+    fun isPlayedWith(other: Player) = matchResults.any { it.value.otherPlayer == other }
+
     fun startMatchWith(otherPlayer: Player) {
         if (activeMatchWith != null) {
             throw IllegalStateException("Уже играем с $activeMatchWith")
