@@ -106,10 +106,10 @@ fun rec(m: Array<BooleanArray>, cnt: Array<Int>, tournamentMatchesPerPlayerCnt: 
         return true
     }
 
-    for (i in m.indices.shuffled()) {
+    for (i in m.indices.shuffled().sortedBy { cnt[it] }) {
         if (cnt[i] >= tournamentMatchesPerPlayerCnt) continue
 
-        for (j in (i + 1 until m.size).shuffled()) {
+        for (j in (i + 1 until m.size).shuffled().sortedBy { cnt[it] }) {
             if (cnt[j] >= tournamentMatchesPerPlayerCnt) continue
 
             if (!m[i][j]) {
