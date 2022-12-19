@@ -42,7 +42,6 @@ class Tournament {
     fun generateAndStartMatch(): Pair<Player, Player>? = generateNextMatch()?.also { startMatch(it) }
 
     private fun startMatch(match: Pair<Player, Player>) {
-        if (!hasFreeTables()) throw IllegalStateException("Нет свободных столов")
         tablesOccupied++
         match.first.startMatchWith(match.second)
         match.second.startMatchWith(match.first)
@@ -54,10 +53,7 @@ class Tournament {
         match.second.endMatch(sets.second, sets.first)
     }
 
-    /**
-     * Возвращает, был ли начат новый незавершённый матч.
-     */
-    private fun parseMatchLine(allPlayers: ArrayList<Player>, line: String): Boolean {
+    private fun parseMatchLine(allPlayers: ArrayList<Player>, line: String) {
         val tok = line.split(" ")
 
         val player1 = allPlayers.first { it.name == tok[0] }
@@ -67,12 +63,11 @@ class Tournament {
         startMatch(player1 to player2)
 
         if (tok.size == 2) { // незавершённый матч
-            return true
+            return
         } else if (tok.size == 4) { // результаты матча
             val sets1 = line.split(" ")[2].toInt()
             val sets2 = line.split(" ")[3].toInt()
             endMatch(player1 to player2, sets1 to sets2)
-            return false
         } else {
             throw IllegalArgumentException("Неверный формат строки: '$line'")
         }
@@ -87,7 +82,7 @@ class Tournament {
             return
         } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) {
             // если игрок уже есть в списке, то просто добавляем результаты
-            if (parseMatchLine(allPlayers, lineTrimmed)) tablesOccupied++
+            parseMatchLine(allPlayers, lineTrimmed)
         } else if (lineTrimmed.lowercase().startsWith("Стол".lowercase())) {
             tablesCnt = lineTrimmed.split(" ").last().toInt()
         } else if (lineTrimmed.lowercase().startsWith("Матч".lowercase())) {
@@ -98,7 +93,7 @@ class Tournament {
             val tok = lineTrimmed.split(" ")
             val name = tok[1]
             val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
-            val handicapLosses = tok.getOrNull(2)?.toInt() ?: 0
+            val handicapLosses = tok.getOrNull(3)?.toInt() ?: 0
             allPlayers += Player(name, handicapToursCnt, handicapWins, handicapLosses)
         } else {
             throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
