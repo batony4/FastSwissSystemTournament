@@ -45,7 +45,45 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
             // TODO когда сравниваю, учитывать не только разницу мест,
             //  но и разницу очков, сетов и Бергера, а то сейчас выбрал пару соседних мест, но с разными очками.
             //  не забыть про возможное деление на ноль — проставлять средние значения, если матчей сыграно не было
-            .minByOrNull { (player1, player2) -> abs(sorted.indexOf(player1) - sorted.indexOf(player2)) }
+            .sortedBy { (player1, player2) -> abs(sorted.indexOf(player1) - sorted.indexOf(player2)) }
+            .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
+
+                val m = Array(allPlayers.size) { BooleanArray(allPlayers.size) }
+                val cnt = Array(allPlayers.size) { 0 }
+
+                allPlayers.forEach { p1 ->
+                    val i1 = allPlayers.indexOf(p1)
+                    p1.matchResults.forEach { (_, result) ->
+                        val i2 = allPlayers.indexOf(result.otherPlayer)
+                        m[i1][i2] = true
+                        cnt[i1]++
+                    }
+
+                    p1.activeMatchWith?.let { p2 ->
+                        val i2 = allPlayers.indexOf(p2)
+                        m[i1][i2] = true
+                        cnt[i1]++
+                    }
+                }
+
+                val player1Index = allPlayers.indexOf(player1)
+                val player2Index = allPlayers.indexOf(player2)
+                m[player1Index][player2Index] = true
+                m[player2Index][player1Index] = true
+                cnt[player1Index]++
+                cnt[player2Index]++
+
+                val res = try {
+                    rec(m, cnt, tournamentMatchesPerPlayerCnt)
+                } finally {
+                    m[player1Index][player2Index] = false
+                    m[player2Index][player1Index] = false
+                    cnt[player1Index]--
+                    cnt[player2Index]--
+                }
+
+                res
+            }
 
         if (bestMatch != null) {
             return bestMatch
@@ -53,6 +91,41 @@ fun generateNextMatch(allPlayers: List<Player>, tournamentMatchesPerPlayerCnt: I
     }
 
     return null
+}
+
+/**
+ * Пытаемся симулировать, получится ли полностью составить план матчей с учётом этого матча.
+ */
+fun rec(m: Array<BooleanArray>, cnt: Array<Int>, tournamentMatchesPerPlayerCnt: Int): Boolean {
+    var hasGamesToPlay = false
+    for (i in m.indices) {
+        if (cnt[i] >= tournamentMatchesPerPlayerCnt) continue
+        hasGamesToPlay = true
+
+        for (j in i + 1 until m.size) {
+            if (cnt[j] >= tournamentMatchesPerPlayerCnt) continue
+
+            if (!m[i][j]) {
+                m[i][j] = true
+                m[j][i] = true
+                cnt[i]++
+                cnt[j]++
+
+                val res = rec(m, cnt, tournamentMatchesPerPlayerCnt)
+
+                m[i][j] = false
+                m[j][i] = false
+                cnt[i]--
+                cnt[j]--
+
+                if (res) {
+                    return true
+                }
+            }
+        }
+    }
+
+    return !hasGamesToPlay
 }
 
 fun startMatch(match: Pair<Player, Player>) {

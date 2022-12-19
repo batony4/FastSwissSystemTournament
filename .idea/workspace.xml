@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Реализовал коэффициент Бергера.">
+    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Комменты и оптимизации.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/Player.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Player.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/PlayerMatchResult.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/PlayerMatchResult.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Score.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Score.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tournament.txt" beforeDir="false" afterPath="$PROJECT_DIR$/tournament.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -170,7 +169,14 @@
       <option name="project" value="LOCAL" />
       <updated>1671404571551</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Комменты и оптимизации.">
+      <created>1671406923092</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1671406923092</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -186,6 +192,18 @@
     <MESSAGE value="Исправление сравнения." />
     <MESSAGE value="Теперь в activeMatch сохраняется игрок, с которым играем, а не только его имя." />
     <MESSAGE value="Реализовал коэффициент Бергера." />
-    <option name="LAST_COMMIT_MESSAGE" value="Реализовал коэффициент Бергера." />
+    <MESSAGE value="Комменты и оптимизации." />
+    <option name="LAST_COMMIT_MESSAGE" value="Комменты и оптимизации." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/Main.kt</url>
+          <line>76</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

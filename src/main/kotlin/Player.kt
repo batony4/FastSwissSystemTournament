@@ -5,7 +5,7 @@ class Player(
     val name: String,
 ) : Comparable<Player> {
 
-    private var activeMatchWith: Player? = null // игрок, с которым сейчас идёт матч
+    var activeMatchWith: Player? = null // игрок, с которым сейчас идёт матч
     val matchResults = HashMap<String, PlayerMatchResult>()
 
     val matchesPlayed by lazy { matchResults.size }
