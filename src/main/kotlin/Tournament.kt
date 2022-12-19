@@ -39,7 +39,10 @@ class Tournament {
         return null
     }
 
-    fun generateAndStartMatch(): Pair<Player, Player>? = generateNextMatch()?.also { startMatch(it) }
+    fun generateAndStartMatch(): Pair<Player, Player>? =
+        generateNextMatch()
+            ?.also { startMatch(it) }
+            ?.also { s.play(it) }
 
     private fun startMatch(match: Pair<Player, Player>) {
         tablesOccupied++

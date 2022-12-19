@@ -11,23 +11,31 @@ class Simulation(
         allPlayersSorted.forEachIndexed { i1, p1 ->
             p1.matchResults.forEach { (_, result) ->
                 val i2 = allPlayersSorted.indexOf(result.otherPlayer)
-                if (i2 > i1) play(m, cnt, i1, i2)
+                if (i2 > i1) play(i1, i2)
             }
 
             p1.activeMatchWith?.let { p2 ->
                 val i2 = allPlayersSorted.indexOf(p2)
-                if (i2 > i1) play(m, cnt, i1, i2)
+                if (i2 > i1) play(i1, i2)
             }
         }
     }
 
-    private fun play(m: Array<BooleanArray>, cnt: Array<Int>, i1: Int, i2: Int) {
+    fun play(p: Pair<Player, Player>) {
+        val player1Index = allPlayersSorted.indexOf(p.first)
+        val player2Index = allPlayersSorted.indexOf(p.second)
+        if (player1Index > player2Index) throw IllegalArgumentException("player1Index должен быть меньше player2Index")
+
+        play(player1Index, player2Index)
+    }
+
+    private fun play(i1: Int, i2: Int) {
         m[i1][i2] = true
         cnt[i1]++
         cnt[i2]++
     }
 
-    private fun unplay(m: Array<BooleanArray>, cnt: Array<Int>, i1: Int, i2: Int) {
+    private fun unplay(i1: Int, i2: Int) {
         m[i1][i2] = false
         cnt[i1]--
         cnt[i2]--
@@ -36,7 +44,7 @@ class Simulation(
     /**
      * Пытаемся симулировать, получится ли полностью составить план матчей с учётом этого матча.
      */
-    private fun rec(m: Array<BooleanArray>, cnt: Array<Int>, tournamentMatchesPerPlayerCnt: Int): Boolean {
+    private fun rec(): Boolean {
         if (cnt.all { it == tournamentMatchesPerPlayerCnt }) return true
 
         for (i in m.indices.shuffled().sortedBy { cnt[it] }) {
@@ -46,8 +54,8 @@ class Simulation(
                 if (cnt[j] >= tournamentMatchesPerPlayerCnt) continue
 
                 if (!m[i][j]) {
-                    play(m, cnt, i, j)
-                    if (rec(m, cnt, tournamentMatchesPerPlayerCnt).also { unplay(m, cnt, i, j) }) return true
+                    play( i, j)
+                    if (rec().also { unplay(i, j) }) return true
                 }
             }
         }
@@ -66,8 +74,8 @@ class Simulation(
         val player1Index = allPlayersSorted.indexOf(player1)
         val player2Index = allPlayersSorted.indexOf(player2)
 
-        play(m, cnt, player1Index, player2Index)
-        return rec(m, cnt, tournamentMatchesPerPlayerCnt).also { unplay(m, cnt, player1Index, player2Index) }
+        play(player1Index, player2Index)
+        return rec().also { unplay(player1Index, player2Index) }
     }
 
 }
