@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Рефакторинг: выделил класс Tournament для механики турнира.">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/Simulation.kt" afterDir="false" />
+    <list default="true" id="2a8a88cd-0828-4535-96fa-a57a99552c87" name="Changes" comment="Рефакторинг: выделил в отдельный класс симуляцию.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/Tournament.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Tournament.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -259,7 +259,14 @@
       <option name="project" value="LOCAL" />
       <updated>1671456433568</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Рефакторинг: выделил в отдельный класс симуляцию.">
+      <created>1671457069952</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1671457069952</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -298,6 +305,7 @@
     <MESSAGE value="Улучшил документацию. И вместо сравнения текущих мест, сравниваю процент побед. Так скорее во втором туре будет взята пара двух выигравших людей, чем худший из выигравших с лучшим из проигравших (они ведь тоже имеют разницу в 1 в турнирной таблице)." />
     <MESSAGE value="Рефакторинг: выделил некоторые методы." />
     <MESSAGE value="Рефакторинг: выделил класс Tournament для механики турнира." />
-    <option name="LAST_COMMIT_MESSAGE" value="Рефакторинг: выделил класс Tournament для механики турнира." />
+    <MESSAGE value="Рефакторинг: выделил в отдельный класс симуляцию." />
+    <option name="LAST_COMMIT_MESSAGE" value="Рефакторинг: выделил в отдельный класс симуляцию." />
   </component>
 </project>
