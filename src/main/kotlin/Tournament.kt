@@ -11,13 +11,6 @@ class Tournament {
 
     private val s by lazy { Simulation(allPlayers, tournamentMatchesPerPlayerCnt) }
 
-    private fun createAllPairs(curEligible: List<Player>) = curEligible
-        .flatMapIndexed { i1, player1 ->
-            curEligible
-                .filterIndexed { i2, _ -> i2 > i1 }
-                .map { player2 -> player1 to player2 }
-        }
-
     private fun generateNextMatch(): Pair<Player, Player>? {
         val allPlayersSorted = allPlayers.sorted()
         val allEligible = allPlayersSorted
@@ -140,6 +133,17 @@ class Tournament {
             }
             println()
         }
+    }
+
+    companion object {
+
+        private fun createAllPairs(curEligible: List<Player>) = curEligible
+            .flatMapIndexed { i1, player1 ->
+                curEligible
+                    .filterIndexed { i2, _ -> i2 > i1 }
+                    .map { player2 -> player1 to player2 }
+            }
+
     }
 
 }
