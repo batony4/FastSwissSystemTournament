@@ -3,20 +3,25 @@
  */
 class Player(
     val name: String,
+    val handicapTours: Int,
+    val handicapWins: Int,
+    val handicapLosses: Int,
 ) : Comparable<Player> {
 
     var activeMatchWith: Player? = null // игрок, с которым сейчас идёт матч
     val matchResults = HashMap<String, PlayerMatchResult>()
 
     val matchesPlayed by lazy { matchResults.size }
-    val matchesWon by lazy { matchResults.values.sumOf { it.winsMy } }
-    val setsDiff by lazy { matchResults.values.sumOf { it.setsMy - it.setsOther } }
+    private val matchesWon by lazy { matchResults.values.sumOf { it.winsMy } }
+    private val setsDiff by lazy { matchResults.values.sumOf { it.setsMy - it.setsOther } }
 
     val score by lazy {
         Score(
             matchesPlayed,
             matchesWon,
             setsDiff,
+            if (matchesPlayed < handicapTours) handicapWins else 0,
+            if (matchesPlayed < handicapTours) handicapLosses else 0,
         )
     }
 
@@ -25,6 +30,8 @@ class Player(
             matchResults.values.sumOf { it.otherPlayer.score.matchesPlayed },
             matchResults.values.sumOf { it.otherPlayer.score.wins },
             matchResults.values.sumOf { it.otherPlayer.score.setsDiff },
+            0,
+            0,
         )
     }
 

@@ -7,9 +7,18 @@ data class Score(
     val matchesPlayed: Int,
     val wins: Int,
     val setsDiff: Int,
-): Comparable<Score> {
+    val currentHandicapWins: Int,
+    val currentHandicapLosses: Int,
+) : Comparable<Score> {
     val winsAvg = if (matchesPlayed > 0) wins.toDouble() / matchesPlayed else 0.5
     val setsDiffAvg = if (matchesPlayed > 0) setsDiff.toDouble() / matchesPlayed else 0.0
+    private val currentHandicapMatches = currentHandicapWins + currentHandicapLosses
+
+    /** Результаты с учётом гандикапа. Нигде не отображаются в таблице, но учитываются при выборе пары в первых кругах */
+    val winsAvgWithHandicap = if (matchesPlayed + currentHandicapMatches > 0)
+        (wins.toDouble() + currentHandicapWins) / (matchesPlayed + currentHandicapMatches)
+    else
+        0.5
 
     override fun compareTo(other: Score): Int {
         if (abs(winsAvg - other.winsAvg) > 1e-9) {

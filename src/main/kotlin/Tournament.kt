@@ -5,6 +5,7 @@ class Tournament {
     // конфиг
     private var tablesCnt = 1
     private var tournamentMatchesPerPlayerCnt = 1
+    private var handicapToursCnt = 0
     private val allPlayers = ArrayList<Player>()
 
     private var tablesOccupied = 0
@@ -22,7 +23,10 @@ class Tournament {
 
             val bestMatch = createAllPairs(curEligible)
                 .filter { (player1, player2) -> !player1.isPlayedWith(player2) } // проверяем, что не играли раньше
-                .sortedBy { (player1, player2) -> abs(player1.score.winsAvg - player2.score.winsAvg) } // сортируем по близости игроков между собой
+
+                // сортируем по близости игроков между собой с учётом невидимого гандикапа
+                .sortedBy { (player1, player2) -> abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) }
+
                 .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
                     s.isPossibleToCreateCorrectTournamentStructureUntilTheEnd(player1, player2)
                 }
@@ -85,8 +89,14 @@ class Tournament {
             tablesCnt = lineTrimmed.split(" ").last().toInt()
         } else if (lineTrimmed.lowercase().startsWith("Матч".lowercase())) {
             tournamentMatchesPerPlayerCnt = lineTrimmed.split(" ").last().toInt()
+        } else if (lineTrimmed.lowercase().startsWith("Гандикап".lowercase())) {
+            handicapToursCnt = lineTrimmed.split(" ").last().toInt()
         } else if (lineTrimmed.lowercase().startsWith("Игрок".lowercase())) {
-            allPlayers += Player(lineTrimmed.split(" ").last())
+            val tok = lineTrimmed.split(" ")
+            val name = tok[1]
+            val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
+            val handicapLosses = tok.getOrNull(2)?.toInt() ?: 0
+            allPlayers += Player(name, handicapToursCnt, handicapWins, handicapLosses)
         } else {
             throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
         }
