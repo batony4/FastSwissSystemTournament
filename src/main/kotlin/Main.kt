@@ -20,9 +20,7 @@ fun generateNextMatch(allPlayersSorted: List<Player>, tournamentMatchesPerPlayer
             .filter { (player1, player2) -> // проверяем, что не играли раньше
                 player1.matchResults.none { it.value.otherPlayer == player2 }
             }
-            // TODO когда сравниваю, учитывать не только разницу мест,
-            //  но и разницу очков, сетов и Бергера, а то сейчас выбрал пару соседних мест, но с разными очками.
-            .sortedBy { (player1, player2) -> abs(allPlayersSorted.indexOf(player1) - allPlayersSorted.indexOf(player2)) }
+            .sortedBy { (player1, player2) -> abs(player1.score.winsAvg - player2.score.winsAvg) }
             .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
 
                 val m = Array(allPlayersSorted.size) { BooleanArray(allPlayersSorted.size) }
