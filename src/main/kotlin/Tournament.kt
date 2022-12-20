@@ -3,21 +3,18 @@ import java.io.PrintWriter
 import java.util.*
 import kotlin.math.abs
 
-class Tournament {
+class Tournament(
+    private val tablesCnt: Int,
+    private val tournamentMatchesPerPlayerCnt: Int,
+    private val allPlayers: List<PlayerState>,
+) {
 
-    // конфиг
-    private var tablesCnt = 1
-    private var tournamentMatchesPerPlayerCnt = 1
-    private var handicapToursCnt = 0
-    private val allPlayers = ArrayList<PlayerState>()
+    private val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
 
     private var tablesOccupied = 0
 
-    private val s by lazy { Simulation(allPlayers, tournamentMatchesPerPlayerCnt) }
-
     private fun generateNextMatch(): Pair<PlayerState, PlayerState>? {
-        val allPlayersSorted = allPlayers.sorted()
-        val allEligible = allPlayersSorted
+        val allEligible = allPlayers
             .filter { !it.isPlaysNow() }
             .filter { it.matchesPlayed < tournamentMatchesPerPlayerCnt }
 
@@ -27,7 +24,7 @@ class Tournament {
             val bestMatch = listAllPairs(curEligible)
                 .filter { (player1, player2) -> !player1.isFinishedGameWith(player2) } // проверяем, что не играли раньше
 
-                // сортируем по близости игроков между собой с учётом невидимого гандикапа
+                // сортируем по близости игроков между собой по проценту побед с учётом невидимого гандикапа
                 .sortedBy { (player1, player2) -> abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) }
 
                 .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
@@ -85,33 +82,6 @@ class Tournament {
         }
     }
 
-    private fun parseLine(line: String) {
-        val lineTrimmed = line.trim()
-
-        if (lineTrimmed.isBlank()) { // пропускаем пустые строки
-            return
-        } else if (lineTrimmed.startsWith("#")) { // пропускаем комменты
-            return
-        } else if (lineTrimmed.lowercase().startsWith("Стол".lowercase())) { // Столов
-            tablesCnt = lineTrimmed.split(" ").last().toInt()
-        } else if (lineTrimmed.lowercase().startsWith("Матч".lowercase())) { // Матчей
-            tournamentMatchesPerPlayerCnt = lineTrimmed.split(" ").last().toInt()
-        } else if (lineTrimmed.lowercase().startsWith("Гандикап".lowercase())) { // ГандикапИгр
-            handicapToursCnt = lineTrimmed.split(" ").last().toInt()
-        } else if (lineTrimmed.lowercase().startsWith("Игрок".lowercase())) { // Игрок
-            val tok = lineTrimmed.split(" ")
-            val name = tok[1]
-            val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
-            val handicapLosses = tok.getOrNull(3)?.toInt() ?: 0
-            allPlayers += PlayerState(name, handicapToursCnt, handicapWins, handicapLosses)
-        } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) { // Результат матча
-            // если игрок уже есть в списке, то просто добавляем результаты
-            parseMatchLine(allPlayers, lineTrimmed)
-        } else {
-            throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
-        }
-    }
-
     fun hasFreeTables() = tablesOccupied < tablesCnt
 
 
@@ -160,18 +130,46 @@ class Tournament {
         private const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
-            val t = Tournament()
+            var tablesCnt = 1
+            var tournamentMatchesPerPlayerCnt = 1
+            var handicapToursCnt = 0
+            val allPlayers = ArrayList<PlayerState>()
+
+            var t: Tournament? = null
 
             val sc = Scanner(inputFile)
             while (sc.hasNextLine()) {
                 val line = sc.nextLine().removePrefix(GO_TO_TABLE_PREFIX)
                 copyTo.println(line)
 
-                t.parseLine(line)
+                val lineTrimmed = line.trim()
+                if (lineTrimmed.isBlank()) { // пропускаем пустые строки
+                    continue
+                } else if (lineTrimmed.startsWith("#")) { // пропускаем комменты
+                    continue
+                } else if (lineTrimmed.lowercase().startsWith("Стол".lowercase())) { // Столов
+                    tablesCnt = lineTrimmed.split(" ").last().toInt()
+                } else if (lineTrimmed.lowercase().startsWith("Матч".lowercase())) { // Матчей
+                    tournamentMatchesPerPlayerCnt = lineTrimmed.split(" ").last().toInt()
+                } else if (lineTrimmed.lowercase().startsWith("Гандикап".lowercase())) { // ГандикапИгр
+                    handicapToursCnt = lineTrimmed.split(" ").last().toInt()
+                } else if (lineTrimmed.lowercase().startsWith("Игрок".lowercase())) { // Игрок
+                    val tok = lineTrimmed.split(" ")
+                    val name = tok[1]
+                    val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
+                    val handicapLosses = tok.getOrNull(3)?.toInt() ?: 0
+                    allPlayers += PlayerState(name, handicapToursCnt, handicapWins, handicapLosses)
+                } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) { // Результат матча
+                    // если игрок уже есть в списке, то просто добавляем результаты
+                    if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers)
+                    t.parseMatchLine(allPlayers, lineTrimmed)
+                } else {
+                    throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
+                }
             }
             sc.close()
 
-            return t
+            return t ?: Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers)
         }
 
         private fun listAllPairs(curEligible: List<PlayerState>) = curEligible
