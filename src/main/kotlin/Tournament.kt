@@ -28,7 +28,7 @@ class Tournament {
                 .sortedBy { (player1, player2) -> abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) }
 
                 .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
-                    s.isPossibleToCreateCorrectTournamentStructureUntilTheEnd(player1, player2)
+                    s.isCorrect(player1 to player2)
                 }
 
             if (bestMatch != null) {
@@ -39,21 +39,19 @@ class Tournament {
         return null
     }
 
-    fun generateAndStartMatch(): Pair<Player, Player>? =
-        generateNextMatch()
-            ?.also { startMatch(it) }
-            ?.also { s.play(it) }
+    fun generateAndStartMatch(): Pair<Player, Player>? = generateNextMatch()?.also { startMatch(it) }
 
-    private fun startMatch(match: Pair<Player, Player>) {
+    private fun startMatch(p: Pair<Player, Player>) {
         tablesOccupied++
-        match.first.startMatchWith(match.second)
-        match.second.startMatchWith(match.first)
+        p.first.startMatchWith(p.second)
+        p.second.startMatchWith(p.first)
+        s.play(p)
     }
 
-    private fun endMatch(match: Pair<Player, Player>, sets: Pair<Int, Int>) {
+    private fun endMatch(p: Pair<Player, Player>, sets: Pair<Int, Int>) {
         tablesOccupied--
-        match.first.endMatch(sets.first, sets.second)
-        match.second.endMatch(sets.second, sets.first)
+        p.first.endMatch(sets.first, sets.second)
+        p.second.endMatch(sets.second, sets.first)
     }
 
     private fun parseMatchLine(allPlayers: ArrayList<Player>, line: String) {

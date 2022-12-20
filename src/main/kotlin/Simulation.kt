@@ -1,3 +1,6 @@
+import kotlin.math.max
+import kotlin.math.min
+
 class Simulation(
     private val allPlayers: List<Player>,
     private val tournamentMatchesPerPlayerCnt: Int,
@@ -5,46 +8,35 @@ class Simulation(
     private val m = Array(allPlayers.size) { BooleanArray(allPlayers.size) } // матрица, кто с кем играл (j > i).
     private val cnt = Array(allPlayers.size) { 0 } // сколько матчей сыграл i-ый игрок
 
-    private val allPlayersSorted = allPlayers.sorted()
-
-    init {
-        allPlayersSorted.forEachIndexed { i1, p1 ->
-            p1.matchResults.forEach { (_, result) ->
-                val i2 = allPlayersSorted.indexOf(result.otherPlayer)
-                if (i2 > i1) play(i1, i2)
-            }
-
-            p1.activeMatchWith?.let { p2 ->
-                val i2 = allPlayersSorted.indexOf(p2)
-                if (i2 > i1) play(i1, i2)
-            }
-        }
-    }
-
-    fun play(p: Pair<Player, Player>) {
-        val player1Index = allPlayersSorted.indexOf(p.first)
-        val player2Index = allPlayersSorted.indexOf(p.second)
-        if (player1Index > player2Index) throw IllegalArgumentException("player1Index должен быть меньше player2Index")
-
-        play(player1Index, player2Index)
-    }
-
     private fun play(i1: Int, i2: Int) {
+        if (m[i1][i2]) throw IllegalArgumentException("Уже сыграли $i1 и $i2")
+        if (i1 >= i2) throw IllegalArgumentException("Неверный порядок параметров. Требуется: $i1 < $i2")
+
         m[i1][i2] = true
         cnt[i1]++
         cnt[i2]++
     }
 
     private fun unplay(i1: Int, i2: Int) {
+        if (!m[i1][i2]) throw IllegalArgumentException("Не сыграли $i1 и $i2")
+        if (i1 >= i2) throw IllegalArgumentException("Неверный порядок параметров. Требуется: $i1 < $i2")
+
         m[i1][i2] = false
         cnt[i1]--
         cnt[i2]--
     }
 
+    fun play(p: Pair<Player, Player>) {
+        val i1 = allPlayers.indexOf(p.first)
+        val i2 = allPlayers.indexOf(p.second)
+
+        play(min(i1, i2), max(i1, i2))
+    }
+
     /**
-     * Пытаемся симулировать, получится ли полностью составить план матчей с учётом этого матча.
+     * Пытаемся симулировать, получится ли полностью составить план матчей из текущей ситуации.
      */
-    private fun rec(): Boolean {
+    private fun isCorrect(): Boolean {
         if (cnt.all { it == tournamentMatchesPerPlayerCnt }) return true
 
         for (i in m.indices.shuffled().sortedBy { cnt[it] }) {
@@ -54,8 +46,8 @@ class Simulation(
                 if (cnt[j] >= tournamentMatchesPerPlayerCnt) continue
 
                 if (!m[i][j]) {
-                    play( i, j)
-                    if (rec().also { unplay(i, j) }) return true
+                    play(i, j)
+                    if (isCorrect().also { unplay(i, j) }) return true
                 }
             }
         }
@@ -64,18 +56,14 @@ class Simulation(
     }
 
     /**
-     * Проверяет, существует ли какой-то набор матчей, который позволит создать корректную структуру турнира до самого конца при условии,
-     * что игроки player1 и player2 будут играть в ближайшем матче.
+     * Удастся ли составить корректный план игр, если начать с матча [p]?
      */
-    fun isPossibleToCreateCorrectTournamentStructureUntilTheEnd(
-        player1: Player,
-        player2: Player,
-    ): Boolean {
-        val player1Index = allPlayersSorted.indexOf(player1)
-        val player2Index = allPlayersSorted.indexOf(player2)
+    fun isCorrect(p: Pair<Player, Player>): Boolean {
+        val i1 = allPlayers.indexOf(p.first)
+        val i2 = allPlayers.indexOf(p.second)
 
-        play(player1Index, player2Index)
-        return rec().also { unplay(player1Index, player2Index) }
+        play(min(i1, i2), max(i1, i2))
+        return isCorrect().also { unplay(min(i1, i2), max(i1, i2)) }
     }
 
 }
