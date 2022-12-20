@@ -18,25 +18,21 @@ class Tournament(
             .filter { !it.isPlaysNow() }
             .filter { it.matchesPlayed < tournamentMatchesPerPlayerCnt }
 
-        for (maxMatchesPlayed in 0 until tournamentMatchesPerPlayerCnt) {
-            val curEligible = allEligible.filter { it.matchesPlayed <= maxMatchesPlayed }
 
-            val bestMatch = listAllPairs(curEligible)
-                .filter { (player1, player2) -> !player1.isFinishedGameWith(player2) } // проверяем, что не играли раньше
+        val bestMatch = listAllPairs(allEligible)
+            .filter { (player1, player2) -> !player1.isFinishedGameWith(player2) } // проверяем, что не играли раньше
 
-                // сортируем по близости игроков между собой по проценту побед с учётом невидимого гандикапа
-                .sortedBy { (player1, player2) -> abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) }
-
-                .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
-                    s.isCorrect(player1 to player2)
-                }
-
-            if (bestMatch != null) {
-                return bestMatch
+            // сортируем по близости игроков между собой по проценту побед с учётом невидимого гандикапа
+            .sortedBy { (player1, player2) ->
+                abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) +
+                        0.6 * (player1.matchesPlayed + player2.matchesPlayed)
             }
-        }
 
-        return null
+            .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
+                s.isCorrect(player1 to player2)
+            }
+
+        return bestMatch
     }
 
     fun generateAndStartMatch(writeTo: PrintWriter): Pair<PlayerState, PlayerState>? =

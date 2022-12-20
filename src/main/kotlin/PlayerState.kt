@@ -40,9 +40,8 @@ class PlayerState(
     fun isFinishedGameWith(otherPlayer: PlayerState) = matchResults.containsKey(otherPlayer)
 
     fun startMatchWith(otherPlayer: PlayerState) {
-        if (activeMatchWith != null) {
-            throw IllegalStateException("Уже играем с $activeMatchWith")
-        }
+        if (activeMatchWith != null) throw IllegalStateException("Уже играем с $activeMatchWith")
+
         activeMatchWith = otherPlayer
     }
 

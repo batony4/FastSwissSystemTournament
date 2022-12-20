@@ -15,10 +15,11 @@ data class Score(
     private val currentHandicapMatches = currentHandicapWins + currentHandicapLosses
 
     /** Результаты с учётом гандикапа. Нигде не отображаются в таблице, но учитываются при выборе пары в первых кругах */
-    val winsAvgWithHandicap = if (matchesPlayed + currentHandicapMatches > 0)
-        (wins.toDouble() + currentHandicapWins) / (matchesPlayed + currentHandicapMatches)
-    else
-        0.5
+    val winsAvgWithHandicap =
+        if (matchesPlayed + currentHandicapMatches > 0)
+            (wins.toDouble() + currentHandicapWins) / (matchesPlayed + currentHandicapMatches)
+        else
+            0.5
 
     override fun compareTo(other: Score): Int {
         if (abs(winsAvg - other.winsAvg) > 1e-9) {
