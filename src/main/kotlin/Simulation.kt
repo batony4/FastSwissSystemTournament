@@ -2,7 +2,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class Simulation(
-    private val allPlayers: List<Player>,
+    private val allPlayers: List<PlayerState>,
     private val tournamentMatchesPerPlayerCnt: Int,
 ) {
     private val m = Array(allPlayers.size) { BooleanArray(allPlayers.size) } // матрица, кто с кем играл (j > i).
@@ -26,7 +26,7 @@ class Simulation(
         cnt[i2]--
     }
 
-    fun play(p: Pair<Player, Player>) {
+    fun play(p: Pair<PlayerState, PlayerState>) {
         val i1 = allPlayers.indexOf(p.first)
         val i2 = allPlayers.indexOf(p.second)
 
@@ -58,7 +58,7 @@ class Simulation(
     /**
      * Удастся ли составить корректный план игр, если начать с матча [p]?
      */
-    fun isCorrect(p: Pair<Player, Player>): Boolean {
+    fun isCorrect(p: Pair<PlayerState, PlayerState>): Boolean {
         val i1 = allPlayers.indexOf(p.first)
         val i2 = allPlayers.indexOf(p.second)
 

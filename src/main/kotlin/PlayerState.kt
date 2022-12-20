@@ -1,14 +1,14 @@
 /**
  * Игрок, включая его статистику на турнире.
  */
-class Player(
+class PlayerState(
     val name: String,
-    val handicapTours: Int,
-    val handicapWins: Int,
-    val handicapLosses: Int,
-) : Comparable<Player> {
+    private val handicapTours: Int,
+    private val handicapWins: Int,
+    private val handicapLosses: Int,
+) : Comparable<PlayerState> {
 
-    var activeMatchWith: Player? = null // игрок, с которым сейчас идёт матч
+    private var activeMatchWith: PlayerState? = null // игрок, с которым сейчас идёт матч
     val matchResults = HashMap<String, PlayerMatchResult>()
 
     val matchesPlayed by lazy { matchResults.size }
@@ -37,9 +37,9 @@ class Player(
 
     fun isPlaysNow() = activeMatchWith != null
 
-    fun isPlayedWith(other: Player) = matchResults.any { it.value.otherPlayer == other }
+    fun isFinishedGameWith(other: PlayerState) = matchResults.any { it.value.otherPlayer == other }
 
-    fun startMatchWith(otherPlayer: Player) {
+    fun startMatchWith(otherPlayer: PlayerState) {
         if (activeMatchWith != null) {
             throw IllegalStateException("Уже играем с $activeMatchWith")
         }
@@ -53,7 +53,7 @@ class Player(
         } ?: throw IllegalStateException("Не играем сейчас")
     }
 
-    override fun compareTo(other: Player): Int {
+    override fun compareTo(other: PlayerState): Int {
         val scoreCompare = score.compareTo(other.score)
         if (scoreCompare != 0) return scoreCompare
 
@@ -64,7 +64,7 @@ class Player(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Player) return false
+        if (other !is PlayerState) return false
 
         if (name != other.name) return false
 

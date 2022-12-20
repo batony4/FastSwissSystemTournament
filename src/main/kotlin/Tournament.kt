@@ -6,13 +6,13 @@ class Tournament {
     private var tablesCnt = 1
     private var tournamentMatchesPerPlayerCnt = 1
     private var handicapToursCnt = 0
-    private val allPlayers = ArrayList<Player>()
+    private val allPlayers = ArrayList<PlayerState>()
 
     private var tablesOccupied = 0
 
     private val s by lazy { Simulation(allPlayers, tournamentMatchesPerPlayerCnt) }
 
-    private fun generateNextMatch(): Pair<Player, Player>? {
+    private fun generateNextMatch(): Pair<PlayerState, PlayerState>? {
         val allPlayersSorted = allPlayers.sorted()
         val allEligible = allPlayersSorted
             .filter { !it.isPlaysNow() }
@@ -22,7 +22,7 @@ class Tournament {
             val curEligible = allEligible.filter { it.matchesPlayed <= maxMatchesPlayed }
 
             val bestMatch = createAllPairs(curEligible)
-                .filter { (player1, player2) -> !player1.isPlayedWith(player2) } // проверяем, что не играли раньше
+                .filter { (player1, player2) -> !player1.isFinishedGameWith(player2) } // проверяем, что не играли раньше
 
                 // сортируем по близости игроков между собой с учётом невидимого гандикапа
                 .sortedBy { (player1, player2) -> abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) }
@@ -39,22 +39,22 @@ class Tournament {
         return null
     }
 
-    fun generateAndStartMatch(): Pair<Player, Player>? = generateNextMatch()?.also { startMatch(it) }
+    fun generateAndStartMatch(): Pair<PlayerState, PlayerState>? = generateNextMatch()?.also { startMatch(it) }
 
-    private fun startMatch(p: Pair<Player, Player>) {
+    private fun startMatch(p: Pair<PlayerState, PlayerState>) {
         tablesOccupied++
         p.first.startMatchWith(p.second)
         p.second.startMatchWith(p.first)
         s.play(p)
     }
 
-    private fun endMatch(p: Pair<Player, Player>, sets: Pair<Int, Int>) {
+    private fun endMatch(p: Pair<PlayerState, PlayerState>, sets: Pair<Int, Int>) {
         tablesOccupied--
         p.first.endMatch(sets.first, sets.second)
         p.second.endMatch(sets.second, sets.first)
     }
 
-    private fun parseMatchLine(allPlayers: ArrayList<Player>, line: String) {
+    private fun parseMatchLine(allPlayers: ArrayList<PlayerState>, line: String) {
         val tok = line.split(" ")
 
         val player1 = allPlayers.first { it.name == tok[0] }
@@ -95,7 +95,7 @@ class Tournament {
             val name = tok[1]
             val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
             val handicapLosses = tok.getOrNull(3)?.toInt() ?: 0
-            allPlayers += Player(name, handicapToursCnt, handicapWins, handicapLosses)
+            allPlayers += PlayerState(name, handicapToursCnt, handicapWins, handicapLosses)
         } else {
             throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
         }
@@ -146,7 +146,7 @@ class Tournament {
 
     companion object {
 
-        private fun createAllPairs(curEligible: List<Player>) = curEligible
+        private fun createAllPairs(curEligible: List<PlayerState>) = curEligible
             .flatMapIndexed { i1, player1 ->
                 curEligible
                     .filterIndexed { i2, _ -> i2 > i1 }
