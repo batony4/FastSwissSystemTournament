@@ -131,7 +131,7 @@ class Tournament {
             )
 
             for ((otherIndex, otherPlayer) in allPlayersSorted.withIndex()) {
-                val match = player.matchResults[otherPlayer.name]
+                val match = player.matchResults[otherPlayer]
                 if (index == otherIndex) {
                     print(" X   ")
                 } else if (match != null) {

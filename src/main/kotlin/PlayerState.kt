@@ -9,7 +9,7 @@ class PlayerState(
 ) : Comparable<PlayerState> {
 
     private var activeMatchWith: PlayerState? = null // игрок, с которым сейчас идёт матч
-    val matchResults = HashMap<String, PlayerMatchResult>()
+    val matchResults = HashMap<PlayerState, PlayerMatchResult>()
 
     val matchesPlayed by lazy { matchResults.size }
     private val matchesWon by lazy { matchResults.values.sumOf { it.winsMy } }
@@ -37,7 +37,7 @@ class PlayerState(
 
     fun isPlaysNow() = activeMatchWith != null
 
-    fun isFinishedGameWith(other: PlayerState) = matchResults.any { it.value.otherPlayer == other }
+    fun isFinishedGameWith(otherPlayer: PlayerState) = matchResults.containsKey(otherPlayer)
 
     fun startMatchWith(otherPlayer: PlayerState) {
         if (activeMatchWith != null) {
@@ -48,7 +48,7 @@ class PlayerState(
 
     fun endMatch(setsMy: Int, setsOther: Int) {
         activeMatchWith?.let { otherPlayer ->
-            matchResults[otherPlayer.name] = PlayerMatchResult(otherPlayer, setsMy, setsOther)
+            matchResults[otherPlayer] = PlayerMatchResult(otherPlayer, setsMy, setsOther)
             activeMatchWith = null
         } ?: throw IllegalStateException("Не играем сейчас")
     }
