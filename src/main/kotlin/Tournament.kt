@@ -1,3 +1,6 @@
+import java.io.File
+import java.io.PrintWriter
+import java.util.*
 import kotlin.math.abs
 
 class Tournament {
@@ -63,18 +66,24 @@ class Tournament {
         // начинаем матч
         startMatch(player1 to player2)
 
-        if (tok.size == 2) { // незавершённый матч
-            return
-        } else if (tok.size == 4) { // результаты матча
-            val sets1 = line.split(" ")[2].toInt()
-            val sets2 = line.split(" ")[3].toInt()
-            endMatch(player1 to player2, sets1 to sets2)
-        } else {
-            throw IllegalArgumentException("Неверный формат строки: '$line'")
+        when (tok.size) {
+
+            2 -> { // незавершённый матч
+                return
+            }
+
+            4 -> { // результаты матча
+                val sets1 = line.split(" ")[2].toInt()
+                val sets2 = line.split(" ")[3].toInt()
+                endMatch(player1 to player2, sets1 to sets2)
+            }
+
+            else -> throw IllegalArgumentException("Неверный формат строки: '$line'")
+
         }
     }
 
-    fun parseLine(line: String) {
+    private fun parseLine(line: String) {
         val lineTrimmed = line.trim()
 
         if (lineTrimmed.isBlank()) { // пропускаем пустые строки
@@ -145,6 +154,23 @@ class Tournament {
     }
 
     companion object {
+
+        const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
+
+        fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
+            val t = Tournament()
+
+            val sc = Scanner(inputFile)
+            while (sc.hasNextLine()) {
+                val line = sc.nextLine().removePrefix(GO_TO_TABLE_PREFIX)
+                copyTo.println(line)
+
+                t.parseLine(line)
+            }
+            sc.close()
+
+            return t
+        }
 
         private fun createAllPairs(curEligible: List<PlayerState>) = curEligible
             .flatMapIndexed { i1, player1 ->
