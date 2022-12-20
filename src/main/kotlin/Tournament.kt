@@ -24,7 +24,7 @@ class Tournament {
         for (maxMatchesPlayed in 0 until tournamentMatchesPerPlayerCnt) {
             val curEligible = allEligible.filter { it.matchesPlayed <= maxMatchesPlayed }
 
-            val bestMatch = createAllPairs(curEligible)
+            val bestMatch = listAllPairs(curEligible)
                 .filter { (player1, player2) -> !player1.isFinishedGameWith(player2) } // проверяем, что не играли раньше
 
                 // сортируем по близости игроков между собой с учётом невидимого гандикапа
@@ -174,7 +174,7 @@ class Tournament {
             return t
         }
 
-        private fun createAllPairs(curEligible: List<PlayerState>) = curEligible
+        private fun listAllPairs(curEligible: List<PlayerState>) = curEligible
             .flatMapIndexed { i1, player1 ->
                 curEligible
                     .filterIndexed { i2, _ -> i2 > i1 }
