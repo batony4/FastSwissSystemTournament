@@ -42,7 +42,9 @@ class Tournament {
         return null
     }
 
-    fun generateAndStartMatch(): Pair<PlayerState, PlayerState>? = generateNextMatch()?.also { startMatch(it) }
+    fun generateAndStartMatch(writeTo: PrintWriter): Pair<PlayerState, PlayerState>? =
+        generateNextMatch()?.also { startMatch(it) }?.also { writeTo.println("$GO_TO_TABLE_PREFIX${it.first.name} ${it.second.name}") }
+
 
     private fun startMatch(p: Pair<PlayerState, PlayerState>) {
         tablesOccupied++
@@ -155,7 +157,7 @@ class Tournament {
 
     companion object {
 
-        const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
+        private const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
             val t = Tournament()
