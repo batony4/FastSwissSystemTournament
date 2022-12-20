@@ -25,7 +25,7 @@ class Tournament(
             // сортируем по близости игроков между собой по проценту побед с учётом невидимого гандикапа
             .sortedBy { (player1, player2) ->
                 abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) +
-                        0.6 * (player1.matchesPlayed + player2.matchesPlayed)
+                        0.4 * (player1.matchesPlayed + player2.matchesPlayed)
             }
 
             .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
