@@ -92,21 +92,21 @@ class Tournament {
             return
         } else if (lineTrimmed.startsWith("#")) { // пропускаем комменты
             return
-        } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) {
-            // если игрок уже есть в списке, то просто добавляем результаты
-            parseMatchLine(allPlayers, lineTrimmed)
-        } else if (lineTrimmed.lowercase().startsWith("Стол".lowercase())) {
+        } else if (lineTrimmed.lowercase().startsWith("Стол".lowercase())) { // Столов
             tablesCnt = lineTrimmed.split(" ").last().toInt()
-        } else if (lineTrimmed.lowercase().startsWith("Матч".lowercase())) {
+        } else if (lineTrimmed.lowercase().startsWith("Матч".lowercase())) { // Матчей
             tournamentMatchesPerPlayerCnt = lineTrimmed.split(" ").last().toInt()
-        } else if (lineTrimmed.lowercase().startsWith("Гандикап".lowercase())) {
+        } else if (lineTrimmed.lowercase().startsWith("Гандикап".lowercase())) { // ГандикапИгр
             handicapToursCnt = lineTrimmed.split(" ").last().toInt()
-        } else if (lineTrimmed.lowercase().startsWith("Игрок".lowercase())) {
+        } else if (lineTrimmed.lowercase().startsWith("Игрок".lowercase())) { // Игрок
             val tok = lineTrimmed.split(" ")
             val name = tok[1]
             val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
             val handicapLosses = tok.getOrNull(3)?.toInt() ?: 0
             allPlayers += PlayerState(name, handicapToursCnt, handicapWins, handicapLosses)
+        } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) { // Результат матча
+            // если игрок уже есть в списке, то просто добавляем результаты
+            parseMatchLine(allPlayers, lineTrimmed)
         } else {
             throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
         }
