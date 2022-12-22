@@ -16,6 +16,7 @@ class Tournament(
     private fun generateNextMatch(): Pair<PlayerState, PlayerState>? {
         val allEligible = allPlayers
             .filter { !it.isPlaysNow() }
+            .filter { !it.isPaused }
             .filter { it.matchesPlayed < tournamentMatchesPerPlayerCnt }
 
 
@@ -151,10 +152,11 @@ class Tournament(
                     handicapToursCnt = lineTrimmed.split(" ").last().toInt()
                 } else if (lineTrimmed.lowercase().startsWith("Игрок".lowercase())) { // Игрок
                     val tok = lineTrimmed.split(" ")
-                    val name = tok[1]
+                    val name = tok[1].removePrefix("-")
+                    val isPaused = tok[1].startsWith("-")
                     val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
                     val handicapLosses = tok.getOrNull(3)?.toInt() ?: 0
-                    allPlayers += PlayerState(name, handicapToursCnt, handicapWins, handicapLosses)
+                    allPlayers += PlayerState(name, isPaused, handicapToursCnt, handicapWins, handicapLosses)
                 } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) { // Результат матча
                     // если игрок уже есть в списке, то просто добавляем результаты
                     if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers)

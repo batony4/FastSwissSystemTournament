@@ -3,6 +3,7 @@
  */
 class PlayerState(
     val name: String,
+    val isPaused: Boolean,
     private val handicapTours: Int,
     private val handicapWins: Int,
     private val handicapLosses: Int,
