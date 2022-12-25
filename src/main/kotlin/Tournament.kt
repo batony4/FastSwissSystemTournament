@@ -1,15 +1,17 @@
+import pairSorters.FastSwissPairSorter
+import pairSorters.PairSorter
 import tableSorters.TableSorter
 import tableSorters.TopologicalTableSorter
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
-import kotlin.math.abs
 
 class Tournament(
     private val tablesCnt: Int,
     private val tournamentMatchesPerPlayerCnt: Int,
     private val allPlayers: List<PlayerState>,
     private val tableSorter: TableSorter,
+    private val pairSorter: PairSorter,
 ) {
 
     private val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
@@ -26,11 +28,7 @@ class Tournament(
         val bestMatch = listAllPairs(allEligible)
             .filter { (player1, player2) -> !player1.isFinishedGameWith(player2) } // проверяем, что не играли раньше
 
-            // сортируем по близости игроков между собой по проценту побед с учётом невидимого гандикапа
-            .sortedBy { (player1, player2) ->
-                abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) +
-                        0.4 * (player1.matchesPlayed + player2.matchesPlayed)
-            }
+            .sortedBy { (player1, player2) -> pairSorter.assessPair(player1, player2) } // оцениваем пару и сортируем по оценке
 
             .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
                 s.isCorrect(player1 to player2)
@@ -150,6 +148,7 @@ class Tournament(
 
         private const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
         private val TABLE_SORTER: TableSorter = TopologicalTableSorter()
+        private val PAIR_SORTER: PairSorter = FastSwissPairSorter()
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
             var tablesCnt = 1
@@ -184,7 +183,7 @@ class Tournament(
                     allPlayers += PlayerState(name, isPaused, handicapToursCnt, handicapWins, handicapLosses)
                 } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) { // Результат матча
                     // если игрок уже есть в списке, то просто добавляем результаты
-                    if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER)
+                    if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER, PAIR_SORTER)
                     t.parseMatchLine(allPlayers, lineTrimmed)
                 } else {
                     throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
@@ -192,7 +191,7 @@ class Tournament(
             }
             sc.close()
 
-            return t ?: Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER)
+            return t ?: Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER, PAIR_SORTER)
         }
 
         private fun listAllPairs(curEligible: List<PlayerState>) = curEligible
