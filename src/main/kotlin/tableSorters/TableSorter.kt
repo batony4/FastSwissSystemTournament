@@ -2,6 +2,6 @@ package tableSorters
 
 import PlayerState
 
-interface Sorter {
+interface TableSorter {
     fun sorted(allPlayers: List<PlayerState>): List<PlayerState>
 }

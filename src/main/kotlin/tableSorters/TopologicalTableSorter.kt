@@ -2,7 +2,7 @@ package tableSorters
 
 import PlayerState
 
-class TopologicalSorter : Sorter {
+class TopologicalTableSorter : TableSorter {
     override fun sorted(allPlayers: List<PlayerState>): List<PlayerState> {
         val source = ArrayList<PlayerState>(allPlayers)
         val res = ArrayList<PlayerState>()

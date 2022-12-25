@@ -3,7 +3,7 @@ package tableSorters
 import PlayerState
 import kotlin.math.abs
 
-class ScoreAndBergerScoreSorter : Comparator<PlayerState>, Sorter {
+class ScoreAndBergerScoreTableSorter : Comparator<PlayerState>, TableSorter {
     override fun compare(o1: PlayerState, o2: PlayerState): Int {
 
         if (abs(o1.score.winsAvg - o2.score.winsAvg) > 1e-9) {

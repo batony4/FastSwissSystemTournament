@@ -1,5 +1,5 @@
-import tableSorters.Sorter
-import tableSorters.TopologicalSorter
+import tableSorters.TableSorter
+import tableSorters.TopologicalTableSorter
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
@@ -9,7 +9,7 @@ class Tournament(
     private val tablesCnt: Int,
     private val tournamentMatchesPerPlayerCnt: Int,
     private val allPlayers: List<PlayerState>,
-    private val sorter: Sorter,
+    private val tableSorter: TableSorter,
 ) {
 
     private val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
@@ -86,7 +86,7 @@ class Tournament(
 
 
     fun outputCurrentTable() {
-        val allPlayersSorted = sorter.sorted(allPlayers)
+        val allPlayersSorted = tableSorter.sorted(allPlayers)
 //            allPlayers.sortedWith(ScoreAndBergerScoreSorter())
 
         val maxNameLength = allPlayers.maxOf { it.name.length } + 2
@@ -149,7 +149,7 @@ class Tournament(
     companion object {
 
         private const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
-        private val SORTER: Sorter = TopologicalSorter()
+        private val TABLE_SORTER: TableSorter = TopologicalTableSorter()
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
             var tablesCnt = 1
@@ -184,7 +184,7 @@ class Tournament(
                     allPlayers += PlayerState(name, isPaused, handicapToursCnt, handicapWins, handicapLosses)
                 } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) { // Результат матча
                     // если игрок уже есть в списке, то просто добавляем результаты
-                    if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, SORTER)
+                    if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER)
                     t.parseMatchLine(allPlayers, lineTrimmed)
                 } else {
                     throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
@@ -192,7 +192,7 @@ class Tournament(
             }
             sc.close()
 
-            return t ?: Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, SORTER)
+            return t ?: Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER)
         }
 
         private fun listAllPairs(curEligible: List<PlayerState>) = curEligible
