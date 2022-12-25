@@ -1,5 +1,5 @@
-import tableSorters.ScoreAndBergerScoreSorter
 import tableSorters.Sorter
+import tableSorters.TopologicalSorter
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
@@ -126,11 +126,28 @@ class Tournament(
             println()
         }
     }
+//Топсорт:
+//
+//1. Митрохин
+//2. Ровда
+//3. Молчанов
+//4. Павлов
+//5. Шалыгин
+//6-7. Попович, Уни
+//8. Мелёхин
+//9, 10. Шелкович, Оленников
+//11. Власов
+//12, 13. Макаровский, Шаймарданов
+//14. Швалёв
+//15. Куприянов
+//16. Нестеров
+//17. Попов
+//18. ЛУЗЕР
 
     companion object {
 
         private const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
-        private val SORTER: Sorter = ScoreAndBergerScoreSorter()
+        private val SORTER: Sorter = TopologicalSorter()
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
             var tablesCnt = 1

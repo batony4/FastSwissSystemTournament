@@ -6,5 +6,7 @@ data class PlayerMatchResult(
     val setsMy: Int,
     val setsOther: Int,
 ) {
-    val winsMy = if (setsMy > setsOther) 1 else 0
+    val isWin = setsMy > setsOther
+
+    val winsMy = if (isWin) 1 else 0
 }
