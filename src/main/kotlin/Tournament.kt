@@ -1,3 +1,4 @@
+import comparators.ScoreAndBergerScoreComparator
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
@@ -83,7 +84,8 @@ class Tournament(
 
 
     fun outputCurrentTable() {
-        val allPlayersSorted = allPlayers.sorted()
+        val allPlayersSorted = allPlayers.sortedWith(ScoreAndBergerScoreComparator())
+
         val maxNameLength = allPlayers.maxOf { it.name.length } + 2
         print(
             "Место ".padEnd(6)

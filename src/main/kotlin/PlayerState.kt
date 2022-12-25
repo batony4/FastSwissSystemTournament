@@ -1,5 +1,3 @@
-import kotlin.math.abs
-
 /**
  * Игрок, включая его статистику на турнире.
  */
@@ -9,7 +7,7 @@ class PlayerState(
     private val handicapTours: Int,
     private val handicapWins: Int,
     private val handicapLosses: Int,
-) : Comparable<PlayerState> {
+) {
 
     private var activeMatchWith: PlayerState? = null // игрок, с которым сейчас идёт матч
     val matchResults = HashMap<PlayerState, PlayerMatchResult>()
@@ -53,26 +51,6 @@ class PlayerState(
             matchResults[otherPlayer] = PlayerMatchResult(otherPlayer, setsMy, setsOther)
             activeMatchWith = null
         } ?: throw IllegalStateException("Не играем сейчас")
-    }
-
-    override fun compareTo(other: PlayerState): Int {
-        if (abs(score.winsAvg - other.score.winsAvg) > 1e-9) {
-            return -score.winsAvg.compareTo(other.score.winsAvg)
-        }
-
-        if (abs(bergerScore.winsAvg - other.bergerScore.winsAvg) > 1e-9) {
-            return -bergerScore.winsAvg.compareTo(other.bergerScore.winsAvg)
-        }
-
-        if (abs(score.setsDiffAvg - other.score.setsDiffAvg) > 1e-9) {
-            return -score.setsDiffAvg.compareTo(other.score.setsDiffAvg)
-        }
-
-        if (abs(bergerScore.setsDiffAvg - other.bergerScore.setsDiffAvg) > 1e-9) {
-            return -bergerScore.setsDiffAvg.compareTo(other.bergerScore.setsDiffAvg)
-        }
-
-        return 0
     }
 
     override fun toString() = name
