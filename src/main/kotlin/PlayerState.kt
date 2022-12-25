@@ -14,7 +14,9 @@ class PlayerState(
 
     val matchesPlayed by lazy { matchResults.size }
     private val matchesWon by lazy { matchResults.values.sumOf { it.winsMy } }
-    private val setsDiff by lazy { matchResults.values.sumOf { it.setsMy - it.setsOther } }
+    private val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
+
+    var topSortRank: Int? = null
 
     val score by lazy {
         Score(

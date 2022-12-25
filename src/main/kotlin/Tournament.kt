@@ -92,6 +92,7 @@ class Tournament(
         val maxNameLength = allPlayers.maxOf { it.name.length } + 2
         print(
             "Место ".padEnd(6)
+                    + "Ранг "
                     + "Игрок".padEnd(maxNameLength)
                     + "Игр".padEnd(5)
                     + "Побед".padEnd(11)
@@ -105,6 +106,7 @@ class Tournament(
         for ((index, player) in allPlayersSorted.withIndex()) {
             print(
                 ("" + (index + 1) + ". ").padStart(6)
+                        + ("(${player.topSortRank})").padStart(4) + " "
                         + player.name.padEnd(maxNameLength)
                         + (player.matchesPlayed.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
                         + (player.score.wins.toString() + " (%.2f)".format(player.score.winsAvg)).padEnd(11)
