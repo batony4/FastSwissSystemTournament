@@ -1,4 +1,5 @@
-import comparators.ScoreAndBergerScoreComparator
+import tableSorters.ScoreAndBergerScoreSorter
+import tableSorters.Sorter
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
@@ -8,6 +9,7 @@ class Tournament(
     private val tablesCnt: Int,
     private val tournamentMatchesPerPlayerCnt: Int,
     private val allPlayers: List<PlayerState>,
+    private val sorter: Sorter,
 ) {
 
     private val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
@@ -84,7 +86,8 @@ class Tournament(
 
 
     fun outputCurrentTable() {
-        val allPlayersSorted = allPlayers.sortedWith(ScoreAndBergerScoreComparator())
+        val allPlayersSorted = sorter.sorted(allPlayers)
+//            allPlayers.sortedWith(ScoreAndBergerScoreSorter())
 
         val maxNameLength = allPlayers.maxOf { it.name.length } + 2
         print(
@@ -127,6 +130,7 @@ class Tournament(
     companion object {
 
         private const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
+        private val SORTER: Sorter = ScoreAndBergerScoreSorter()
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
             var tablesCnt = 1
@@ -161,7 +165,7 @@ class Tournament(
                     allPlayers += PlayerState(name, isPaused, handicapToursCnt, handicapWins, handicapLosses)
                 } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) { // Результат матча
                     // если игрок уже есть в списке, то просто добавляем результаты
-                    if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers)
+                    if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, SORTER)
                     t.parseMatchLine(allPlayers, lineTrimmed)
                 } else {
                     throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
@@ -169,7 +173,7 @@ class Tournament(
             }
             sc.close()
 
-            return t ?: Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers)
+            return t ?: Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, SORTER)
         }
 
         private fun listAllPairs(curEligible: List<PlayerState>) = curEligible
