@@ -90,8 +90,8 @@ class Tournament(
                     + "Игрок".padEnd(maxNameLength)
                     + "Игр".padEnd(5)
                     + "Побед".padEnd(11)
-                    + "Сетов".padEnd(13)
                     + "Б-Побед".padEnd(11)
+                    + "Сетов".padEnd(13)
                     + "Б-Сетов".padEnd(13)
         )
         repeat(allPlayersSorted.size) { idx -> print(" ${idx + 1}".padEnd(5)) }
@@ -103,8 +103,8 @@ class Tournament(
                         + player.name.padEnd(maxNameLength)
                         + (player.matchesPlayed.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
                         + (player.score.wins.toString() + " (%.2f)".format(player.score.winsAvg)).padEnd(11)
-                        + ("%+d".format(player.score.setsDiff) + " (%+.2f)".format(player.score.setsDiffAvg)).padEnd(13)
                         + (player.bergerScore.wins.toString() + " (%.2f)".format(player.bergerScore.winsAvg)).padEnd(11)
+                        + ("%+d".format(player.score.setsDiff) + " (%+.2f)".format(player.score.setsDiffAvg)).padEnd(13)
                         + ("%+d".format(player.bergerScore.setsDiff) + " (%+.2f)".format(player.bergerScore.setsDiffAvg)).padEnd(13)
             )
 
