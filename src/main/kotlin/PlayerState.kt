@@ -1,3 +1,5 @@
+import kotlin.math.abs
+
 /**
  * Игрок, включая его статистику на турнире.
  */
@@ -54,10 +56,23 @@ class PlayerState(
     }
 
     override fun compareTo(other: PlayerState): Int {
-        val scoreCompare = score.compareTo(other.score)
-        if (scoreCompare != 0) return scoreCompare
+        if (abs(score.winsAvg - other.score.winsAvg) > 1e-9) {
+            return -score.winsAvg.compareTo(other.score.winsAvg)
+        }
 
-        return bergerScore.compareTo(other.bergerScore)
+        if (abs(bergerScore.winsAvg - other.bergerScore.winsAvg) > 1e-9) {
+            return -bergerScore.winsAvg.compareTo(other.bergerScore.winsAvg)
+        }
+
+        if (abs(score.setsDiffAvg - other.score.setsDiffAvg) > 1e-9) {
+            return -score.setsDiffAvg.compareTo(other.score.setsDiffAvg)
+        }
+
+        if (abs(bergerScore.setsDiffAvg - other.bergerScore.setsDiffAvg) > 1e-9) {
+            return -bergerScore.setsDiffAvg.compareTo(other.bergerScore.setsDiffAvg)
+        }
+
+        return 0
     }
 
     override fun toString() = name
