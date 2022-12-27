@@ -1,7 +1,6 @@
 package pairSorters
 
 import PlayerState
-import kotlin.math.abs
 
 /**
  * Сортируем по близости рангов игроков в топологической сортировке.
@@ -14,10 +13,15 @@ import kotlin.math.abs
 //  2. Минимизация текущей разницы рангов
 class TopologicalPairSorter : PairSorter {
 
+    // TODO можно использовать другой алгоритм в самом конце турнира, а то жадник работает так, что остаются пары из игрока с самого
+    //  начала таблицы с игроком из самого конца. Лучше использовать не жадник, а продумывать все пары сразу, когда осталось всего
+    //  несколько игр до конца
     override fun assessPair(player1: PlayerState, player2: PlayerState, allPlayers: Collection<PlayerState>): Double {
-        val maxRankDiff = allPlayers.maxOf { it.topSortRank!! } - 1
-        return abs(player1.topSortRank!! - player2.topSortRank!!) +
-                0.41 * maxRankDiff * (player1.matchesPlayed + player2.matchesPlayed)
+        val maxRankDiffSqr = sqr(allPlayers.maxOf { it.topSortRank!! } - 1)
+        return sqr(player1.topSortRank!! - player2.topSortRank!!) +
+                0.26 * maxRankDiffSqr * (player1.matchesPlayed + player2.matchesPlayed)
     }
+
+    private fun sqr(x: Int) = x * x
 
 }
