@@ -18,8 +18,9 @@ class TopologicalPairSorter : PairSorter {
     //  несколько игр до конца
     override fun assessPair(player1: PlayerState, player2: PlayerState, allPlayers: Collection<PlayerState>): Double {
         val maxRankDiffSqr = sqr(allPlayers.maxOf { it.topSortRank!! } - 1)
-        return sqr(player1.topSortRank!! - player2.topSortRank!!) +
-                0.21 * maxRankDiffSqr * (player1.matchesPlayed + player2.matchesPlayed)
+        val maxMatchesPlayed = allPlayers.maxOf { it.matchesPlayed }
+        return sqr(player1.topSortRank!! - player2.topSortRank!!).toDouble() / maxRankDiffSqr +
+                0.17 * (sqr(maxMatchesPlayed - player1.matchesPlayed) + sqr(maxMatchesPlayed - player2.matchesPlayed))
     }
 
     private fun sqr(x: Int) = x * x
