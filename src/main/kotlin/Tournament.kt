@@ -1,10 +1,11 @@
+import pairSorters.FastSwissPairSorter
 import pairSorters.PairSorter
-import pairSorters.TopologicalPairSorter
 import tableSorters.TableSorter
 import tableSorters.TopologicalTableSorter
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
+import kotlin.math.max
 
 class Tournament(
     private val tablesCnt: Int,
@@ -90,7 +91,7 @@ class Tournament(
         print(
             "Место ".padEnd(6)
                     + "Ранг "
-                    + "Игрок".padEnd(maxNameLength)
+                    + "Игрок".padEnd(maxNameLength) + " "
                     + "Игр".padEnd(5)
                     + "Побед".padEnd(11)
                     + "Б-Побед".padEnd(11)
@@ -104,7 +105,7 @@ class Tournament(
             print(
                 ("" + (index + 1) + ". ").padStart(6)
                         + ("(${player.topSortRank})").padStart(4) + " "
-                        + player.name.padEnd(maxNameLength)
+                        + player.name.padEnd(max(maxNameLength, "Игрок".length)) + " "
                         + (player.matchesPlayed.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
                         + (player.score.wins.toString() + " (%.2f)".format(player.score.winsAvg)).padEnd(11)
                         + (player.bergerScore.wins.toString() + " (%.2f)".format(player.bergerScore.winsAvg)).padEnd(11)
@@ -125,23 +126,6 @@ class Tournament(
             println()
         }
     }
-//Топсорт:
-//
-//1. Митрохин
-//2. Ровда
-//3. Молчанов
-//4. Павлов
-//5. Шалыгин
-//6-7. Попович, Уни
-//8. Мелёхин
-//9, 10. Шелкович, Оленников
-//11. Власов
-//12, 13. Макаровский, Шаймарданов
-//14. Швалёв
-//15. Куприянов
-//16. Нестеров
-//17. Попов
-//18. ЛУЗЕР
 
     companion object {
 
@@ -149,7 +133,7 @@ class Tournament(
 
         private val TABLE_SORTER: TableSorter = TopologicalTableSorter()
 
-        private val PAIR_SORTER: PairSorter = TopologicalPairSorter()
+        private val PAIR_SORTER: PairSorter = FastSwissPairSorter()
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
             var tablesCnt = 1
