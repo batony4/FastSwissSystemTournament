@@ -36,8 +36,9 @@ class Simulation(
     /**
      * Пытаемся симулировать, получится ли полностью составить план матчей из текущей ситуации.
      */
+    // TODO симуляция, можно ли поставить пару, иногда работает ужасно долго
     private fun isCorrect(): Boolean {
-        if (cnt.all { it == tournamentMatchesPerPlayerCnt }) return true
+        if (cnt.all { it >= tournamentMatchesPerPlayerCnt }) return true
 
         for (i in m.indices.shuffled().sortedBy { cnt[it] }) {
             if (cnt[i] >= tournamentMatchesPerPlayerCnt) continue
