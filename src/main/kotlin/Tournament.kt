@@ -1,5 +1,5 @@
-import pairSorters.FastSwissPairSorter
 import pairSorters.PairSorter
+import pairSorters.TopologicalPairSorter
 import tableSorters.TableSorter
 import tableSorters.TopologicalTableSorter
 import java.io.File
@@ -150,12 +150,7 @@ class Tournament(
 
         private val TABLE_SORTER: TableSorter = TopologicalTableSorter()
 
-        // TODO сделать сортировку по топсорту. Вот критерии:
-        //  1. Несравнимые лучше сравнимых. Даже независимо от ранга.
-        //	 Несравнимые — значит с учётом транзитивности их результат между собой неясен.
-        //	 Более формально: между игроками нет пути по направленным рёбрам (направление — от победителя к проигравшему в матче).
-        //  2. Минимизация текущей разницы рангов
-        private val PAIR_SORTER: PairSorter = FastSwissPairSorter()
+        private val PAIR_SORTER: PairSorter = TopologicalPairSorter()
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
             var tablesCnt = 1
