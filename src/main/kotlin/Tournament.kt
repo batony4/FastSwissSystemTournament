@@ -28,7 +28,7 @@ class Tournament(
         val bestMatch = listAllPairs(allEligible)
             .filter { (player1, player2) -> !player1.isFinishedGameWith(player2) } // проверяем, что не играли раньше
 
-            .sortedBy { (player1, player2) -> pairSorter.assessPair(player1, player2) } // оцениваем пару и сортируем по оценке
+            .sortedBy { (player1, player2) -> pairSorter.assessPair(player1, player2, allPlayers) } // оцениваем пару и сортируем по оценке
 
             .firstOrNull { (player1, player2) -> // пробуем симулировать до конца
                 s.isCorrect(player1 to player2)

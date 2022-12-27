@@ -14,8 +14,10 @@ import kotlin.math.abs
 //  2. Минимизация текущей разницы рангов
 class TopologicalPairSorter : PairSorter {
 
-    override fun assessPair(player1: PlayerState, player2: PlayerState) =
-        abs(player1.topSortRank!! - player2.topSortRank!!) +
-                0.6 * (player1.matchesPlayed + player2.matchesPlayed)
+    override fun assessPair(player1: PlayerState, player2: PlayerState, allPlayers: Collection<PlayerState>): Double {
+        val maxRankDiff = allPlayers.maxOf { it.topSortRank!! } - 1
+        return abs(player1.topSortRank!! - player2.topSortRank!!) +
+                0.41 * maxRankDiff * (player1.matchesPlayed + player2.matchesPlayed)
+    }
 
 }
