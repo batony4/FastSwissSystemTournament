@@ -83,10 +83,9 @@ class Tournament(
     fun hasFreeTables() = tablesOccupied < tablesCnt
 
 
-    fun outputCurrentTable() {
-        val allPlayersSorted = tableSorter.sorted(allPlayers)
-//            allPlayers.sortedWith(ScoreAndBergerScoreSorter())
+    fun calcCurrentTable() = tableSorter.sorted(allPlayers)
 
+    fun outputCurrentTable(allPlayersSorted: List<PlayerState>) {
         val maxNameLength = allPlayers.maxOf { it.name.length } + 2
         print(
             "Место ".padEnd(6)
