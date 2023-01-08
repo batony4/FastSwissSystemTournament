@@ -1,5 +1,5 @@
-import pairSorters.FastSwissPairSorter
 import pairSorters.PairSorter
+import pairSorters.TopologicalPairSorter
 import tableSorters.TableSorter
 import tableSorters.TopologicalTableSorter
 import java.io.File
@@ -133,7 +133,7 @@ class Tournament(
 
         private val TABLE_SORTER: TableSorter = TopologicalTableSorter()
 
-        private val PAIR_SORTER: PairSorter = FastSwissPairSorter()
+        private val PAIR_SORTER: PairSorter = TopologicalPairSorter()
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
             var tablesCnt = 1
