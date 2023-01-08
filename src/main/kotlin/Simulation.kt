@@ -40,6 +40,13 @@ class Simulation(
     private fun isCorrect(): Boolean {
         if (cnt.all { it >= tournamentMatchesPerPlayerCnt }) return true
 
+        // в случае нечётного количества игроков, допускаем ситуацию, когда один игрок не сыграет один матч
+        if ((allPlayers.size % 2 == 1)
+            && (cnt.count { it == tournamentMatchesPerPlayerCnt - 1 } == 1)
+            && (cnt.count { it == tournamentMatchesPerPlayerCnt } == allPlayers.size - 1)
+        )
+            return true
+
         for (i in m.indices.shuffled().sortedBy { cnt[it] }) {
             if (cnt[i] >= tournamentMatchesPerPlayerCnt) continue
 
