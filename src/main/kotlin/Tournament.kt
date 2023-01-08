@@ -132,7 +132,6 @@ class Tournament(
         private const val GO_TO_TABLE_PREFIX = "К СТОЛУ --> "
 
         private val TABLE_SORTER: TableSorter = TopologicalTableSorter()
-
         private val PAIR_SORTER: PairSorter = TopologicalPairSorter()
 
         fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
