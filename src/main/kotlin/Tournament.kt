@@ -118,7 +118,15 @@ class Tournament(
                 if (index == otherIndex) {
                     print(" X   ")
                 } else if (match != null) {
-                    print("${match.setsMy}:${match.setsOther}".padEnd(5))
+                    val delimiter = if ((index > otherIndex) && (match.setsMy > match.setsOther)) {
+                        "↑"
+                    } else if ((index < otherIndex) && (match.setsMy < match.setsOther)) {
+                        "↓"
+                    } else {
+                        ":"
+                    }
+
+                    print("${match.setsMy}$delimiter${match.setsOther}".padEnd(5))
                 } else {
                     print(" •".padEnd(5))
                 }
