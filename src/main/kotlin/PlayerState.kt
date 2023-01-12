@@ -42,6 +42,20 @@ class PlayerState(
 
     fun isFinishedGameWith(otherPlayer: PlayerState) = matchResults.containsKey(otherPlayer)
 
+    fun getLossesBalance(source: ArrayList<PlayerState>): Int {
+        // количество поражений от оставшихся в рассмотрении
+        val lossesInSourceCnt = matchResults.values
+            .filter { it.otherPlayer in source }
+            .count { !it.isWin }
+
+        // количество побед у выбывших из рассмотрения
+        val winsNotInSourceCnt = matchResults.values
+            .filter { it.otherPlayer !in source }
+            .count { it.isWin }
+
+        return lossesInSourceCnt - winsNotInSourceCnt
+    }
+
     fun startMatchWith(otherPlayer: PlayerState) {
         if (activeMatchWith != null) throw IllegalStateException("Уже играем с $activeMatchWith")
 

@@ -10,15 +10,11 @@ class TopologicalTableSorter : TableSorter {
         var curRank = 1
         while (source.isNotEmpty()) {
             val minLossesCnt = source.minOf { player ->
-                player.matchResults.values
-                    .filter { it.otherPlayer in source }
-                    .count { !it.isWin }
+                player.getLossesBalance(source)
             }
 
             val minRankSet = source.filter { player ->
-                player.matchResults.values
-                    .filter { it.otherPlayer in source }
-                    .count { !it.isWin } == minLossesCnt
+                player.getLossesBalance(source) == minLossesCnt
             }.toSet()
 
             minRankSet.forEach { it.topSortRank = curRank }
