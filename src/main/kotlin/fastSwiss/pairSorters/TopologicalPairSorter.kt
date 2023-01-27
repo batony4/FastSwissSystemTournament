@@ -1,6 +1,6 @@
-package pairSorters
+package fastSwiss.pairSorters
 
-import PlayerState
+import fastSwiss.PlayerState
 
 /**
  * Сортируем по близости рангов игроков в топологической сортировке.

@@ -1,3 +1,5 @@
+package fastSwiss
+
 import kotlin.math.abs
 
 /**

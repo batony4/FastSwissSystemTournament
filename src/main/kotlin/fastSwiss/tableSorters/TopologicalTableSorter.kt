@@ -1,6 +1,6 @@
-package tableSorters
+package fastSwiss.tableSorters
 
-import PlayerState
+import fastSwiss.PlayerState
 
 class TopologicalTableSorter : TableSorter {
     override fun sorted(allPlayers: List<PlayerState>): List<PlayerState> {

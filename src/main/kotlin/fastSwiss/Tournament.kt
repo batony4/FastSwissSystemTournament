@@ -1,7 +1,9 @@
-import pairSorters.PairSorter
-import pairSorters.TopologicalPairSorter
-import tableSorters.TableSorter
-import tableSorters.TopologicalTableSorter
+package fastSwiss
+
+import fastSwiss.pairSorters.PairSorter
+import fastSwiss.pairSorters.TopologicalPairSorter
+import fastSwiss.tableSorters.TableSorter
+import fastSwiss.tableSorters.TopologicalTableSorter
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
