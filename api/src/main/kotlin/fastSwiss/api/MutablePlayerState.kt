@@ -69,9 +69,9 @@ class MutablePlayerState(
         return lossesInSourceCnt - winsNotInSourceCnt
     }
 
-    // TODO проверять, что мы ещё не сыграли с этим игроком
     fun startMatchWith(otherPlayer: MutablePlayerState) {
         if (activeMatchWith != null) throw IllegalStateException("Уже играем с $activeMatchWith")
+        if (matchResults.containsKey(otherPlayer)) throw IllegalStateException("Уже сыграли ранее с $otherPlayer")
 
         activeMatchWith = otherPlayer
     }
