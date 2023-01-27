@@ -1,6 +1,6 @@
-package fastSwiss.pairSorters
+package fastSwiss.api.pairSorters
 
-import fastSwiss.PlayerState
+import fastSwiss.api.PlayerState
 import kotlin.math.abs
 
 /**

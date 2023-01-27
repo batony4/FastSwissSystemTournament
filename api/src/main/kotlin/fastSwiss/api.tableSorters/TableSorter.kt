@@ -1,6 +1,6 @@
-package fastSwiss.tableSorters
+package fastSwiss.api.tableSorters
 
-import fastSwiss.PlayerState
+import fastSwiss.api.PlayerState
 
 interface TableSorter {
     fun sorted(allPlayers: List<PlayerState>): List<PlayerState>

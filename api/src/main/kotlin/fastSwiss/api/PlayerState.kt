@@ -1,4 +1,4 @@
-package fastSwiss
+package fastSwiss.api
 
 /**
  * Игрок, включая его статистику на турнире.

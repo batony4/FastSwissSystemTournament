@@ -1,6 +1,6 @@
-package fastSwiss.tableSorters
+package fastSwiss.api.tableSorters
 
-import fastSwiss.PlayerState
+import fastSwiss.api.PlayerState
 import kotlin.math.abs
 
 class ScoreAndBergerScoreTableSorter : Comparator<PlayerState>, TableSorter {

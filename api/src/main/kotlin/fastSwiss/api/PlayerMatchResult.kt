@@ -1,4 +1,4 @@
-package fastSwiss
+package fastSwiss.api
 
 /**
  * Результат конкретного матча с точки зрения определённого игрока.

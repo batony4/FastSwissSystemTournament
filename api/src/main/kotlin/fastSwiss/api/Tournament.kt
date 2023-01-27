@@ -1,9 +1,9 @@
-package fastSwiss
+package fastSwiss.api
 
-import fastSwiss.pairSorters.PairSorter
-import fastSwiss.pairSorters.TopologicalPairSorter
-import fastSwiss.tableSorters.TableSorter
-import fastSwiss.tableSorters.TopologicalTableSorter
+import fastSwiss.api.pairSorters.PairSorter
+import fastSwiss.api.pairSorters.TopologicalPairSorter
+import fastSwiss.api.tableSorters.TableSorter
+import fastSwiss.api.tableSorters.TopologicalTableSorter
 import java.io.File
 import java.io.PrintWriter
 import java.util.*

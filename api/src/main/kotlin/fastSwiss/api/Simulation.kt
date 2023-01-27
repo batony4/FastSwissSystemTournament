@@ -1,4 +1,4 @@
-package fastSwiss
+package fastSwiss.api
 
 import kotlin.math.max
 import kotlin.math.min

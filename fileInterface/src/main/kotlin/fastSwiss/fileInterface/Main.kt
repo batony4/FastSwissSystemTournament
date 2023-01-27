@@ -1,5 +1,6 @@
-package fastSwiss
+package fastSwiss.fileInterface
 
+import fastSwiss.api.Tournament
 import java.io.File
 import java.io.PrintWriter
 
