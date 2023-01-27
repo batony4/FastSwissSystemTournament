@@ -1,11 +1,14 @@
 package fastSwiss.api.tableSorters
 
-import fastSwiss.api.PlayerState
+import fastSwiss.api.MutablePlayerState
 
+/**
+ * Сортирует с помощью топологической сортировки.
+ */
 class TopologicalTableSorter : TableSorter {
-    override fun sorted(allPlayers: List<PlayerState>): List<PlayerState> {
-        val source = ArrayList<PlayerState>(allPlayers)
-        val res = ArrayList<PlayerState>()
+    override fun sorted(allPlayers: List<MutablePlayerState>): List<MutablePlayerState> {
+        val source = ArrayList<MutablePlayerState>(allPlayers)
+        val res = ArrayList<MutablePlayerState>()
 
         var curRank = 1
         while (source.isNotEmpty()) {

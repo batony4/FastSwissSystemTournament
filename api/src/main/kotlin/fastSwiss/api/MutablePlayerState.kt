@@ -3,7 +3,8 @@ package fastSwiss.api
 /**
  * Игрок, включая его статистику на турнире.
  */
-class PlayerState(
+// TODO добавить больше защиты от неправильных действий, так как в Телеграм-Боте это уже актуально.
+class MutablePlayerState(
     val name: String,
     val isPaused: Boolean,
     private val handicapTours: Int,
@@ -11,25 +12,31 @@ class PlayerState(
     private val handicapLosses: Int,
 ) {
 
-    private var activeMatchWith: PlayerState? = null // игрок, с которым сейчас идёт матч
-    val matchResults = HashMap<PlayerState, PlayerMatchResult>()
+    private var activeMatchWith: MutablePlayerState? = null // игрок, с которым сейчас идёт матч
+    val matchResults = HashMap<MutablePlayerState, PlayerMatchResult>()
 
     val matchesPlayed by lazy { matchResults.size }
-    private val matchesWon by lazy { matchResults.values.sumOf { it.winsMy } }
+
+    // TODO поддержать везде ничьи
+    private val matchesWonCnt by lazy { matchResults.values.sumOf { it.winsMy } }
+    private val drawsCnt by lazy { matchResults.values.sumOf { it.drawsMy } }
     private val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
 
+    // TODO вынуть из этого класса элементы tableSorters и тому подобное
     var topSortRank: Int? = null
 
+    // TODO вынести в pairSorter
     val score by lazy {
         Score(
             matchesPlayed,
-            matchesWon,
+            matchesWonCnt,
             setsDiff,
             if (matchesPlayed < handicapTours) handicapWins else 0,
             if (matchesPlayed < handicapTours) handicapLosses else 0,
         )
     }
 
+    // TODO вынести в pairSorter
     val bergerScore by lazy {
         Score(
             matchResults.values.sumOf { it.otherPlayer.score.matchesPlayed },
@@ -42,23 +49,28 @@ class PlayerState(
 
     fun isPlaysNow() = activeMatchWith != null
 
-    fun isFinishedGameWith(otherPlayer: PlayerState) = matchResults.containsKey(otherPlayer)
+    fun isFinishedGameWith(otherPlayer: MutablePlayerState) = matchResults.containsKey(otherPlayer)
 
-    fun getLossesBalance(source: ArrayList<PlayerState>): Int {
+    /**
+     * Количество поражений от игроков из [filteredPlayers] минус количество побед у игроков не из [filteredPlayers].
+     */
+    // TODO вероятно, вынести в топсорт
+    fun getLossesBalance(filteredPlayers: ArrayList<MutablePlayerState>): Int {
         // количество поражений от оставшихся в рассмотрении
         val lossesInSourceCnt = matchResults.values
-            .filter { it.otherPlayer in source }
+            .filter { it.otherPlayer in filteredPlayers }
             .count { !it.isWin }
 
         // количество побед у выбывших из рассмотрения
         val winsNotInSourceCnt = matchResults.values
-            .filter { it.otherPlayer !in source }
+            .filter { it.otherPlayer !in filteredPlayers }
             .count { it.isWin }
 
         return lossesInSourceCnt - winsNotInSourceCnt
     }
 
-    fun startMatchWith(otherPlayer: PlayerState) {
+    // TODO проверять, что мы ещё не сыграли с этим игроком
+    fun startMatchWith(otherPlayer: MutablePlayerState) {
         if (activeMatchWith != null) throw IllegalStateException("Уже играем с $activeMatchWith")
 
         activeMatchWith = otherPlayer
@@ -75,7 +87,7 @@ class PlayerState(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is PlayerState) return false
+        if (other !is MutablePlayerState) return false
 
         if (name != other.name) return false
 

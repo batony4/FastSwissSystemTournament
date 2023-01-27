@@ -9,10 +9,13 @@ import java.io.PrintWriter
 import java.util.*
 import kotlin.math.max
 
-class Tournament(
+// TODO сделать его mutable, чтобы можно было апдейтить на ходу
+// TODO вынести отсюда методы, связанные с представлением. Здесь должна быть только модель
+// TODO добавить больше защиты от неправильных действий, так как в Телеграм-Боте это уже актуально.
+class MutableTournament(
     private val tablesCnt: Int,
     private val tournamentMatchesPerPlayerCnt: Int,
-    private val allPlayers: List<PlayerState>,
+    private val allPlayers: List<MutablePlayerState>,
     private val tableSorter: TableSorter,
     private val pairSorter: PairSorter,
 ) {
@@ -21,7 +24,7 @@ class Tournament(
 
     private var tablesOccupied = 0
 
-    private fun generateNextMatch(): Pair<PlayerState, PlayerState>? {
+    private fun generateNextMatch(): Pair<MutablePlayerState, MutablePlayerState>? {
         val allEligible = allPlayers
             .filter { !it.isPlaysNow() }
             .filter { !it.isPaused }
@@ -40,24 +43,25 @@ class Tournament(
         return bestMatch
     }
 
-    fun generateAndStartMatch(writeTo: PrintWriter): Pair<PlayerState, PlayerState>? =
+    fun generateAndStartMatch(writeTo: PrintWriter): Pair<MutablePlayerState, MutablePlayerState>? =
         generateNextMatch()?.also { startMatch(it) }?.also { writeTo.println("$GO_TO_TABLE_PREFIX${it.first.name} ${it.second.name}") }
 
 
-    private fun startMatch(p: Pair<PlayerState, PlayerState>) {
+    private fun startMatch(p: Pair<MutablePlayerState, MutablePlayerState>) {
         tablesOccupied++
         p.first.startMatchWith(p.second)
         p.second.startMatchWith(p.first)
         s.play(p)
     }
 
-    private fun endMatch(p: Pair<PlayerState, PlayerState>, sets: Pair<Int, Int>) {
+    private fun endMatch(p: Pair<MutablePlayerState, MutablePlayerState>, sets: Pair<Int, Int>) {
         tablesOccupied--
         p.first.endMatch(sets.first, sets.second)
         p.second.endMatch(sets.second, sets.first)
     }
 
-    private fun parseMatchLine(allPlayers: ArrayList<PlayerState>, line: String) {
+    // TODO весь парсинг вынести в модуль fileInterface
+    private fun parseMatchLine(allPlayers: ArrayList<MutablePlayerState>, line: String) {
         val tok = line.split(" ")
 
         val player1 = allPlayers.first { it.name == tok[0] }
@@ -85,10 +89,9 @@ class Tournament(
 
     fun hasFreeTables() = tablesOccupied < tablesCnt
 
-
     fun calcCurrentTable() = tableSorter.sorted(allPlayers)
 
-    fun outputCurrentTable(allPlayersSorted: List<PlayerState>) {
+    fun outputCurrentTable(allPlayersSorted: List<MutablePlayerState>) {
         val maxNameLength = allPlayers.maxOf { it.name.length } + 2
         print(
             "Место ".padEnd(6)
@@ -144,13 +147,13 @@ class Tournament(
         private val TABLE_SORTER: TableSorter = TopologicalTableSorter()
         private val PAIR_SORTER: PairSorter = TopologicalPairSorter()
 
-        fun parse(inputFile: File, copyTo: PrintWriter): Tournament {
+        fun parse(inputFile: File, copyTo: PrintWriter): MutableTournament {
             var tablesCnt = 1
             var tournamentMatchesPerPlayerCnt = 1
             var handicapToursCnt = 0
-            val allPlayers = ArrayList<PlayerState>()
+            val allPlayers = ArrayList<MutablePlayerState>()
 
-            var t: Tournament? = null
+            var t: MutableTournament? = null
 
             val sc = Scanner(inputFile)
             while (sc.hasNextLine()) {
@@ -174,10 +177,10 @@ class Tournament(
                     val isPaused = tok[1].startsWith("-")
                     val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
                     val handicapLosses = tok.getOrNull(3)?.toInt() ?: 0
-                    allPlayers += PlayerState(name, isPaused, handicapToursCnt, handicapWins, handicapLosses)
+                    allPlayers += MutablePlayerState(name, isPaused, handicapToursCnt, handicapWins, handicapLosses)
                 } else if (lineTrimmed.split(" ").first().let { name -> allPlayers.count { it.name == name } > 0 }) { // Результат матча
                     // если игрок уже есть в списке, то просто добавляем результаты
-                    if (t == null) t = Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER, PAIR_SORTER)
+                    if (t == null) t = MutableTournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER, PAIR_SORTER)
                     t.parseMatchLine(allPlayers, lineTrimmed)
                 } else {
                     throw IllegalArgumentException("Не могу разобрать строку: '$lineTrimmed'")
@@ -185,10 +188,10 @@ class Tournament(
             }
             sc.close()
 
-            return t ?: Tournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER, PAIR_SORTER)
+            return t ?: MutableTournament(tablesCnt, tournamentMatchesPerPlayerCnt, allPlayers, TABLE_SORTER, PAIR_SORTER)
         }
 
-        private fun listAllPairs(curEligible: List<PlayerState>) = curEligible
+        private fun listAllPairs(curEligible: List<MutablePlayerState>) = curEligible
             .flatMapIndexed { i1, player1 ->
                 curEligible
                     .filterIndexed { i2, _ -> i2 > i1 }

@@ -5,6 +5,7 @@ import kotlin.math.abs
 /**
  * Текущий счёт участника.
  */
+// TODO сходу кажется, что это что-то сильно специфичное для ScoreAndBergerScoreTableSorter. подумать, может туда перенести получится
 data class Score(
     val matchesPlayed: Int,
     val wins: Int,

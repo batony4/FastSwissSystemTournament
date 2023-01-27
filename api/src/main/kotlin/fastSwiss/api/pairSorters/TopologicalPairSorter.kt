@@ -1,6 +1,6 @@
 package fastSwiss.api.pairSorters
 
-import fastSwiss.api.PlayerState
+import fastSwiss.api.MutablePlayerState
 
 /**
  * Сортируем по близости рангов игроков в топологической сортировке.
@@ -16,7 +16,7 @@ class TopologicalPairSorter : PairSorter {
     // TODO можно использовать другой алгоритм в самом конце турнира, а то жадник работает так, что остаются пары из игрока с самого
     //  начала таблицы с игроком из самого конца. Лучше использовать не жадник, а продумывать все пары сразу, когда осталось всего
     //  несколько игр до конца
-    override fun assessPair(player1: PlayerState, player2: PlayerState, allPlayers: Collection<PlayerState>): Double {
+    override fun assessPair(player1: MutablePlayerState, player2: MutablePlayerState, allPlayers: Collection<MutablePlayerState>): Double {
         val maxRankDiffSqr = sqr(allPlayers.maxOf { it.topSortRank!! } - 1)
         val minMatchesPlayed = allPlayers.minOf { it.matchesPlayed }
         return sqr(player1.topSortRank!! - player2.topSortRank!!).toDouble() / maxRankDiffSqr +

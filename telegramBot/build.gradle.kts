@@ -6,9 +6,15 @@ plugins {
     id("fastSwiss.kotlin-application-conventions")
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation("org.apache.commons:commons-text")
     implementation(project(":api"))
+    implementation("dev.inmo:tgbotapi:5.0.1")
+
 }
 
 application {

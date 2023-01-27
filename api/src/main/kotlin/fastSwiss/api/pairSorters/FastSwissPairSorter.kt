@@ -1,6 +1,6 @@
 package fastSwiss.api.pairSorters
 
-import fastSwiss.api.PlayerState
+import fastSwiss.api.MutablePlayerState
 import kotlin.math.abs
 
 /**
@@ -8,7 +8,7 @@ import kotlin.math.abs
  */
 class FastSwissPairSorter : PairSorter {
 
-    override fun assessPair(player1: PlayerState, player2: PlayerState, allPlayers: Collection<PlayerState>) =
+    override fun assessPair(player1: MutablePlayerState, player2: MutablePlayerState, allPlayers: Collection<MutablePlayerState>) =
         abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) +
                 0.4 * (player1.matchesPlayed + player2.matchesPlayed)
 

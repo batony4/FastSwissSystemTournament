@@ -1,6 +1,6 @@
 package fastSwiss.fileInterface
 
-import fastSwiss.api.Tournament
+import fastSwiss.api.MutableTournament
 import java.io.File
 import java.io.PrintWriter
 
@@ -9,7 +9,7 @@ fun main() {
     val outputFile = File("tournament_out.txt")
 
     val pw = PrintWriter(outputFile)
-    val t = Tournament.parse(inputFile, pw)
+    val t = MutableTournament.parse(inputFile, pw)
 
     val allPlayersSorted = t.calcCurrentTable()
 
