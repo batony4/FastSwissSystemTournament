@@ -31,13 +31,6 @@ class Simulation(
         cnt[i2]--
     }
 
-    fun play(p: Pair<MutablePlayerState, MutablePlayerState>) {
-        val i1 = allPlayers.indexOf(p.first)
-        val i2 = allPlayers.indexOf(p.second)
-
-        play(min(i1, i2), max(i1, i2))
-    }
-
     /**
      * Пытаемся симулировать, получится ли полностью составить план матчей из текущей ситуации.
      */
@@ -77,6 +70,13 @@ class Simulation(
 
         play(min(i1, i2), max(i1, i2))
         return isCorrect().also { unplay(min(i1, i2), max(i1, i2)) }
+    }
+
+    fun play(p: Pair<MutablePlayerState, MutablePlayerState>) {
+        val i1 = allPlayers.indexOf(p.first)
+        val i2 = allPlayers.indexOf(p.second)
+
+        play(min(i1, i2), max(i1, i2))
     }
 
 }
