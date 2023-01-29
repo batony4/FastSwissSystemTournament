@@ -44,20 +44,22 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
 
             minRankSet.forEach { topSortRank[it] = curRank }
 
-            // TODO не реализована возможность назначения двум игрокам одного места
             // сортируем между собой по проценту побед в личных встречах, а при равенстве — по разнице сетов per match в личных встречах
+            // TODO при равенстве по личным встречам — сортировать по всем матчам (со всеми соперниками). затем — по рейтингу.
+            //  Да и вообще, можно выделить в отдельные классы все дополнительные критерии сортировки,
+            //  чтобы их можно было подставлять в любом порядке по желанию.
             val minRankSortedList = ArrayList(minRankSet)
                 .map { player ->
                     // результат в личных встречах: процент_побед, разница_сетов_per_match
                     val commonMatches = player.matchResults.values.filter { it.otherPlayer in minRankSet }
-                    val matchesCnt = commonMatches.size
-                    val winsCnt = commonMatches.count { it.isWin }
-                    val setsDiff = commonMatches.sumOf { it.setsDiff }
+                    val commonMatchesCnt = commonMatches.size
+                    val commonWinsCnt = commonMatches.count { it.isWin }
+                    val commonSetsDiff = commonMatches.sumOf { it.setsDiff }
 
-                    player to if (matchesCnt == 0) {
+                    player to if (commonMatchesCnt == 0) {
                         0.5 to 0.0
                     } else {
-                        winsCnt.toDouble() / matchesCnt to setsDiff.toDouble() / matchesCnt
+                        commonWinsCnt.toDouble() / commonMatchesCnt to commonSetsDiff.toDouble() / commonMatchesCnt
                     }
                 }
                 .sortedWith { o1, o2 ->

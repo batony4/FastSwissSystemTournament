@@ -3,7 +3,6 @@ package fastSwiss.api
 /**
  * Игрок, включая его статистику на турнире.
  */
-// TODO добавить больше защиты от неправильных действий, так как в Телеграм-Боте это уже актуально.
 class MutablePlayerState(
     val name: String,
     initialIsPaused: Boolean,
