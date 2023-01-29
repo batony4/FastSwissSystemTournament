@@ -46,26 +46,46 @@ class MutableTournament<R : Ranking>(
 
     fun findPlayerByName(name: String): MutablePlayerState? = allPlayers.firstOrNull { it.name == name }
 
-    // TODO реализовать опциональную проверку ([check]).
-    //  что с этим матчем сходится турнир,
-    //  что они ещё не играли друг с другом,
-    //  что оба игрока в данный момент свободны,
-    //  что игроки существуют
-    fun startMatch(p: Pair<String, String>) {
-        val p1 = findPlayerByName(p.first)!!
-        val p2 = findPlayerByName(p.second)!!
+    /**
+     * Старт матча между соперниками, имена которых перечислены в [p].
+     * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
+     * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
+     */
+    @Throws(IncorrectChangeException::class)
+    fun startMatch(p: Pair<String, String>, check: Boolean) {
+        val p1 = findPlayerByName(p.first) ?: throw IncorrectChangeException("Игрок ${p.first} не найден")
+        val p2 = findPlayerByName(p.second) ?: throw IncorrectChangeException("Игрок ${p.second} не найден")
+
+        if (check) {
+            val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
+            if (!s.isCorrectWithMatch(p1 to p2)) {
+                throw IncorrectChangeException(
+                    "Игроки ${p.first} и ${p.second} не могут сыграть между собой:" +
+                            " при условии проведения этого матча, не сходится турнир"
+                )
+            }
+        }
 
         tablesOccupied++
         p1.startMatchWith(p2)
         p2.startMatchWith(p1)
     }
 
-    // TODO реализовать опциональную проверку ([check]).
-    //  что они действительно играли именно друг с другом,
-    //  что игроки существуют
-    fun endMatch(p: Pair<String, String>, sets: Pair<Int, Int>) {
-        val p1 = findPlayerByName(p.first)!!
-        val p2 = findPlayerByName(p.second)!!
+    /**
+     * Завершение матча между соперниками, имена которых перечислены в [p]. Счёт: [sets].
+     * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
+     * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
+     */
+    fun endMatch(p: Pair<String, String>, sets: Pair<Int, Int>, check: Boolean) {
+        val p1 = findPlayerByName(p.first) ?: throw IncorrectChangeException("Игрок ${p.first} не найден")
+        val p2 = findPlayerByName(p.second) ?: throw IncorrectChangeException("Игрок ${p.second} не найден")
+
+        if (check) {
+            if (p1.activeMatchWith != p2) throw IncorrectChangeException("Игрок $p1 не играет с игроком $p2")
+            if (p2.activeMatchWith != p1) throw IncorrectChangeException("Игрок $p2 не играет с игроком $p1")
+        }
 
         tablesOccupied--
         p1.endMatch(sets.first, sets.second)
@@ -160,7 +180,7 @@ class MutableTournament<R : Ranking>(
      */
     @Throws(IncorrectChangeException::class)
     fun generateAndStartMatch(): Pair<MutablePlayerState, MutablePlayerState>? =
-        generateNextMatch()?.also { startMatch(it.first.name to it.second.name) }
+        generateNextMatch()?.also { startMatch(it.first.name to it.second.name, false) }
 
     fun hasFreeTables() = tablesOccupied < tablesCnt
 

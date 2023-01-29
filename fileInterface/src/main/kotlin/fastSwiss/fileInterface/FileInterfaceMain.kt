@@ -75,7 +75,7 @@ object FileInterfaceMain {
         val p = tok[0] to tok[1]
 
         // начинаем матч
-        t.startMatch(p)
+        t.startMatch(p, false)
 
         when (tok.size) {
 
@@ -86,7 +86,7 @@ object FileInterfaceMain {
             4 -> { // результаты матча
                 val sets1 = line.split(" ")[2].toInt()
                 val sets2 = line.split(" ")[3].toInt()
-                t.endMatch(p, sets1 to sets2)
+                t.endMatch(p, sets1 to sets2, false)
             }
 
             else -> throw IllegalArgumentException("Неверный формат строки: '$line'")

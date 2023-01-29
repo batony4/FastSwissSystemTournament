@@ -13,7 +13,8 @@ class MutablePlayerState(
 ) {
 
     var isPaused = initialIsPaused
-    private var activeMatchWith: MutablePlayerState? = null // игрок, с которым сейчас идёт матч
+    var activeMatchWith: MutablePlayerState? = null // игрок, с которым сейчас идёт матч
+        private set
     val matchResults = HashMap<MutablePlayerState, PlayerMatchResult>()
 
     val matchesFinishedCnt by lazy { matchResults.size }

@@ -6,7 +6,6 @@ import kotlin.math.min
 /**
  * Симуляция возможности расстановки пар до конца турнира с учётом уже сыгранных пар и предлагаемой следующей пары.
  */
-// TODO создавать симуляцию под конкретную игру, а не один экземпляр на турнир.
 class Simulation(
     private val allPlayers: List<MutablePlayerState>,
     private val tournamentMatchesPerPlayerCnt: Int,
