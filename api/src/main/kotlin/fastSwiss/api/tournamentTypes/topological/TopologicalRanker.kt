@@ -60,8 +60,13 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
                         winsCnt.toDouble() / matchesCnt to setsDiff.toDouble() / matchesCnt
                     }
                 }
-                .sortedByDescending {
-                    it.second.first * 1_000_000 + it.second.second // TODO говнокод, конечно. Надо сравнивать первое и при равенстве второе
+                .sortedWith { o1, o2 ->
+                    val rankWinsDiff = o2.second.first.compareTo(o1.second.first)
+                    if (rankWinsDiff != 0) {
+                        rankWinsDiff
+                    } else {
+                        o2.second.second.compareTo(o1.second.second)
+                    }
                 }
                 .map { it.first }
 
