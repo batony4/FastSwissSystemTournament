@@ -1,6 +1,7 @@
 package fastSwiss.api.tournamentTypes.topological
 
 import fastSwiss.api.MutablePlayerState
+import fastSwiss.api.Score
 import fastSwiss.api.tournamentTypes.Ranker
 
 /**
@@ -8,19 +9,37 @@ import fastSwiss.api.tournamentTypes.Ranker
  */
 class TopologicalRanker : Ranker<TopologicalRanking> {
 
+    /**
+     * Количество поражений от игроков из [filteredPlayers] минус количество побед у игроков не из [filteredPlayers].
+     */
+    private fun getLossesBalance(p: MutablePlayerState, filteredPlayers: ArrayList<MutablePlayerState>): Int {
+        // количество поражений от оставшихся в рассмотрении
+        val lossesInSourceCnt = p.matchResults.values
+            .filter { it.otherPlayer in filteredPlayers }
+            .count { !it.isWin }
+
+        // количество побед у выбывших из рассмотрения
+        val winsNotInSourceCnt = p.matchResults.values
+            .filter { it.otherPlayer !in filteredPlayers }
+            .count { it.isWin }
+
+        return lossesInSourceCnt - winsNotInSourceCnt
+    }
+
     override fun generate(allPlayers: List<MutablePlayerState>): TopologicalRanking {
         val source = ArrayList<MutablePlayerState>(allPlayers)
         val res = ArrayList<MutablePlayerState>()
+
         val topSortRank = HashMap<MutablePlayerState, Int>()
 
         var curRank = 1
         while (source.isNotEmpty()) {
             val minLossesCnt = source.minOf { player ->
-                player.getLossesBalance(source)
+                getLossesBalance(player, source)
             }
 
             val minRankSet = source.filter { player ->
-                player.getLossesBalance(source) == minLossesCnt
+                getLossesBalance(player, source) == minLossesCnt
             }.toSet()
 
             minRankSet.forEach { topSortRank[it] = curRank }
@@ -53,7 +72,17 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
             curRank++
         }
 
-        return TopologicalRanking(res, topSortRank)
+        val score = allPlayers.associateWith { p ->
+            Score(
+                p.matchesFinishedCnt,
+                p.matchesWonCnt,
+                p.setsDiff,
+                if (p.matchesFinishedCnt < p.handicapTours) p.handicapWins else 0,
+                if (p.matchesFinishedCnt < p.handicapTours) p.handicapLosses else 0,
+            )
+        }
+
+        return TopologicalRanking(res, topSortRank, score)
     }
 
 }

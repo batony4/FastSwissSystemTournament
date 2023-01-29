@@ -1,6 +1,7 @@
 package fastSwiss.api.tournamentTypes.topological
 
 import fastSwiss.api.MutablePlayerState
+import fastSwiss.api.Score
 import fastSwiss.api.tournamentTypes.Ranking
 import kotlin.math.max
 
@@ -8,6 +9,7 @@ import kotlin.math.max
 class TopologicalRanking(
     val allPlayersSorted: List<MutablePlayerState>,
     val topSortRank: Map<MutablePlayerState, Int>,
+    val score: Map<MutablePlayerState, Score>,
 ) : Ranking {
 
     override fun outputRanking() {
@@ -18,9 +20,7 @@ class TopologicalRanking(
                     + "Игрок".padEnd(maxNameLength) + " "
                     + "Игр".padEnd(5)
                     + "Побед".padEnd(11)
-                    + "Б-Побед".padEnd(11)
                     + "Сетов".padEnd(13)
-                    + "Б-Сетов".padEnd(13)
         )
         repeat(allPlayersSorted.size) { idx -> print(" ${idx + 1}".padEnd(5)) }
         println()
@@ -31,10 +31,8 @@ class TopologicalRanking(
                         + ("(${topSortRank[player]})").padStart(4) + " "
                         + player.name.padEnd(max(maxNameLength, "Игрок".length)) + " "
                         + (player.matchesFinishedCnt.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
-                        + (player.score.wins.toString() + " (%.2f)".format(player.score.winsAvg)).padEnd(11)
-                        + (player.bergerScore.wins.toString() + " (%.2f)".format(player.bergerScore.winsAvg)).padEnd(11)
-                        + ("%+d".format(player.score.setsDiff) + " (%+.2f)".format(player.score.setsDiffAvg)).padEnd(13)
-                        + ("%+d".format(player.bergerScore.setsDiff) + " (%+.2f)".format(player.bergerScore.setsDiffAvg)).padEnd(13)
+                        + (score[player]!!.wins.toString() + " (%.2f)".format(score[player]!!.winsAvg)).padEnd(11)
+                        + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
             )
 
             for ((otherIndex, otherPlayer) in allPlayersSorted.withIndex()) {

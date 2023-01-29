@@ -34,24 +34,6 @@ class MutablePlayerState(
 
     fun isFinishedGameWith(otherPlayer: MutablePlayerState) = matchResults.containsKey(otherPlayer)
 
-    /**
-     * Количество поражений от игроков из [filteredPlayers] минус количество побед у игроков не из [filteredPlayers].
-     */
-    // TODO вероятно, вынести в топсорт
-    fun getLossesBalance(filteredPlayers: ArrayList<MutablePlayerState>): Int {
-        // количество поражений от оставшихся в рассмотрении
-        val lossesInSourceCnt = matchResults.values
-            .filter { it.otherPlayer in filteredPlayers }
-            .count { !it.isWin }
-
-        // количество побед у выбывших из рассмотрения
-        val winsNotInSourceCnt = matchResults.values
-            .filter { it.otherPlayer !in filteredPlayers }
-            .count { it.isWin }
-
-        return lossesInSourceCnt - winsNotInSourceCnt
-    }
-
     fun startMatchWith(otherPlayer: MutablePlayerState) {
         if (activeMatchWith != null) throw IllegalStateException("Уже играем с $activeMatchWith")
         if (matchResults.containsKey(otherPlayer)) throw IllegalStateException("Уже сыграли ранее с $otherPlayer")
