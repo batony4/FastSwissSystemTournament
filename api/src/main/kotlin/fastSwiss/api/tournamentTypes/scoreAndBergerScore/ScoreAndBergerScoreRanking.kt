@@ -1,12 +1,15 @@
 package fastSwiss.api.tournamentTypes.scoreAndBergerScore
 
 import fastSwiss.api.MutablePlayerState
+import fastSwiss.api.Score
 import fastSwiss.api.tournamentTypes.Ranking
 import kotlin.math.max
 
 // TODO вынести общий код (например, код вывода матрицы игр) в суперкласс
 class ScoreAndBergerScoreRanking(
-    private val allPlayersSorted: List<MutablePlayerState>
+    val allPlayersSorted: List<MutablePlayerState>,
+    val score: Map<MutablePlayerState, Score>,
+    val bergerScore: Map<MutablePlayerState, Score>,
 ) : Ranking {
 
     override fun outputRanking() {
@@ -28,10 +31,10 @@ class ScoreAndBergerScoreRanking(
                 ("" + (index + 1) + ". ").padStart(6)
                         + player.name.padEnd(max(maxNameLength, "Игрок".length)) + " "
                         + (player.matchesFinishedCnt.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
-                        + (player.score.wins.toString() + " (%.2f)".format(player.score.winsAvg)).padEnd(11)
-                        + (player.bergerScore.wins.toString() + " (%.2f)".format(player.bergerScore.winsAvg)).padEnd(11)
-                        + ("%+d".format(player.score.setsDiff) + " (%+.2f)".format(player.score.setsDiffAvg)).padEnd(13)
-                        + ("%+d".format(player.bergerScore.setsDiff) + " (%+.2f)".format(player.bergerScore.setsDiffAvg)).padEnd(13)
+                        + (score[player]!!.wins.toString() + " (%.2f)".format(score[player]!!.winsAvg)).padEnd(11)
+                        + (bergerScore[player]!!.wins.toString() + " (%.2f)".format(bergerScore[player]!!.winsAvg)).padEnd(11)
+                        + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
+                        + ("%+d".format(bergerScore[player]!!.setsDiff) + " (%+.2f)".format(bergerScore[player]!!.setsDiffAvg)).padEnd(13)
             )
 
             for ((otherIndex, otherPlayer) in allPlayersSorted.withIndex()) {

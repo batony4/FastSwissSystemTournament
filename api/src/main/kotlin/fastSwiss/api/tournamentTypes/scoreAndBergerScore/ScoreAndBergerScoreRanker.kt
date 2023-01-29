@@ -1,6 +1,7 @@
 package fastSwiss.api.tournamentTypes.scoreAndBergerScore
 
 import fastSwiss.api.MutablePlayerState
+import fastSwiss.api.Score
 import fastSwiss.api.tournamentTypes.Ranker
 import kotlin.math.abs
 
@@ -13,30 +14,52 @@ import kotlin.math.abs
  * - баланс выигранных сетов
  * - баланс выигранных сетов у всех соперников данного игрока (второй критерий Бергера)
  */
-class ScoreAndBergerScoreRanker : Comparator<MutablePlayerState>, Ranker<ScoreAndBergerScoreRanking> {
-    override fun compare(o1: MutablePlayerState, o2: MutablePlayerState): Int {
-
-        if (abs(o1.score.winsAvg - o2.score.winsAvg) > 1e-9) {
-            return -o1.score.winsAvg.compareTo(o2.score.winsAvg)
-        }
-
-        if (abs(o1.bergerScore.winsAvg - o2.bergerScore.winsAvg) > 1e-9) {
-            return -o1.bergerScore.winsAvg.compareTo(o2.bergerScore.winsAvg)
-        }
-
-        if (abs(o1.score.setsDiffAvg - o2.score.setsDiffAvg) > 1e-9) {
-            return -o1.score.setsDiffAvg.compareTo(o2.score.setsDiffAvg)
-        }
-
-        if (abs(o1.bergerScore.setsDiffAvg - o2.bergerScore.setsDiffAvg) > 1e-9) {
-            return -o1.bergerScore.setsDiffAvg.compareTo(o2.bergerScore.setsDiffAvg)
-        }
-
-        return 0
-    }
+class ScoreAndBergerScoreRanker : Ranker<ScoreAndBergerScoreRanking> {
 
     override fun generate(allPlayers: List<MutablePlayerState>): ScoreAndBergerScoreRanking {
-        return ScoreAndBergerScoreRanking(allPlayers.sortedWith(this))
+        val score = allPlayers.associateWith { p ->
+            Score(
+                p.matchesFinishedCnt,
+                p.matchesWonCnt,
+                p.setsDiff,
+                if (p.matchesFinishedCnt < p.handicapTours) p.handicapWins else 0,
+                if (p.matchesFinishedCnt < p.handicapTours) p.handicapLosses else 0,
+            )
+        }
+
+        val bergerScore = allPlayers.associateWith { p ->
+            Score(
+                p.matchResults.values.sumOf { score[it.otherPlayer]!!.matchesPlayed },
+                p.matchResults.values.sumOf { score[it.otherPlayer]!!.wins },
+                p.matchResults.values.sumOf { score[it.otherPlayer]!!.setsDiff },
+                0,
+                0,
+            )
+        }
+
+        val comparator = object : Comparator<MutablePlayerState> {
+            override fun compare(o1: MutablePlayerState?, o2: MutablePlayerState?): Int {
+                if (abs(score[o1]!!.winsAvg - score[o2]!!.winsAvg) > 1e-9) {
+                    return -score[o1]!!.winsAvg.compareTo(score[o2]!!.winsAvg)
+                }
+
+                if (abs(bergerScore[o1]!!.winsAvg - bergerScore[o2]!!.winsAvg) > 1e-9) {
+                    return -bergerScore[o1]!!.winsAvg.compareTo(bergerScore[o2]!!.winsAvg)
+                }
+
+                if (abs(score[o1]!!.setsDiffAvg - score[o2]!!.setsDiffAvg) > 1e-9) {
+                    return -score[o1]!!.setsDiffAvg.compareTo(score[o2]!!.setsDiffAvg)
+                }
+
+                if (abs(bergerScore[o1]!!.setsDiffAvg - bergerScore[o2]!!.setsDiffAvg) > 1e-9) {
+                    return -bergerScore[o1]!!.setsDiffAvg.compareTo(bergerScore[o2]!!.setsDiffAvg)
+                }
+
+                return 0
+            }
+        }
+
+        return ScoreAndBergerScoreRanking(allPlayers.sortedWith(comparator), score, bergerScore)
     }
 
 }

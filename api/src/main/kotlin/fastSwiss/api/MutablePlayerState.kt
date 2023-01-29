@@ -7,9 +7,9 @@ package fastSwiss.api
 class MutablePlayerState(
     val name: String,
     initialIsPaused: Boolean,
-    private val handicapTours: Int,
-    private val handicapWins: Int,
-    private val handicapLosses: Int,
+    val handicapTours: Int,
+    val handicapWins: Int,
+    val handicapLosses: Int,
 ) {
 
     var isPaused = initialIsPaused
@@ -20,31 +20,9 @@ class MutablePlayerState(
     val matchesStartedCnt by lazy { matchesFinishedCnt + (if (activeMatchWith != null) 1 else 0) }
 
     // TODO поддержать везде ничьи (по всему коду пройтись)
-    private val matchesWonCnt by lazy { matchResults.values.sumOf { it.winsMy } }
+    val matchesWonCnt by lazy { matchResults.values.sumOf { it.winsMy } }
     private val drawsCnt by lazy { matchResults.values.sumOf { it.drawsMy } }
-    private val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
-
-    // TODO вынести в pairSorter
-    val score by lazy {
-        Score(
-            matchesFinishedCnt,
-            matchesWonCnt,
-            setsDiff,
-            if (matchesFinishedCnt < handicapTours) handicapWins else 0,
-            if (matchesFinishedCnt < handicapTours) handicapLosses else 0,
-        )
-    }
-
-    // TODO вынести в pairSorter
-    val bergerScore by lazy {
-        Score(
-            matchResults.values.sumOf { it.otherPlayer.score.matchesPlayed },
-            matchResults.values.sumOf { it.otherPlayer.score.wins },
-            matchResults.values.sumOf { it.otherPlayer.score.setsDiff },
-            0,
-            0,
-        )
-    }
+    val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
 
     fun getAllPlayersPlayedOrStarted(): List<MutablePlayerState> {
         val res = ArrayList(matchResults.keys)

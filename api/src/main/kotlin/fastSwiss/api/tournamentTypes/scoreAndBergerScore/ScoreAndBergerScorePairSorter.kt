@@ -10,7 +10,7 @@ import kotlin.math.abs
 class ScoreAndBergerScorePairSorter : PairSorter<ScoreAndBergerScoreRanking> {
 
     override fun assessPair(player1: MutablePlayerState, player2: MutablePlayerState, ranking: ScoreAndBergerScoreRanking) =
-        abs(player1.score.winsAvgWithHandicap - player2.score.winsAvgWithHandicap) +
+        abs(ranking.score[player1]!!.winsAvgWithHandicap - ranking.score[player2]!!.winsAvgWithHandicap) +
                 0.4 * (player1.matchesFinishedCnt + player2.matchesFinishedCnt)
 
 }
