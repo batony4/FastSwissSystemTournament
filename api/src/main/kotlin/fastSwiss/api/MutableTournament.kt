@@ -7,6 +7,7 @@ import fastSwiss.api.tableSorters.TopologicalTableSorter
 import java.io.File
 import java.io.PrintWriter
 import java.util.*
+import kotlin.jvm.Throws
 import kotlin.math.max
 
 // TODO сделать его mutable, чтобы можно было апдейтить на ходу
@@ -44,6 +45,47 @@ class MutableTournament(
     fun generateAndStartMatch(writeTo: PrintWriter): Pair<MutablePlayerState, MutablePlayerState>? =
         generateNextMatch()?.also { startMatch(it) }?.also { writeTo.println("$GO_TO_TABLE_PREFIX${it.first.name} ${it.second.name}") }
 
+
+    /**
+     * Добавление нового игрока.
+     * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
+     * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
+     * Проверка на корректность актуальна: например, может быть такая ситуация, что новому игроку надо сыграть много матчей, а все
+     * остальные уже доиграли все свои матчи.
+     */
+    @Throws(IncorrectChangeException::class)
+    fun addPlayer(player: MutablePlayerState, check: Boolean) {
+        TODO()
+    }
+
+    /**
+     * Удаление игрока.
+     * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
+     * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
+     * Проверка на корректность актуальна: например, нельзя удалить игрока, который сыграл хотя бы один матч.
+     * Также может быть такое, что с учётом этого игрока все пары сходились (даже если он пока не сыграл ни одного матча), а после его
+     * удаления сходиться перестали.
+     */
+    @Throws(IncorrectChangeException::class)
+    fun removePlayer(player: MutablePlayerState, check: Boolean) {
+        TODO()
+    }
+
+    /**
+     * Изменение количества матчей, которые должен сыграть каждый игрок.
+     * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
+     * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
+     * Проверка на корректность актуальна: например, при нельзя сократить количество матчей до N, если хотя бы один игрок уже сыграл
+     * более чем N матчей.
+     * Также может быть такое, что все пары сходились, а при уменьшении количества оставшихся матчей — перестали.
+     */
+    @Throws(IncorrectChangeException::class)
+    fun changeTournamentMatchesPerPlayerCnt(newTournamentMatchesPerPlayerCnt: Int, check: Boolean) {
+        TODO()
+    }
 
     private fun startMatch(p: Pair<MutablePlayerState, MutablePlayerState>) {
         tablesOccupied++

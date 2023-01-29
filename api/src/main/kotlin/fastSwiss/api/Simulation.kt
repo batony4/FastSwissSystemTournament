@@ -6,6 +6,7 @@ import kotlin.math.min
 /**
  * Симуляция возможности расстановки пар до конца турнира с учётом уже сыгранных пар и предлагаемой следующей пары.
  */
+// TODO создавать симуляцию под конкретную игру, а не один экземпляр на турнир.
 class Simulation(
     private val allPlayers: List<MutablePlayerState>,
     private val tournamentMatchesPerPlayerCnt: Int,
@@ -61,6 +62,8 @@ class Simulation(
         return false
     }
 
+    // ----- API -----
+
     /**
      * Удастся ли составить корректный план игр, если начать с матча [p]?
      */
@@ -72,7 +75,18 @@ class Simulation(
         return isCorrect().also { unplay(min(i1, i2), max(i1, i2)) }
     }
 
-    fun play(p: Pair<MutablePlayerState, MutablePlayerState>) {
+    /**
+     * Сыграть матч между игроками в паре [p].
+     * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
+     * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
+     */
+    @Throws(IncorrectChangeException::class)
+    fun play(p: Pair<MutablePlayerState, MutablePlayerState>, check: Boolean) {
+        if (check) {
+            if (!isCorrect(p)) throw IncorrectChangeException("Невозможно поставить за стол данную пару: турнир в таком случае не сходится")
+        }
+
         val i1 = allPlayers.indexOf(p.first)
         val i2 = allPlayers.indexOf(p.second)
 
