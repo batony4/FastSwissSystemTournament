@@ -1,6 +1,7 @@
 package fastSwiss.api.tournamentTypes.topological
 
 import fastSwiss.api.MutablePlayerState
+import fastSwiss.api.PlayerMatchResult
 import fastSwiss.api.Score
 import fastSwiss.api.tournamentTypes.Ranker
 
@@ -13,17 +14,17 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
      * Количество поражений от игроков из [filteredPlayers] минус количество побед у игроков не из [filteredPlayers].
      */
     private fun getLossesBalance(p: MutablePlayerState, filteredPlayers: ArrayList<MutablePlayerState>): Int {
-        // количество поражений от оставшихся в рассмотрении
-        val lossesInSourceCnt = p.matchResults.values
+        // количество потерь очков от оставшихся в рассмотрении
+        val pointsLossInSourceCnt = p.matchResults.values
             .filter { it.otherPlayer in filteredPlayers }
-            .count { !it.isWin }
+            .sumOf { PlayerMatchResult.WIN_POINTS - it.pointsMy }
 
-        // количество побед у выбывших из рассмотрения
-        val winsNotInSourceCnt = p.matchResults.values
+        // количество заработанных очков в матчах с выбывшими из рассмотрения
+        val pointsWonNotInSourceCnt = p.matchResults.values
             .filter { it.otherPlayer !in filteredPlayers }
-            .count { it.isWin }
+            .sumOf { it.pointsMy }
 
-        return lossesInSourceCnt - winsNotInSourceCnt
+        return pointsLossInSourceCnt - pointsWonNotInSourceCnt
     }
 
     override fun generate(allPlayers: List<MutablePlayerState>): TopologicalRanking {
@@ -53,13 +54,13 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
                     // результат в личных встречах: процент_побед, разница_сетов_per_match
                     val commonMatches = player.matchResults.values.filter { it.otherPlayer in minRankSet }
                     val commonMatchesCnt = commonMatches.size
-                    val commonWinsCnt = commonMatches.count { it.isWin }
+                    val commonPointsCnt = commonMatches.sumOf { it.pointsMy }
                     val commonSetsDiff = commonMatches.sumOf { it.setsDiff }
 
                     player to if (commonMatchesCnt == 0) {
-                        0.5 to 0.0
+                        (PlayerMatchResult.WIN_POINTS / 2.0) to 0.0
                     } else {
-                        commonWinsCnt.toDouble() / commonMatchesCnt to commonSetsDiff.toDouble() / commonMatchesCnt
+                        commonPointsCnt.toDouble() / commonMatchesCnt to commonSetsDiff.toDouble() / commonMatchesCnt
                     }
                 }
                 .sortedWith { o1, o2 ->
@@ -82,7 +83,7 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
         val score = allPlayers.associateWith { p ->
             Score(
                 p.matchesFinishedCnt,
-                p.matchesWonCnt,
+                p.pointsCnt,
                 p.setsDiff,
                 if (p.matchesFinishedCnt < p.handicapTours) p.handicapWins else 0,
                 if (p.matchesFinishedCnt < p.handicapTours) p.handicapLosses else 0,

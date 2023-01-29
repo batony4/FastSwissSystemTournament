@@ -19,9 +19,9 @@ class MutablePlayerState(
     val matchesFinishedCnt by lazy { matchResults.size }
     val matchesStartedCnt by lazy { matchesFinishedCnt + (if (activeMatchWith != null) 1 else 0) }
 
-    // TODO поддержать везде ничьи (по всему коду пройтись)
     val matchesWonCnt by lazy { matchResults.values.sumOf { it.winsMy } }
-    private val drawsCnt by lazy { matchResults.values.sumOf { it.drawsMy } }
+    val matchesDrawnCnt by lazy { matchResults.values.sumOf { it.drawsMy } }
+    val pointsCnt by lazy { matchResults.values.sumOf { it.pointsMy } }
     val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
 
     fun getAllPlayersPlayedOrStarted(): List<MutablePlayerState> {

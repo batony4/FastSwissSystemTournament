@@ -18,7 +18,7 @@ class TopologicalRanking(
                     + "Ранг "
                     + "Игрок".padEnd(maxNameLength) + " "
                     + "Игр".padEnd(5)
-                    + "Побед".padEnd(11)
+                    + "Очков".padEnd(11)
                     + "Сетов".padEnd(13)
         )
         repeat(allPlayersSorted.size) { idx -> print(" ${idx + 1}".padEnd(5)) }
@@ -30,7 +30,7 @@ class TopologicalRanking(
                         + ("(${topSortRank[player]})").padStart(4) + " "
                         + player.name.padEnd(max(maxNameLength, "Игрок".length)) + " "
                         + (player.matchesFinishedCnt.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
-                        + (score[player]!!.wins.toString() + " (%.2f)".format(score[player]!!.winsAvg)).padEnd(11)
+                        + (score[player]!!.points.toString() + " (%.2f)".format(score[player]!!.pointsAvg)).padEnd(11)
                         + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
             )
 

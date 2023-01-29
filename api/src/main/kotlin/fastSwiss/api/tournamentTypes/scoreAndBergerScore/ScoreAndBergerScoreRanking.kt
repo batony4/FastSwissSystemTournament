@@ -17,8 +17,8 @@ class ScoreAndBergerScoreRanking(
             "Место ".padEnd(6)
                     + "Игрок".padEnd(maxNameLength) + " "
                     + "Игр".padEnd(5)
-                    + "Побед".padEnd(11)
-                    + "Б-Побед".padEnd(11)
+                    + "Очков".padEnd(11)
+                    + "Б-Очков".padEnd(11)
                     + "Сетов".padEnd(13)
                     + "Б-Сетов".padEnd(13)
         )
@@ -30,8 +30,8 @@ class ScoreAndBergerScoreRanking(
                 ("" + (index + 1) + ". ").padStart(6)
                         + player.name.padEnd(max(maxNameLength, "Игрок".length)) + " "
                         + (player.matchesFinishedCnt.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
-                        + (score[player]!!.wins.toString() + " (%.2f)".format(score[player]!!.winsAvg)).padEnd(11)
-                        + (bergerScore[player]!!.wins.toString() + " (%.2f)".format(bergerScore[player]!!.winsAvg)).padEnd(11)
+                        + (score[player]!!.points.toString() + " (%.2f)".format(score[player]!!.pointsAvg)).padEnd(11)
+                        + (bergerScore[player]!!.points.toString() + " (%.2f)".format(bergerScore[player]!!.pointsAvg)).padEnd(11)
                         + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
                         + ("%+d".format(bergerScore[player]!!.setsDiff) + " (%+.2f)".format(bergerScore[player]!!.setsDiffAvg)).padEnd(13)
             )

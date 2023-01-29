@@ -10,11 +10,15 @@ data class PlayerMatchResult(
 ) {
     val isWin = setsMy > setsOther
     val isDraw = setsMy == setsOther
-    val isLoss = setsMy < setsOther
 
     val winsMy = if (isWin) 1 else 0
     val drawsMy = if (isDraw) 1 else 0
-    val lossesMy = if (isLoss) 1 else 0
+    val pointsMy = winsMy * WIN_POINTS + drawsMy * DRAW_POINTS
 
     val setsDiff = setsMy - setsOther
+
+    companion object {
+        const val WIN_POINTS = 2
+        const val DRAW_POINTS = 1
+    }
 }
