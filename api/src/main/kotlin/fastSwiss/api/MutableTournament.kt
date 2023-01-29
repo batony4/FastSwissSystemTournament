@@ -100,10 +100,11 @@ class MutableTournament<R : Ranking>(
      * Проверка на корректность актуальна: например, может быть такая ситуация, что новому игроку надо сыграть много матчей, а все
      * остальные уже доиграли все свои матчи.
      */
-    // TODO проверка, что игрока с таким именем ещё не существует
     @Throws(IncorrectChangeException::class)
     fun addPlayer(player: MutablePlayerState, check: Boolean) {
         if (check) {
+            if (allPlayers.contains(player)) throw IncorrectChangeException("Игрок $player уже существует")
+
             val newAllPlayers = ArrayList(allPlayers) + player
             if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
                 throw IncorrectChangeException("Если добавить нового игрока, то турнир не сходится")
