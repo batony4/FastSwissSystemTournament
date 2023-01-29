@@ -5,7 +5,6 @@ import fastSwiss.api.Score
 import fastSwiss.api.tournamentTypes.AbstractRanking
 import kotlin.math.max
 
-// TODO убрать лишние столбцы тут (Бергер)
 class TopologicalRanking(
     val allPlayersSorted: List<MutablePlayerState>,
     val topSortRank: Map<MutablePlayerState, Int>,

@@ -18,10 +18,7 @@ object FileInterfaceMain {
         val pw = PrintWriter(outputFile)
         val t = parse(inputFile, pw)
 
-        while (t.hasFreeTables()) {
-            t.generateAndStartMatch()?.also { pw.println("$GO_TO_TABLE_PREFIX${it.first.name} ${it.second.name}") }
-                ?: break // не удалось поставить никого за стол — значит прерываем досрочно
-        }
+        t.generateAndStartMatches(true).forEach { pw.println("$GO_TO_TABLE_PREFIX${it.first.name} ${it.second.name}") }
         pw.close()
 
         inputFile.delete()

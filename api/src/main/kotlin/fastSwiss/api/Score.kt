@@ -10,6 +10,7 @@ data class Score(
     val matchesPlayed: Int,
     val wins: Int,
     val setsDiff: Int,
+    // TODO подумать, где должна быть логика гандикапа
     val currentHandicapWins: Int,
     val currentHandicapLosses: Int,
 ) : Comparable<Score> {

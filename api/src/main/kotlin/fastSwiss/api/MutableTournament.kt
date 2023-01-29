@@ -173,15 +173,31 @@ class MutableTournament<R : Ranking>(
     }
 
     /**
-     * Сгенерировать наилучший матч, который можно сыграть в текущих обстоятельствах, и начать его.
+     * Сгенерировать максимум наилучших матчей, которые можно сыграть в текущих обстоятельствах (с учётом числа свободных столов,
+     * а также, сходимости турнира), и начать их.
      * В случае, если при текущих ожидающих игроках никакой следующий матч не будет корректным, либо нет свободных столов,
-     * возвращает `null`.
-     * В случае, если турнир уже сейчас некорректный и не может сойтись ни при каких условиях, кидает исключение [IncorrectChangeException].
-     * TODO реализовать выдачу исключения, а также проверку свободных столов перенести сюда
+     * возвращает пусой список.
+     * Если [check] == `true`, то сначала будет проведена проверка, корректен ли в принципе турнир на данный момент и если окажется,
+     * что он не может сойтись уже сейчас, то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то проверок сходимости производиться не будет, и метод вернёт
+     * просто пустой список в случае некорректного турнира.
      */
     @Throws(IncorrectChangeException::class)
-    fun generateAndStartMatch(): Pair<MutablePlayerState, MutablePlayerState>? =
-        generateNextMatch()?.also { startMatch(it.first.name to it.second.name, false) }
+    fun generateAndStartMatches(check: Boolean): List<Pair<MutablePlayerState, MutablePlayerState>> {
+        if (check) {
+            if (!createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
+                throw IncorrectChangeException("Турнир не сходится уже сейчас")
+            }
+        }
+
+        val res = mutableListOf<Pair<MutablePlayerState, MutablePlayerState>>()
+        while (hasFreeTables()) {
+            val nextMatch = generateNextMatch() ?: break
+            startMatch(nextMatch.first.name to nextMatch.second.name, false)
+            res.add(nextMatch)
+        }
+        return res
+    }
 
     fun hasFreeTables() = tablesOccupied < tablesCnt
 
