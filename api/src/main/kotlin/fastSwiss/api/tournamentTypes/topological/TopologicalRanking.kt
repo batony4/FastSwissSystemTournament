@@ -2,7 +2,7 @@ package fastSwiss.api.tournamentTypes.topological
 
 import fastSwiss.api.MutablePlayerState
 import fastSwiss.api.Score
-import fastSwiss.api.tournamentTypes.Ranking
+import fastSwiss.api.tournamentTypes.AbstractRanking
 import kotlin.math.max
 
 // TODO убрать лишние столбцы тут (Бергер)
@@ -10,7 +10,7 @@ class TopologicalRanking(
     val allPlayersSorted: List<MutablePlayerState>,
     val topSortRank: Map<MutablePlayerState, Int>,
     val score: Map<MutablePlayerState, Score>,
-) : Ranking {
+) : AbstractRanking() {
 
     override fun outputRanking() {
         val maxNameLength = allPlayersSorted.maxOf { it.name.length } + 2
@@ -35,24 +35,7 @@ class TopologicalRanking(
                         + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
             )
 
-            for ((otherIndex, otherPlayer) in allPlayersSorted.withIndex()) {
-                val match = player.matchResults[otherPlayer]
-                if (index == otherIndex) {
-                    print(" X   ")
-                } else if (match != null) {
-                    val delimiter = if ((index > otherIndex) && (match.setsMy > match.setsOther)) {
-                        "↑"
-                    } else if ((index < otherIndex) && (match.setsMy < match.setsOther)) {
-                        "↓"
-                    } else {
-                        ":"
-                    }
-
-                    print("${match.setsMy}$delimiter${match.setsOther}".padEnd(5))
-                } else {
-                    print(" •".padEnd(5))
-                }
-            }
+            outputMatrixForPlayer(player, allPlayersSorted)
             println()
         }
     }

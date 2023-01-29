@@ -2,15 +2,14 @@ package fastSwiss.api.tournamentTypes.scoreAndBergerScore
 
 import fastSwiss.api.MutablePlayerState
 import fastSwiss.api.Score
-import fastSwiss.api.tournamentTypes.Ranking
+import fastSwiss.api.tournamentTypes.AbstractRanking
 import kotlin.math.max
 
-// TODO вынести общий код (например, код вывода матрицы игр) в суперкласс
 class ScoreAndBergerScoreRanking(
     val allPlayersSorted: List<MutablePlayerState>,
     val score: Map<MutablePlayerState, Score>,
     val bergerScore: Map<MutablePlayerState, Score>,
-) : Ranking {
+) : AbstractRanking() {
 
     override fun outputRanking() {
         val maxNameLength = allPlayersSorted.maxOf { it.name.length } + 2
@@ -37,24 +36,7 @@ class ScoreAndBergerScoreRanking(
                         + ("%+d".format(bergerScore[player]!!.setsDiff) + " (%+.2f)".format(bergerScore[player]!!.setsDiffAvg)).padEnd(13)
             )
 
-            for ((otherIndex, otherPlayer) in allPlayersSorted.withIndex()) {
-                val match = player.matchResults[otherPlayer]
-                if (index == otherIndex) {
-                    print(" X   ")
-                } else if (match != null) {
-                    val delimiter = if ((index > otherIndex) && (match.setsMy > match.setsOther)) {
-                        "↑"
-                    } else if ((index < otherIndex) && (match.setsMy < match.setsOther)) {
-                        "↓"
-                    } else {
-                        ":"
-                    }
-
-                    print("${match.setsMy}$delimiter${match.setsOther}".padEnd(5))
-                } else {
-                    print(" •".padEnd(5))
-                }
-            }
+            outputMatrixForPlayer(player, allPlayersSorted)
             println()
         }
     }
