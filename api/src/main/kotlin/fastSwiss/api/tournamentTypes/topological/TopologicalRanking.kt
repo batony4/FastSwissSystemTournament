@@ -6,7 +6,8 @@ import kotlin.math.max
 
 // TODO убрать лишние столбцы тут (Бергер)
 class TopologicalRanking(
-    val allPlayersSorted: List<MutablePlayerState>
+    val allPlayersSorted: List<MutablePlayerState>,
+    val topSortRank: Map<MutablePlayerState, Int>,
 ) : Ranking {
 
     override fun outputRanking() {
@@ -27,7 +28,7 @@ class TopologicalRanking(
         for ((index, player) in allPlayersSorted.withIndex()) {
             print(
                 ("" + (index + 1) + ". ").padStart(6)
-                        + ("(${player.topSortRank})").padStart(4) + " "
+                        + ("(${topSortRank[player]})").padStart(4) + " "
                         + player.name.padEnd(max(maxNameLength, "Игрок".length)) + " "
                         + (player.matchesFinishedCnt.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
                         + (player.score.wins.toString() + " (%.2f)".format(player.score.winsAvg)).padEnd(11)

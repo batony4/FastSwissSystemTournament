@@ -18,9 +18,9 @@ class TopologicalPairSorter : PairSorter<TopologicalRanking> {
     //  начала таблицы с игроком из самого конца. Лучше использовать не жадник, а продумывать все пары сразу, когда осталось всего
     //  несколько игр до конца
     override fun assessPair(player1: MutablePlayerState, player2: MutablePlayerState, ranking: TopologicalRanking): Double {
-        val maxRankDiffSqr = sqr(ranking.allPlayersSorted.maxOf { it.topSortRank!! } - 1)
+        val maxRankDiffSqr = sqr(ranking.allPlayersSorted.maxOf { ranking.topSortRank[it]!! } - 1)
         val minMatchesPlayed = ranking.allPlayersSorted.minOf { it.matchesFinishedCnt }
-        return sqr(player1.topSortRank!! - player2.topSortRank!!).toDouble() / maxRankDiffSqr +
+        return sqr(ranking.topSortRank[player1]!! - ranking.topSortRank[player2]!!).toDouble() / maxRankDiffSqr +
                 0.17 * (sqr(player1.matchesFinishedCnt - minMatchesPlayed) + sqr(player2.matchesFinishedCnt - minMatchesPlayed))
     }
 

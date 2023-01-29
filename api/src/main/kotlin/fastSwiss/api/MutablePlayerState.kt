@@ -24,9 +24,6 @@ class MutablePlayerState(
     private val drawsCnt by lazy { matchResults.values.sumOf { it.drawsMy } }
     private val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
 
-    // TODO вынуть из этого класса элементы tableSorters и тому подобное
-    var topSortRank: Int? = null
-
     // TODO вынести в pairSorter
     val score by lazy {
         Score(

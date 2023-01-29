@@ -11,6 +11,7 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
     override fun generate(allPlayers: List<MutablePlayerState>): TopologicalRanking {
         val source = ArrayList<MutablePlayerState>(allPlayers)
         val res = ArrayList<MutablePlayerState>()
+        val topSortRank = HashMap<MutablePlayerState, Int>()
 
         var curRank = 1
         while (source.isNotEmpty()) {
@@ -22,7 +23,7 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
                 player.getLossesBalance(source) == minLossesCnt
             }.toSet()
 
-            minRankSet.forEach { it.topSortRank = curRank }
+            minRankSet.forEach { topSortRank[it] = curRank }
 
             // TODO не реализована возможность назначения двум игрокам одного места
             // сортируем между собой по проценту побед в личных встречах, а при равенстве — по разнице сетов per match в личных встречах
@@ -52,7 +53,7 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
             curRank++
         }
 
-        return TopologicalRanking(res)
+        return TopologicalRanking(res, topSortRank)
     }
 
 }
