@@ -1,6 +1,7 @@
-package fastSwiss.api.tableSorters
+package fastSwiss.api.tournamentTypes.scoreAndBergerScore
 
 import fastSwiss.api.MutablePlayerState
+import fastSwiss.api.tournamentTypes.Ranker
 import kotlin.math.abs
 
 /**
@@ -12,7 +13,7 @@ import kotlin.math.abs
  * - баланс выигранных сетов
  * - баланс выигранных сетов у всех соперников данного игрока (второй критерий Бергера)
  */
-class ScoreAndBergerScoreTableSorter : Comparator<MutablePlayerState>, TableSorter {
+class ScoreAndBergerScoreRanker : Comparator<MutablePlayerState>, Ranker<ScoreAndBergerScoreRanking> {
     override fun compare(o1: MutablePlayerState, o2: MutablePlayerState): Int {
 
         if (abs(o1.score.winsAvg - o2.score.winsAvg) > 1e-9) {
@@ -34,8 +35,8 @@ class ScoreAndBergerScoreTableSorter : Comparator<MutablePlayerState>, TableSort
         return 0
     }
 
-    override fun sorted(allPlayers: List<MutablePlayerState>): List<MutablePlayerState> {
-        return allPlayers.sortedWith(this)
+    override fun generate(allPlayers: List<MutablePlayerState>): ScoreAndBergerScoreRanking {
+        return ScoreAndBergerScoreRanking(allPlayers.sortedWith(this))
     }
 
 }

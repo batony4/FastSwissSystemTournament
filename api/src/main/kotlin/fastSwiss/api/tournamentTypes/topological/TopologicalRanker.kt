@@ -1,12 +1,14 @@
-package fastSwiss.api.tableSorters
+package fastSwiss.api.tournamentTypes.topological
 
 import fastSwiss.api.MutablePlayerState
+import fastSwiss.api.tournamentTypes.Ranker
 
 /**
  * Сортирует с помощью топологической сортировки.
  */
-class TopologicalTableSorter : TableSorter {
-    override fun sorted(allPlayers: List<MutablePlayerState>): List<MutablePlayerState> {
+class TopologicalRanker : Ranker<TopologicalRanking> {
+
+    override fun generate(allPlayers: List<MutablePlayerState>): TopologicalRanking {
         val source = ArrayList<MutablePlayerState>(allPlayers)
         val res = ArrayList<MutablePlayerState>()
 
@@ -50,6 +52,7 @@ class TopologicalTableSorter : TableSorter {
             curRank++
         }
 
-        return res
+        return TopologicalRanking(res)
     }
+
 }

@@ -6,18 +6,20 @@ package fastSwiss.api
 // TODO добавить больше защиты от неправильных действий, так как в Телеграм-Боте это уже актуально.
 class MutablePlayerState(
     val name: String,
-    val isPaused: Boolean,
+    initialIsPaused: Boolean,
     private val handicapTours: Int,
     private val handicapWins: Int,
     private val handicapLosses: Int,
 ) {
 
+    var isPaused = initialIsPaused
     private var activeMatchWith: MutablePlayerState? = null // игрок, с которым сейчас идёт матч
     val matchResults = HashMap<MutablePlayerState, PlayerMatchResult>()
 
-    val matchesPlayed by lazy { matchResults.size }
+    val matchesFinishedCnt by lazy { matchResults.size }
+    val matchesStartedCnt by lazy { matchesFinishedCnt + (if (activeMatchWith != null) 1 else 0) }
 
-    // TODO поддержать везде ничьи
+    // TODO поддержать везде ничьи (по всему коду пройтись)
     private val matchesWonCnt by lazy { matchResults.values.sumOf { it.winsMy } }
     private val drawsCnt by lazy { matchResults.values.sumOf { it.drawsMy } }
     private val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
@@ -28,11 +30,11 @@ class MutablePlayerState(
     // TODO вынести в pairSorter
     val score by lazy {
         Score(
-            matchesPlayed,
+            matchesFinishedCnt,
             matchesWonCnt,
             setsDiff,
-            if (matchesPlayed < handicapTours) handicapWins else 0,
-            if (matchesPlayed < handicapTours) handicapLosses else 0,
+            if (matchesFinishedCnt < handicapTours) handicapWins else 0,
+            if (matchesFinishedCnt < handicapTours) handicapLosses else 0,
         )
     }
 
@@ -45,6 +47,12 @@ class MutablePlayerState(
             0,
             0,
         )
+    }
+
+    fun getAllPlayersPlayedOrStarted(): List<MutablePlayerState> {
+        val res = ArrayList(matchResults.keys)
+        if (activeMatchWith != null) res += activeMatchWith
+        return res
     }
 
     fun isPlaysNow() = activeMatchWith != null

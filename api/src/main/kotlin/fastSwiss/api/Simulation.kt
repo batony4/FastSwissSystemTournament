@@ -32,11 +32,13 @@ class Simulation(
         cnt[i2]--
     }
 
+    // ----- API -----
+
     /**
      * Пытаемся симулировать, получится ли полностью составить план матчей из текущей ситуации.
      */
     // TODO симуляция, можно ли поставить пару, иногда работает ужасно долго
-    private fun isCorrect(): Boolean {
+    fun isCorrectNow(): Boolean {
         if (cnt.all { it >= tournamentMatchesPerPlayerCnt }) return true
 
         // в случае нечётного количества игроков, допускаем ситуацию, когда один игрок не сыграет один матч
@@ -54,7 +56,7 @@ class Simulation(
 
                 if (!m[i][j]) {
                     play(i, j)
-                    if (isCorrect().also { unplay(i, j) }) return true
+                    if (isCorrectNow().also { unplay(i, j) }) return true
                 }
             }
         }
@@ -62,17 +64,15 @@ class Simulation(
         return false
     }
 
-    // ----- API -----
-
     /**
      * Удастся ли составить корректный план игр, если начать с матча [p]?
      */
-    fun isCorrect(p: Pair<MutablePlayerState, MutablePlayerState>): Boolean {
+    fun isCorrectWithMatch(p: Pair<MutablePlayerState, MutablePlayerState>): Boolean {
         val i1 = allPlayers.indexOf(p.first)
         val i2 = allPlayers.indexOf(p.second)
 
         play(min(i1, i2), max(i1, i2))
-        return isCorrect().also { unplay(min(i1, i2), max(i1, i2)) }
+        return isCorrectNow().also { unplay(min(i1, i2), max(i1, i2)) }
     }
 
     /**
@@ -84,7 +84,7 @@ class Simulation(
     @Throws(IncorrectChangeException::class)
     fun play(p: Pair<MutablePlayerState, MutablePlayerState>, check: Boolean) {
         if (check) {
-            if (!isCorrect(p)) throw IncorrectChangeException("Невозможно поставить за стол данную пару: турнир в таком случае не сходится")
+            if (!isCorrectWithMatch(p)) throw IncorrectChangeException("Невозможно поставить за стол данную пару: турнир в таком случае не сходится")
         }
 
         val i1 = allPlayers.indexOf(p.first)
