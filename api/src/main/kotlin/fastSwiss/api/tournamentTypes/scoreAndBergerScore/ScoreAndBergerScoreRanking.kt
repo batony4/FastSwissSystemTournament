@@ -7,7 +7,7 @@ import kotlin.math.max
 
 class ScoreAndBergerScoreRanking(
     val allPlayersSorted: List<MutablePlayerState>,
-    val score: Map<MutablePlayerState, Score>,
+    val scoreWithHandicap: Map<MutablePlayerState, ScoreWithHandicap>,
     val bergerScore: Map<MutablePlayerState, Score>,
 ) : AbstractRanking() {
 
@@ -30,9 +30,13 @@ class ScoreAndBergerScoreRanking(
                 ("" + (index + 1) + ". ").padStart(6)
                         + player.name.padEnd(max(maxNameLength, "Игрок".length)) + " "
                         + (player.matchesFinishedCnt.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
-                        + (score[player]!!.points.toString() + " (%.2f)".format(score[player]!!.pointsAvg)).padEnd(11)
+                        + (scoreWithHandicap[player]!!.points.toString() + " (%.2f)".format(scoreWithHandicap[player]!!.pointsAvg)).padEnd(
+                    11
+                )
                         + (bergerScore[player]!!.points.toString() + " (%.2f)".format(bergerScore[player]!!.pointsAvg)).padEnd(11)
-                        + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
+                        + ("%+d".format(scoreWithHandicap[player]!!.setsDiff) + " (%+.2f)".format(scoreWithHandicap[player]!!.setsDiffAvg)).padEnd(
+                    13
+                )
                         + ("%+d".format(bergerScore[player]!!.setsDiff) + " (%+.2f)".format(bergerScore[player]!!.setsDiffAvg)).padEnd(13)
             )
 

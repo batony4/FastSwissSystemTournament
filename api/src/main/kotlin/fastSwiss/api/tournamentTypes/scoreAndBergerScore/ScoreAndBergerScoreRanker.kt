@@ -17,8 +17,8 @@ import kotlin.math.abs
 class ScoreAndBergerScoreRanker : Ranker<ScoreAndBergerScoreRanking> {
 
     override fun generate(allPlayers: List<MutablePlayerState>): ScoreAndBergerScoreRanking {
-        val score = allPlayers.associateWith { p ->
-            Score(
+        val scoreWithHandicap = allPlayers.associateWith { p ->
+            ScoreWithHandicap(
                 p.matchesFinishedCnt,
                 p.pointsCnt,
                 p.setsDiff,
@@ -29,26 +29,24 @@ class ScoreAndBergerScoreRanker : Ranker<ScoreAndBergerScoreRanking> {
 
         val bergerScore = allPlayers.associateWith { p ->
             Score(
-                p.matchResults.values.sumOf { score[it.otherPlayer]!!.matchesPlayed },
-                p.matchResults.values.sumOf { score[it.otherPlayer]!!.points },
-                p.matchResults.values.sumOf { score[it.otherPlayer]!!.setsDiff },
-                0,
-                0,
+                p.matchResults.values.sumOf { scoreWithHandicap[it.otherPlayer]!!.matchesPlayed },
+                p.matchResults.values.sumOf { scoreWithHandicap[it.otherPlayer]!!.points },
+                p.matchResults.values.sumOf { scoreWithHandicap[it.otherPlayer]!!.setsDiff },
             )
         }
 
         val comparator = object : Comparator<MutablePlayerState> {
             override fun compare(o1: MutablePlayerState?, o2: MutablePlayerState?): Int {
-                if (abs(score[o1]!!.pointsAvg - score[o2]!!.pointsAvg) > 1e-9) {
-                    return -score[o1]!!.pointsAvg.compareTo(score[o2]!!.pointsAvg)
+                if (abs(scoreWithHandicap[o1]!!.pointsAvg - scoreWithHandicap[o2]!!.pointsAvg) > 1e-9) {
+                    return -scoreWithHandicap[o1]!!.pointsAvg.compareTo(scoreWithHandicap[o2]!!.pointsAvg)
                 }
 
                 if (abs(bergerScore[o1]!!.pointsAvg - bergerScore[o2]!!.pointsAvg) > 1e-9) {
                     return -bergerScore[o1]!!.pointsAvg.compareTo(bergerScore[o2]!!.pointsAvg)
                 }
 
-                if (abs(score[o1]!!.setsDiffAvg - score[o2]!!.setsDiffAvg) > 1e-9) {
-                    return -score[o1]!!.setsDiffAvg.compareTo(score[o2]!!.setsDiffAvg)
+                if (abs(scoreWithHandicap[o1]!!.setsDiffAvg - scoreWithHandicap[o2]!!.setsDiffAvg) > 1e-9) {
+                    return -scoreWithHandicap[o1]!!.setsDiffAvg.compareTo(scoreWithHandicap[o2]!!.setsDiffAvg)
                 }
 
                 if (abs(bergerScore[o1]!!.setsDiffAvg - bergerScore[o2]!!.setsDiffAvg) > 1e-9) {
@@ -59,7 +57,7 @@ class ScoreAndBergerScoreRanker : Ranker<ScoreAndBergerScoreRanking> {
             }
         }
 
-        return ScoreAndBergerScoreRanking(allPlayers.sortedWith(comparator), score, bergerScore)
+        return ScoreAndBergerScoreRanking(allPlayers.sortedWith(comparator), scoreWithHandicap, bergerScore)
     }
 
 }

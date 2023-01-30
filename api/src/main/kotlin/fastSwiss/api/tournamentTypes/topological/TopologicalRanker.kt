@@ -82,8 +82,6 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
                 p.matchesFinishedCnt,
                 p.pointsCnt,
                 p.setsDiff,
-                if (p.matchesFinishedCnt < p.handicapTours) p.handicapWins else 0,
-                if (p.matchesFinishedCnt < p.handicapTours) p.handicapLosses else 0,
             )
         }
 
