@@ -36,7 +36,6 @@ class Simulation(
     /**
      * Пытаемся симулировать, получится ли полностью составить план матчей из текущей ситуации.
      */
-    // TODO симуляция, можно ли поставить пару, иногда работает ужасно долго
     fun isCorrectNow(): Boolean {
         if (cnt.all { it >= tournamentMatchesPerPlayerCnt }) return true
 

@@ -9,7 +9,6 @@ data class Score(
     val matchesPlayed: Int,
     val points: Int,
     val setsDiff: Int,
-    // TODO подумать, где должна быть логика гандикапа; не относится ли она больше именно к ScoreAndBergerScore?
     val currentHandicapWins: Int,
     val currentHandicapLosses: Int,
 ) : Comparable<Score> {
