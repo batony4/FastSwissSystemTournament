@@ -207,10 +207,12 @@ class MutableTournament<R : Ranking>(
 
         private fun createCurrentSimulation(allPlayers: List<MutablePlayerState>, tournamentMatchesPerPlayerCnt: Int): Simulation {
             val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
-            allPlayers.forEach { p1 ->
-                p1.getAllPlayersPlayedOrStarted().forEach { p2 ->
-                    s.play(p1 to p2, false)
-                }
+            allPlayers.forEachIndexed { idx1, p1 ->
+                p1.getAllPlayersPlayedOrStarted()
+                    .filter { allPlayers.indexOf(it) > idx1 }
+                    .forEach { p2 ->
+                        s.play(p1 to p2, false)
+                    }
             }
             return s
         }
