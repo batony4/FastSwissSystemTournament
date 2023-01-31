@@ -55,6 +55,12 @@ object FileInterfaceMain {
                 val handicapWins = tok.getOrNull(2)?.toInt() ?: 0
                 val handicapLosses = tok.getOrNull(3)?.toInt() ?: 0
                 t.addPlayer(MutablePlayerState(name, isPaused, handicapToursCnt, handicapWins, handicapLosses), false)
+            } else if (lineTrimmed.lowercase().startsWith("Пауза".lowercase())) { // Пауза
+                t.pausePlayer(lineTrimmed.split(" ").last())
+            } else if (lineTrimmed.lowercase().startsWith("Продолжи".lowercase())) { // Продолжить
+                t.unpausePlayer(lineTrimmed.split(" ").last())
+            } else if (lineTrimmed.lowercase().startsWith("Удал".lowercase())) { // Удалить из турнира
+                t.removePlayer(lineTrimmed.split(" ").last(), true)
             } else if (lineTrimmed.split(" ").first().let { name -> t.findPlayerByName(name) != null }) { // Результат матча
                 // если игрок уже есть в списке, то просто добавляем результаты
                 parseMatchLine(t, lineTrimmed)

@@ -47,21 +47,21 @@ class MutableTournament<R : Ranking>(
     fun findPlayerByName(name: String): MutablePlayerState? = allPlayers.firstOrNull { it.name == name }
 
     /**
-     * Старт матча между соперниками, имена которых перечислены в [p].
+     * Старт матча между соперниками, имена которых перечислены в [names].
      * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
      * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
      * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
      */
     @Throws(IncorrectChangeException::class)
-    fun startMatch(p: Pair<String, String>, check: Boolean) {
-        val p1 = findPlayerByName(p.first) ?: throw IncorrectChangeException("Игрок ${p.first} не найден")
-        val p2 = findPlayerByName(p.second) ?: throw IncorrectChangeException("Игрок ${p.second} не найден")
+    fun startMatch(names: Pair<String, String>, check: Boolean) {
+        val p1 = findPlayerByName(names.first) ?: throw IncorrectChangeException("Игрок ${names.first} не найден")
+        val p2 = findPlayerByName(names.second) ?: throw IncorrectChangeException("Игрок ${names.second} не найден")
 
         if (check) {
             val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
             if (!s.isCorrectWithMatch(p1 to p2)) {
                 throw IncorrectChangeException(
-                    "Игроки ${p.first} и ${p.second} не могут сыграть между собой:" +
+                    "Игроки ${names.first} и ${names.second} не могут сыграть между собой:" +
                             " при условии проведения этого матча, не сходится турнир"
                 )
             }
@@ -73,14 +73,14 @@ class MutableTournament<R : Ranking>(
     }
 
     /**
-     * Завершение матча между соперниками, имена которых перечислены в [p]. Счёт: [sets].
+     * Завершение матча между соперниками, имена которых перечислены в [names]. Счёт: [sets].
      * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
      * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
      * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
      */
-    fun endMatch(p: Pair<String, String>, sets: Pair<Int, Int>, check: Boolean) {
-        val p1 = findPlayerByName(p.first) ?: throw IncorrectChangeException("Игрок ${p.first} не найден")
-        val p2 = findPlayerByName(p.second) ?: throw IncorrectChangeException("Игрок ${p.second} не найден")
+    fun endMatch(names: Pair<String, String>, sets: Pair<Int, Int>, check: Boolean) {
+        val p1 = findPlayerByName(names.first) ?: throw IncorrectChangeException("Игрок ${names.first} не найден")
+        val p2 = findPlayerByName(names.second) ?: throw IncorrectChangeException("Игрок ${names.second} не найден")
 
         if (check) {
             if (p1.activeMatchWith != p2) throw IncorrectChangeException("Игрок $p1 не играет с игроком $p2")
@@ -124,7 +124,10 @@ class MutableTournament<R : Ranking>(
      * удаления сходиться перестали.
      */
     @Throws(IncorrectChangeException::class)
-    fun removePlayer(player: MutablePlayerState, check: Boolean) {
+    fun removePlayer(name: String, check: Boolean) {
+        val player = findPlayerByName(name)
+            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся удалить, не участвует в турнире")
+
         if (check) {
             if (player.isPlaysNow() || (player.matchesFinishedCnt > 0)) {
                 throw IncorrectChangeException("Невозможно удалить из турнира этого игрока, так как он уже начал играть")
@@ -138,6 +141,27 @@ class MutableTournament<R : Ranking>(
         if (!allPlayers.remove(player)) {
             throw IncorrectChangeException("Игрок, которого мы пытаемся удалить, не найден в списках турнира")
         }
+    }
+
+    /**
+     * Приостановка игрока. Это значит, что на него не будут назначаться матчи.
+     * Если он сейчас играет — не страшно, он доиграет этот матч и на него не будут назначаться следующие матчи до снятия его с паузы.
+     */
+    fun pausePlayer(name: String) {
+        val player = findPlayerByName(name)
+            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся приостановить, не найден в списках турнира")
+
+        player.isPaused = true
+    }
+
+    /**
+     * Снятие игрока с паузы. Это значит, что на него снова могут назначаться матчи.
+     */
+    fun unpausePlayer(name: String) {
+        val player = findPlayerByName(name)
+            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся снять с паузы, не найден в списках турнира")
+
+        player.isPaused = false
     }
 
     /**
