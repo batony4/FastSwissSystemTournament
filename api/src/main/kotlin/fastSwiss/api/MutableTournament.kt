@@ -12,8 +12,12 @@ class MutableTournament<R : Ranking>(
 
     // Настройки турнира
 
-    private var tablesCnt: Int = 1
-    private var tournamentMatchesPerPlayerCnt: Int = 1
+    var tablesCnt: Int = 1
+        private set
+
+    var tournamentMatchesPerPlayerCnt: Int = 1
+        private set
+
     private var allPlayers = ArrayList<MutablePlayerState>()
 
     // Текущее состояние турнира
@@ -45,6 +49,8 @@ class MutableTournament<R : Ranking>(
     // ----- API -----
 
     fun findPlayerByName(name: String): MutablePlayerState? = allPlayers.firstOrNull { it.name == name }
+
+    fun getPlayerNames() = allPlayers.map { it.name }
 
     /**
      * Старт матча между соперниками, имена которых перечислены в [names].
