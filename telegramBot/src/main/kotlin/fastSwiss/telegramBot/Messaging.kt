@@ -5,7 +5,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.MessageContent
-import dev.inmo.tgbotapi.types.message.textsources.TextSourcesList
+import dev.inmo.tgbotapi.utils.EntitiesBuilderBody
 import dev.inmo.tgbotapi.utils.buildEntities
 import fastSwiss.api.IncorrectChangeException
 import kotlinx.coroutines.flow.firstOrNull
@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.firstOrNull
 suspend fun <T> BehaviourContext.processReply(
     answerConverter: (CommonMessage<MessageContent>) -> T?,
     logic: (T) -> Unit,
-    formatAnswer: (T) -> TextSourcesList,
+    formatAnswer: (T) -> EntitiesBuilderBody,
     outputTournamentInfo: Boolean,
 ) {
     val message = waitContentMessage().firstOrNull()
     val answer = (message?.let { answerConverter(it) } ?: return) as T
     try {
         logic(answer)
-        reply(message, formatAnswer(answer))
+        reply(message, buildEntities("", formatAnswer(answer)))
         if (outputTournamentInfo) tournamentInfoMessage()
     } catch (e: IncorrectChangeException) {
         reply(message, buildEntities("") { +"Ошибка: ${e.message}" })

@@ -9,7 +9,6 @@ import dev.inmo.tgbotapi.extensions.utils.extensions.raw.text
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.message.textsources.underline
-import dev.inmo.tgbotapi.utils.buildEntities
 import fastSwiss.api.MutablePlayerState
 import fastSwiss.api.MutableTournament
 import fastSwiss.api.tournamentTypes.topological.TopologicalPairSorter
@@ -75,11 +74,7 @@ private suspend fun BehaviourContext.createTournament(
     processReply(
         { it.text?.toIntOrNull() },
         { tablesCntMutable = it },
-        {
-            buildEntities("") {
-                +"Отлично, будет задействовано " + underline("$it полей") + "."
-            }
-        },
+        { { +"Отлично, будет задействовано " + underline("$it полей") + "." } },
         false,
     )
 
@@ -98,11 +93,7 @@ private suspend fun BehaviourContext.createTournament(
                 t.changeTournamentMatchesPerPlayerCnt(it, true)
                 res = t
             },
-            {
-                buildEntities("") {
-                    +"Отлично, новый турнир создан!"
-                }
-            },
+            { { +"Отлично, новый турнир создан!" } },
             true,
         )
     }
@@ -123,11 +114,7 @@ private suspend fun BehaviourContext.fieldsCount(
     processReply(
         { it.text?.toIntOrNull() },
         { t.changeOverallTablesCnt(it) },
-        {
-            buildEntities("") {
-                +"Отлично, теперь задействовано " + underline("$it полей") + "."
-            }
-        },
+        { { +"Отлично, теперь задействовано " + underline("$it полей") + "." } },
         true,
     )
 }
@@ -145,11 +132,7 @@ private suspend fun BehaviourContext.matchesCount(
     processReply(
         { it.text?.toIntOrNull() },
         { t.changeTournamentMatchesPerPlayerCnt(it, true) },
-        {
-            buildEntities("") {
-                +"Отлично, теперь каждый сыграет по " + formatTournamentSetting("$it матчей") + "."
-            }
-        },
+        { { +"Отлично, теперь каждый сыграет по " + formatTournamentSetting("$it матчей") + "." } },
         true,
     )
 }
@@ -170,11 +153,7 @@ private suspend fun BehaviourContext.addPlayer(
             val player = MutablePlayerState(it, false, 0, 0, 0)
             t.addPlayer(player, true)
         },
-        {
-            buildEntities("") {
-                +"Отлично, участник " + formatPlayerName(it) + " добавлен в турнир"
-            }
-        },
+        { { +"Отлично, участник " + formatPlayerName(it) + " добавлен в турнир" } },
         true,
     )
 }
@@ -192,11 +171,7 @@ private suspend fun BehaviourContext.removePlayer(
     processReply(
         { it.text },
         { t.removePlayer(it, true) },
-        {
-            buildEntities("") {
-                +"Отлично, участник " + formatPlayerName(it) + " исключен в турнир"
-            }
-        },
+        { { +"Отлично, участник " + formatPlayerName(it) + " исключен из турнира" } },
         true,
     )
 }
