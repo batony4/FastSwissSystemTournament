@@ -4,14 +4,14 @@ package fastSwiss.api
  * Игрок, включая его статистику на турнире.
  */
 class MutablePlayerState(
-    val name: String,
+    override val name: String,
     initialIsPaused: Boolean,
-    val handicapTours: Int,
-    val handicapWins: Int,
-    val handicapLosses: Int,
-) {
+    override val handicapTours: Int,
+    override val handicapWins: Int,
+    override val handicapLosses: Int,
+) : ImmutablePlayerState {
 
-    var isPaused = initialIsPaused
+    override var isPaused = initialIsPaused
     var activeMatchWith: MutablePlayerState? = null // игрок, с которым сейчас идёт матч
         private set
     val matchResults = HashMap<MutablePlayerState, PlayerMatchResult>()
@@ -30,7 +30,7 @@ class MutablePlayerState(
         return res
     }
 
-    fun isPlaysNow() = activeMatchWith != null
+    override fun isPlaysNow() = activeMatchWith != null
 
     fun isFinishedGameWith(otherPlayer: MutablePlayerState) = matchResults.containsKey(otherPlayer)
 

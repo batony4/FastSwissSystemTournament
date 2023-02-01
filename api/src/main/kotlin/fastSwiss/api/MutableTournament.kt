@@ -50,11 +50,7 @@ class MutableTournament<R : Ranking>(
 
     fun findPlayerByName(name: String): MutablePlayerState? = allPlayers.firstOrNull { it.name == name }
 
-    fun getPlayerNames() = allPlayers.map { it.name }
-
-    fun getPausedPlayerNames() = allPlayers.filter { it.isPaused }.map { it.name }
-
-    fun getUnpausedPlayerNames() = allPlayers.filter { !it.isPaused }.map { it.name }
+    fun getPlayersImmutable(): List<ImmutablePlayerState> = allPlayers
 
     /**
      * Старт матча между соперниками, имена которых перечислены в [names].

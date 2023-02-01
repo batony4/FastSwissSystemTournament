@@ -1,3 +1,5 @@
+@file:Suppress("OPT_IN_USAGE")
+
 package fastSwiss.telegramBot
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
@@ -14,6 +16,7 @@ import fastSwiss.api.tournamentTypes.topological.TopologicalPairSorter
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanker
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanking
 
+// TODO всё привести к этому словарю по всему коду. Сам словарь сохранить в отдельном файле.
 /*
 Словарь:
 - турнир (а не соревнование)
@@ -22,21 +25,20 @@ import fastSwiss.api.tournamentTypes.topological.TopologicalRanking
 - участник (а не игрок)
 - счёт (а не сеты)
  */
-// TODO всё привести к этому словарю
 
 val RANKER = TopologicalRanker()
 val PAIR_SORTER = TopologicalPairSorter()
 
-val CREATE_TOURNAMENT_COMMAND = "создатьТурнир"
-val FIELDS_COUNT_COMMAND = "полей"
-val MATCHES_COUNT_COMMAND = "матчей"
-val ADD_PLAYER_COMMAND = "добавитьУчастника"
-val REMOVE_PLAYER_COMMAND = "удалитьУчастника" // TODO реализовать
-val PAUSE_PLAYER_COMMAND = "участникОтошел" // TODO реализовать
-val UNPAUSE_PLAYER_COMMAND = "участникВернулся" // TODO реализовать
+val CREATE_TOURNAMENT_COMMAND = "createTournament"
+val FIELDS_COUNT_COMMAND = "fieldsCount"
+val MATCHES_COUNT_COMMAND = "matchesCount"
+val ADD_PLAYER_COMMAND = "addPlayer"
+val REMOVE_PLAYER_COMMAND = "removePlayer"
+val PAUSE_PLAYER_COMMAND = "pausePlayer"
+val UNPAUSE_PLAYER_COMMAND = "unpausePlayer"
 val START_TOURNAMENT_COMMAND =
-    "запуститьТурнир" // TODO запуск турнира (после этого будут предлагаться новые матчи в ответ на любое изменение в турнире, либо надпись "турнир завершён")
-val MATCH_RESULT_COMMAND = "результатМатча" // TODO реализовать
+    "go" // TODO запуск турнира (после этого будут предлагаться новые матчи в ответ на любое изменение в турнире, либо надпись "турнир завершён")
+val MATCH_RESULT_COMMAND = "result" // TODO реализовать
 
 
 suspend fun main() {
@@ -75,7 +77,7 @@ private suspend fun BehaviourContext.createTournament(
         { it.text?.toIntOrNull() },
         { tablesCntMutable = it },
         { { +"Отлично, будет задействовано " + underline("$it полей") + "." } },
-        false,
+        null,
     )
 
     tablesCntMutable?.let { tablesCnt ->
@@ -91,7 +93,7 @@ private suspend fun BehaviourContext.createTournament(
                 res = t
             },
             { { +"Отлично, новый турнир создан!" } },
-            true,
+            res,
         )
     }
 
@@ -110,7 +112,7 @@ private suspend fun BehaviourContext.fieldsCount(
         { it.text?.toIntOrNull() },
         { t.changeOverallTablesCnt(it) },
         { { +"Отлично, теперь задействовано " + underline("$it полей") + "." } },
-        true,
+        t,
     )
 
 
@@ -125,7 +127,7 @@ private suspend fun BehaviourContext.matchesCount(
         { it.text?.toIntOrNull() },
         { t.changeTournamentMatchesPerPlayerCnt(it, true) },
         { { +"Отлично, теперь каждый сыграет по " + formatTournamentSetting("$it матчей") + "." } },
-        true,
+        t,
     )
 
 
@@ -143,7 +145,7 @@ private suspend fun BehaviourContext.addPlayer(
             t.addPlayer(player, true)
         },
         { { +"Отлично, участник " + formatPlayerName(it) + " добавлен в турнир" } },
-        true,
+        t,
     )
 
 
@@ -154,11 +156,11 @@ private suspend fun BehaviourContext.removePlayer(
     processDialog(
         message,
         "Введите имя/название участника, которого надо исключить из турнира:",
-        replyKeyboardOf(t.getPlayerNames(), 4),
+        replyKeyboardOfPlayers(t.getPlayersImmutable()),
         { it.text },
         { t.removePlayer(it, true) },
         { { +"Отлично, участник " + formatPlayerName(it) + " исключен из турнира" } },
-        true,
+        t,
     )
 
 
@@ -169,11 +171,11 @@ private suspend fun BehaviourContext.pausePlayer(
     processDialog(
         message,
         "Введите имя/название участника, который отошёл:",
-        replyKeyboardOf(t.getUnpausedPlayerNames(), 4),
+        replyKeyboardOfPlayers(t.getPlayersImmutable().filter { !it.isPaused }),
         { it.text },
         { t.pausePlayer(it) },
         { { +"Отлично, участнику " + formatPlayerName(it) + " пока не будут назначаться новые матчи" } },
-        true,
+        t,
     )
 
 
@@ -184,9 +186,9 @@ private suspend fun BehaviourContext.unpausePlayer(
     processDialog(
         message,
         "Введите имя/название участника, который вернулся:",
-        replyKeyboardOf(t.getPausedPlayerNames(), 4),
+        replyKeyboardOfPlayers(t.getPlayersImmutable().filter { it.isPaused }),
         { it.text },
         { t.pausePlayer(it) },
         { { +"Отлично, участнику " + formatPlayerName(it) + " снова может быть назначен новый матч" } },
-        true,
+        t,
     )
