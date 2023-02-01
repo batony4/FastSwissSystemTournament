@@ -56,7 +56,7 @@ private suspend fun <T> BehaviourContext.processReply(
 // TODO вывод текущей инфы о турнире
 //      если он ещё не начат — то настройки и список игроков, а также дока по запуску турнира
 //      если он уже начат — то таблица и матчи, которые сейчас играются, а также настройки и дока по продолжению турнира
-private suspend fun BehaviourContext.tournamentInfoMessage(message: ContentMessage<TextContent>, t: MutableTournament<*>) {
+suspend fun BehaviourContext.tournamentInfoMessage(message: ContentMessage<TextContent>, t: MutableTournament<*>) {
     val players = t.getPlayersImmutable()
     reply(message, buildEntities("") {
         +"Настройки турнира:\n" +
@@ -70,6 +70,6 @@ private suspend fun BehaviourContext.tournamentInfoMessage(message: ContentMessa
                 t.getPlayersImmutable().joinToString { "- ${if (it.isPaused) "(пауза) " else ""}${it.name}\n" } +
                 "\n" +
                 "Любые настройки можно поменять как до, так и во время турнира.\n" +
-                "Когда всё будет настроено, запустите турнир командой /$START_TOURNAMENT_COMMAND."
+                "Когда всё будет готово, запустите турнир: /$START_TOURNAMENT_COMMAND."
     })
 }

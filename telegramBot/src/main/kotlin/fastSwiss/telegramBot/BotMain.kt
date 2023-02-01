@@ -70,7 +70,8 @@ private suspend fun BehaviourContext.createTournament(
     )
 
     tablesCntMutable?.let { tablesCnt ->
-        processDialog(
+        var newTournament: MutableTournament<TopologicalRanking>? = null
+        val secondAnswerMessage = processDialog(
             firstAnswerMessage!!,
             "А сколько матчей должен сыграть каждый участник за время турнира?",
             replyKeyboard1to16(),
@@ -79,13 +80,17 @@ private suspend fun BehaviourContext.createTournament(
                 val t = MutableTournament(RANKER, PAIR_SORTER)
                 t.changeOverallTablesCnt(tablesCnt)
                 t.changeTournamentMatchesPerPlayerCnt(it, true)
-                res = t
+                newTournament = t
             },
             { { +"Отлично, новый турнир создан!" } },
-            res,
+            null,
         )
-    }
 
+        newTournament?.let {
+            tournamentInfoMessage(secondAnswerMessage!!, it)
+            res = it
+        }
+    }
     return res
 }
 
