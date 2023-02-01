@@ -16,8 +16,29 @@ import fastSwiss.api.tournamentTypes.topological.TopologicalPairSorter
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanker
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanking
 
+/*
+Словарь:
+- турнир (а не соревнование)
+- поле (а не стол)
+- матч (а не игра)
+- участник (а не игрок)
+- счёт (а не сеты)
+ */
+// TODO всё привести к этому словарю
+
 val RANKER = TopologicalRanker()
 val PAIR_SORTER = TopologicalPairSorter()
+
+val CREATE_TOURNAMENT_COMMAND = "создатьТурнир"
+val FIELDS_COUNT_COMMAND = "полей"
+val MATCHES_COUNT_COMMAND = "матчей"
+val ADD_PLAYER_COMMAND = "добавитьУчастника"
+val REMOVE_PLAYER_COMMAND = "удалитьУчастника" // TODO реализовать
+val PAUSE_COMMAND = "участникОтошел" // TODO реализовать
+val RESUME_COMMAND = "участникВернулся" // TODO реализовать
+val START_TOURNAMENT_COMMAND =
+    "запуститьТурнир" // TODO запуск турнира (после этого будут предлагаться новые матчи в ответ на любое изменение в турнире, либо надпись "турнир завершён")
+val MATCH_RESULT_COMMAND = "результатМатча" // TODO реализовать
 
 suspend fun main() {
 
@@ -28,22 +49,12 @@ suspend fun main() {
 
         var t = MutableTournament(RANKER, PAIR_SORTER)
 
-        onCommand("createTournament") { // Начать настройку нового турнира
+        onCommand(CREATE_TOURNAMENT_COMMAND) { // Начать настройку нового турнира
             createTournament(it)?.let { tournament -> t = tournament }
         }
-
-        onCommand("fieldsCount") { fieldsCount(it, t) } // Поменять количество полей
-
-        onCommand("matchesCount") { matchesCount(it, t) } // Поменять количество матчей
-
-        onCommand("addPlayer") { addPlayer(it, t) } // Добавить игрока
-
-        // TODO поддержать:
-        //  - удаление игрока
-        //  - поставить на паузу
-        //  - снять с паузы игрока
-        //  - запуск турнира (после этого будут предлагаться новые матчи в ответ на любое изменение в турнире, либо надпись "турнир завершён")
-        //  - указать результат матча
+        onCommand(FIELDS_COUNT_COMMAND) { fieldsCount(it, t) } // Поменять количество полей
+        onCommand(MATCHES_COUNT_COMMAND) { matchesCount(it, t) } // Поменять количество матчей
+        onCommand(ADD_PLAYER_COMMAND) { addPlayer(it, t) } // Добавить игрока
 
     }.join()
 }
@@ -51,7 +62,7 @@ suspend fun main() {
 private suspend fun BehaviourContext.createTournament(
     message: CommonMessage<TextContent>,
 ): MutableTournament<TopologicalRanking>? {
-    var tablesCnt: Int? = null
+    var tablesCntMutable: Int? = null
     var res: MutableTournament<TopologicalRanking>? = null
 
     reply(
@@ -62,7 +73,7 @@ private suspend fun BehaviourContext.createTournament(
 
     processReply(
         { it.text?.toIntOrNull() },
-        { tablesCnt = it },
+        { tablesCntMutable = it },
         {
             buildEntities("") {
                 +"Отлично, будет задействовано " + underline("$it полей") + "."
@@ -71,7 +82,7 @@ private suspend fun BehaviourContext.createTournament(
         false,
     )
 
-    tablesCnt?.let { tablesCnt ->
+    tablesCntMutable?.let { tablesCnt ->
         reply(
             to = message,
             text = "А сколько матчей должен сыграть каждый участник за время турнира?",
@@ -91,7 +102,7 @@ private suspend fun BehaviourContext.createTournament(
                     +"Отлично, новый турнир создан!"
                 }
             },
-            false,
+            true,
         )
     }
 
@@ -148,7 +159,7 @@ private suspend fun BehaviourContext.addPlayer(
 ) {
     reply(
         to = message,
-        text = "Как зовут игрока? Повторяться нельзя",
+        text = "Введите имя/название участника (повторяться нельзя):",
         replyMarkup = replyForce(),
     )
 
@@ -160,7 +171,7 @@ private suspend fun BehaviourContext.addPlayer(
         },
         {
             buildEntities("") {
-                +"Отлично, игрок " + formatPlayerName(it) + " добавлен в турнир"
+                +"Отлично, участник " + formatPlayerName(it) + " добавлен в турнир"
             }
         },
         true,
