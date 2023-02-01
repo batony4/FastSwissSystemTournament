@@ -48,9 +48,9 @@ suspend fun main() {
 
         var t = MutableTournament(RANKER, PAIR_SORTER)
 
-        onCommand(CREATE_TOURNAMENT_COMMAND) { // Начать настройку нового турнира
-            createTournament(it)?.let { tournament -> t = tournament }
-        }
+        // Начать настройку нового турнира
+        onCommand(CREATE_TOURNAMENT_COMMAND) { createTournament(it)?.let { tournament -> t = tournament } }
+
         onCommand(FIELDS_COUNT_COMMAND) { fieldsCount(it, t) } // Поменять количество полей
         onCommand(MATCHES_COUNT_COMMAND) { matchesCount(it, t) } // Поменять количество матчей
         onCommand(ADD_PLAYER_COMMAND) { addPlayer(it, t) } // Добавить участника

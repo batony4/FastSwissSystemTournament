@@ -16,25 +16,4 @@ fun replyKeyboardOf(buttons: List<String>, buttonsPerLine: Int) =
         }
     }
 
-fun replyKeyboard1to16() = replyKeyboard(resizeKeyboard = true, oneTimeKeyboard = true, selective = true) {
-    row {
-        simpleButton("1")
-        simpleButton("2")
-        simpleButton("3")
-        simpleButton("4")
-        simpleButton("5")
-        simpleButton("6")
-        simpleButton("7")
-        simpleButton("8")
-    }
-    row {
-        simpleButton("9")
-        simpleButton("10")
-        simpleButton("11")
-        simpleButton("12")
-        simpleButton("13")
-        simpleButton("14")
-        simpleButton("15")
-        simpleButton("16")
-    }
-}
+fun replyKeyboard1to16() = replyKeyboardOf((1..16).map { it.toString() }, 8)
