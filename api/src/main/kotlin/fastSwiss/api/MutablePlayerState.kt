@@ -24,6 +24,8 @@ class MutablePlayerState(
     val pointsCnt by lazy { matchResults.values.sumOf { it.pointsMy } }
     val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
 
+    fun isStartedTournament() = matchesStartedCnt > 0
+
     fun getAllPlayersPlayedOrStarted(): List<MutablePlayerState> {
         val res = ArrayList(matchResults.keys)
         if (activeMatchWith != null) res += activeMatchWith

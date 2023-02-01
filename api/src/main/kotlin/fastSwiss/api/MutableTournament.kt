@@ -48,6 +48,8 @@ class MutableTournament<R : Ranking>(
 
     // ----- API -----
 
+    fun isTournamentStarted(): Boolean = allPlayers.any { it.isStartedTournament() }
+
     fun findPlayerByName(name: String): MutablePlayerState? = allPlayers.firstOrNull { it.name == name }
 
     fun getPlayersImmutable(): List<ImmutablePlayerState> = allPlayers
@@ -111,9 +113,12 @@ class MutableTournament<R : Ranking>(
         if (check) {
             if (allPlayers.contains(player)) throw IncorrectChangeException("Игрок $player уже существует")
 
-            val newAllPlayers = ArrayList(allPlayers) + player
-            if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
-                throw IncorrectChangeException("Если добавить нового игрока, то турнир не сходится")
+            // проверяем сходимость только если турнир начался
+            if (isTournamentStarted()) {
+                val newAllPlayers = ArrayList(allPlayers) + player
+                if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
+                    throw IncorrectChangeException("Если добавить нового игрока, то турнир не сходится")
+                }
             }
         }
 
@@ -138,9 +143,13 @@ class MutableTournament<R : Ranking>(
             if (player.isPlaysNow() || (player.matchesFinishedCnt > 0)) {
                 throw IncorrectChangeException("Невозможно удалить из турнира этого игрока, так как он уже начал играть")
             }
-            val newAllPlayers = ArrayList(allPlayers) - player
-            if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
-                throw IncorrectChangeException("Если удалить из турнира этого игрока, то турнир не сходится")
+
+            // проверяем сходимость только если турнир начался
+            if (isTournamentStarted()) {
+                val newAllPlayers = ArrayList(allPlayers) - player
+                if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
+                    throw IncorrectChangeException("Если удалить из турнира этого игрока, то турнир не сходится")
+                }
             }
         }
 
@@ -163,7 +172,7 @@ class MutableTournament<R : Ranking>(
     /**
      * Снятие игрока с паузы. Это значит, что на него снова могут назначаться матчи.
      */
-    fun unpausePlayer(name: String) {
+    fun resumePlayer(name: String) {
         val player = findPlayerByName(name)
             ?: throw IncorrectChangeException("Игрок, которого мы пытаемся снять с паузы, не найден в списках турнира")
 
@@ -185,9 +194,13 @@ class MutableTournament<R : Ranking>(
             if (allPlayers.any { it.matchesStartedCnt > newTournamentMatchesPerPlayerCnt }) {
                 throw IncorrectChangeException("Невозможно установить такое количество матчей на турнире: кто-то уже сыграл больше матчей")
             }
-            val s = createCurrentSimulation(allPlayers, newTournamentMatchesPerPlayerCnt)
-            if (!s.isCorrectNow()) {
-                throw IncorrectChangeException("Если поменять таким образом количество матчей на турнире, то он перестаёт сходиться")
+
+            // проверяем сходимость только если турнир начался
+            if (isTournamentStarted()) {
+                val s = createCurrentSimulation(allPlayers, newTournamentMatchesPerPlayerCnt)
+                if (!s.isCorrectNow()) {
+                    throw IncorrectChangeException("Если поменять таким образом количество матчей на турнире, то он перестаёт сходиться")
+                }
             }
         }
 
