@@ -29,17 +29,6 @@ import fastSwiss.api.tournamentTypes.topological.TopologicalRanking
 val RANKER = TopologicalRanker()
 val PAIR_SORTER = TopologicalPairSorter()
 
-val CREATE_TOURNAMENT_COMMAND = "createTournament"
-val FIELDS_COUNT_COMMAND = "fieldsCount"
-val MATCHES_COUNT_COMMAND = "matchesCount"
-val ADD_PLAYER_COMMAND = "addPlayer"
-val REMOVE_PLAYER_COMMAND = "removePlayer"
-val PAUSE_PLAYER_COMMAND = "pausePlayer"
-val UNPAUSE_PLAYER_COMMAND = "unpausePlayer"
-val START_TOURNAMENT_COMMAND =
-    "go" // TODO запуск турнира (после этого будут предлагаться новые матчи в ответ на любое изменение в турнире, либо надпись "турнир завершён")
-val MATCH_RESULT_COMMAND = "result" // TODO реализовать
-
 
 suspend fun main() {
 

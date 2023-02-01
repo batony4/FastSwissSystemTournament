@@ -57,17 +57,19 @@ private suspend fun <T> BehaviourContext.processReply(
 //      если он ещё не начат — то настройки и список игроков, а также дока по запуску турнира
 //      если он уже начат — то таблица и матчи, которые сейчас играются, а также настройки и дока по продолжению турнира
 private suspend fun BehaviourContext.tournamentInfoMessage(message: ContentMessage<TextContent>, t: MutableTournament<*>) {
+    val players = t.getPlayersImmutable()
     reply(message, buildEntities("") {
         +"Настройки турнира:\n" +
-                "- будет задействовано " + formatTournamentSetting("${t.tablesCnt} полей") + ";\n" +
-                "- каждый сыграет по " + formatTournamentSetting("${t.tournamentMatchesPerPlayerCnt} матчей") + ".\n" +
+                "- будет задействовано " + formatTournamentSetting("${t.tablesCnt} полей") + " (поменять: /$FIELDS_COUNT_COMMAND);\n" +
+                "- каждый сыграет по " + formatTournamentSetting("${t.tournamentMatchesPerPlayerCnt} матчей") + " (поменять: /$MATCHES_COUNT_COMMAND).\n" +
                 "\n" +
-                "Участники:\n" +
-                t.getPlayersImmutable().joinToString("\n") { "- ${it.name}" } + // TODO выводить, кто на паузе, а кто сейчас играет.
-                "\n\n" +
-                // TODO отсюда поменять
-                "Эти настройки можно поменять в любой момент (как до старта, так и во время турнира), командами /fieldsCount и /matchesCount соответственно.\n" +
-                "Теперь добавляйте игроков на турнир командой /addPlayer.\n" +
-                "Когда все игроки будут добавлены, запустите турнир командой /startTournament."
+                (if (players.isEmpty())
+                    "Участников нет. Добавьте их: /$ADD_PLAYER_COMMAND\n"
+                else
+                    "Участники (добавить: /$ADD_PLAYER_COMMAND, удалить: /$REMOVE_PLAYER_COMMAND):\n") +
+                t.getPlayersImmutable().joinToString { "- ${if (it.isPaused) "(пауза) " else ""}${it.name}\n" } +
+                "\n" +
+                "Любые настройки можно поменять как до, так и во время турнира.\n" +
+                "Когда всё будет настроено, запустите турнир командой /$START_TOURNAMENT_COMMAND."
     })
 }
