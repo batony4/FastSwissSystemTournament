@@ -55,6 +55,7 @@ suspend fun main() {
         onCommand(FIELDS_COUNT_COMMAND) { fieldsCount(it, t) } // Поменять количество полей
         onCommand(MATCHES_COUNT_COMMAND) { matchesCount(it, t) } // Поменять количество матчей
         onCommand(ADD_PLAYER_COMMAND) { addPlayer(it, t) } // Добавить игрока
+        onCommand(REMOVE_PLAYER_COMMAND) { removePlayer(it, t) } // Удалить игрока
 
     }.join()
 }
@@ -172,6 +173,28 @@ private suspend fun BehaviourContext.addPlayer(
         {
             buildEntities("") {
                 +"Отлично, участник " + formatPlayerName(it) + " добавлен в турнир"
+            }
+        },
+        true,
+    )
+}
+
+private suspend fun BehaviourContext.removePlayer(
+    message: CommonMessage<TextContent>,
+    t: MutableTournament<TopologicalRanking>,
+) {
+    reply(
+        to = message,
+        text = "Введите имя/название участника, которого надо  исключить из турнира:",
+        replyMarkup = replyForce(),
+    )
+
+    processReply(
+        { it.text },
+        { t.removePlayer(it, true) },
+        {
+            buildEntities("") {
+                +"Отлично, участник " + formatPlayerName(it) + " исключен в турнир"
             }
         },
         true,
