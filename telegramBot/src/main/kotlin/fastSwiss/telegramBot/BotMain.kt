@@ -32,11 +32,12 @@ val FIELDS_COUNT_COMMAND = "полей"
 val MATCHES_COUNT_COMMAND = "матчей"
 val ADD_PLAYER_COMMAND = "добавитьУчастника"
 val REMOVE_PLAYER_COMMAND = "удалитьУчастника" // TODO реализовать
-val PAUSE_COMMAND = "участникОтошел" // TODO реализовать
-val RESUME_COMMAND = "участникВернулся" // TODO реализовать
+val PAUSE_PLAYER_COMMAND = "участникОтошел" // TODO реализовать
+val UNPAUSE_PLAYER_COMMAND = "участникВернулся" // TODO реализовать
 val START_TOURNAMENT_COMMAND =
     "запуститьТурнир" // TODO запуск турнира (после этого будут предлагаться новые матчи в ответ на любое изменение в турнире, либо надпись "турнир завершён")
 val MATCH_RESULT_COMMAND = "результатМатча" // TODO реализовать
+
 
 suspend fun main() {
 
@@ -52,11 +53,14 @@ suspend fun main() {
         }
         onCommand(FIELDS_COUNT_COMMAND) { fieldsCount(it, t) } // Поменять количество полей
         onCommand(MATCHES_COUNT_COMMAND) { matchesCount(it, t) } // Поменять количество матчей
-        onCommand(ADD_PLAYER_COMMAND) { addPlayer(it, t) } // Добавить игрока
-        onCommand(REMOVE_PLAYER_COMMAND) { removePlayer(it, t) } // Удалить игрока
+        onCommand(ADD_PLAYER_COMMAND) { addPlayer(it, t) } // Добавить участника
+        onCommand(REMOVE_PLAYER_COMMAND) { removePlayer(it, t) } // Удалить участника
+        onCommand(PAUSE_PLAYER_COMMAND) { pausePlayer(it, t) } // Временно не назначать участника на новые матчи
+        onCommand(UNPAUSE_PLAYER_COMMAND) { unpausePlayer(it, t) } // Снова назначать участника на новые матчи
 
     }.join()
 }
+
 
 private suspend fun BehaviourContext.createTournament(
     message: CommonMessage<TextContent>,
@@ -67,7 +71,7 @@ private suspend fun BehaviourContext.createTournament(
     val firstAnswerMessage = processDialog(
         message,
         "Настроим новый турнир. Сколько полей есть в распоряжении?",
-        keyboard1to16(),
+        replyKeyboard1to16(),
         { it.text?.toIntOrNull() },
         { tablesCntMutable = it },
         { { +"Отлично, будет задействовано " + underline("$it полей") + "." } },
@@ -78,7 +82,7 @@ private suspend fun BehaviourContext.createTournament(
         processDialog(
             firstAnswerMessage!!,
             "А сколько матчей должен сыграть каждый участник за время турнира?",
-            keyboard1to16(),
+            replyKeyboard1to16(),
             { it.text?.toIntOrNull() },
             {
                 val t = MutableTournament(RANKER, PAIR_SORTER)
@@ -94,6 +98,7 @@ private suspend fun BehaviourContext.createTournament(
     return res
 }
 
+
 private suspend fun BehaviourContext.fieldsCount(
     message: CommonMessage<TextContent>,
     t: MutableTournament<TopologicalRanking>,
@@ -101,12 +106,13 @@ private suspend fun BehaviourContext.fieldsCount(
     processDialog(
         message,
         "Сколько полей есть в распоряжении?",
-        keyboard1to16(),
+        replyKeyboard1to16(),
         { it.text?.toIntOrNull() },
         { t.changeOverallTablesCnt(it) },
         { { +"Отлично, теперь задействовано " + underline("$it полей") + "." } },
         true,
     )
+
 
 private suspend fun BehaviourContext.matchesCount(
     message: CommonMessage<TextContent>,
@@ -115,7 +121,7 @@ private suspend fun BehaviourContext.matchesCount(
     processDialog(
         message,
         "Сколько матчей должен сыграть каждый участник за время турнира?",
-        keyboard1to16(),
+        replyKeyboard1to16(),
         { it.text?.toIntOrNull() },
         { t.changeTournamentMatchesPerPlayerCnt(it, true) },
         { { +"Отлично, теперь каждый сыграет по " + formatTournamentSetting("$it матчей") + "." } },
@@ -147,10 +153,40 @@ private suspend fun BehaviourContext.removePlayer(
 ) =
     processDialog(
         message,
-        "Введите имя/название участника, которого надо  исключить из турнира:",
-        replyForce(),
+        "Введите имя/название участника, которого надо исключить из турнира:",
+        replyKeyboardOf(t.getPlayerNames(), 4),
         { it.text },
         { t.removePlayer(it, true) },
         { { +"Отлично, участник " + formatPlayerName(it) + " исключен из турнира" } },
+        true,
+    )
+
+
+private suspend fun BehaviourContext.pausePlayer(
+    message: CommonMessage<TextContent>,
+    t: MutableTournament<TopologicalRanking>,
+) =
+    processDialog(
+        message,
+        "Введите имя/название участника, который отошёл:",
+        replyKeyboardOf(t.getUnpausedPlayerNames(), 4),
+        { it.text },
+        { t.pausePlayer(it) },
+        { { +"Отлично, участнику " + formatPlayerName(it) + " пока не будут назначаться новые матчи" } },
+        true,
+    )
+
+
+private suspend fun BehaviourContext.unpausePlayer(
+    message: CommonMessage<TextContent>,
+    t: MutableTournament<TopologicalRanking>,
+) =
+    processDialog(
+        message,
+        "Введите имя/название участника, который вернулся:",
+        replyKeyboardOf(t.getPausedPlayerNames(), 4),
+        { it.text },
+        { t.pausePlayer(it) },
+        { { +"Отлично, участнику " + formatPlayerName(it) + " снова может быть назначен новый матч" } },
         true,
     )

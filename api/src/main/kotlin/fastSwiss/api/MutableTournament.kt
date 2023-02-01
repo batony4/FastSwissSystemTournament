@@ -52,6 +52,10 @@ class MutableTournament<R : Ranking>(
 
     fun getPlayerNames() = allPlayers.map { it.name }
 
+    fun getPausedPlayerNames() = allPlayers.filter { it.isPaused }.map { it.name }
+
+    fun getUnpausedPlayerNames() = allPlayers.filter { !it.isPaused }.map { it.name }
+
     /**
      * Старт матча между соперниками, имена которых перечислены в [names].
      * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,

@@ -7,14 +7,21 @@ import dev.inmo.tgbotapi.utils.row
 
 fun replyForce() = ReplyForce(selective = true)
 
-fun keyboard1to16() = replyKeyboard(resizeKeyboard = true, oneTimeKeyboard = true, selective = true) {
+fun replyKeyboardOf(buttons: List<String>, buttonsPerLine: Int) =
+    replyKeyboard(resizeKeyboard = true, oneTimeKeyboard = true, selective = true) {
+        for (i in buttons.indices step buttonsPerLine) {
+            row {
+                buttons.subList(i, i + buttonsPerLine).forEach { simpleButton(it) }
+            }
+        }
+    }
+
+fun replyKeyboard1to16() = replyKeyboard(resizeKeyboard = true, oneTimeKeyboard = true, selective = true) {
     row {
         simpleButton("1")
         simpleButton("2")
         simpleButton("3")
         simpleButton("4")
-    }
-    row {
         simpleButton("5")
         simpleButton("6")
         simpleButton("7")
@@ -25,8 +32,6 @@ fun keyboard1to16() = replyKeyboard(resizeKeyboard = true, oneTimeKeyboard = tru
         simpleButton("10")
         simpleButton("11")
         simpleButton("12")
-    }
-    row {
         simpleButton("13")
         simpleButton("14")
         simpleButton("15")

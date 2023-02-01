@@ -13,6 +13,7 @@ import dev.inmo.tgbotapi.utils.buildEntities
 import fastSwiss.api.IncorrectChangeException
 import kotlinx.coroutines.flow.firstOrNull
 
+
 suspend fun <T> BehaviourContext.processDialog(
     message: ContentMessage<TextContent>,
     botText: String,
@@ -31,6 +32,7 @@ suspend fun <T> BehaviourContext.processDialog(
     return processReply(answerConverter, logic, formatAnswer, outputTournamentInfo)
 }
 
+
 private suspend fun <T> BehaviourContext.processReply(
     answerConverter: (CommonMessage<MessageContent>) -> T?,
     logic: (T) -> Unit,
@@ -48,6 +50,7 @@ private suspend fun <T> BehaviourContext.processReply(
         reply(message, buildEntities("") { +"Ошибка: ${e.message}" })
     }
 }
+
 
 // TODO вывод текущей инфы о турнире
 //      если он ещё не начат — то настройки и список игроков, а также дока по запуску турнира
