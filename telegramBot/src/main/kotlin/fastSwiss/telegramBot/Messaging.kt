@@ -3,25 +3,47 @@ package fastSwiss.telegramBot
 import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
+import dev.inmo.tgbotapi.types.buttons.KeyboardMarkup
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.content.MessageContent
+import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.utils.EntitiesBuilderBody
 import dev.inmo.tgbotapi.utils.buildEntities
 import fastSwiss.api.IncorrectChangeException
 import kotlinx.coroutines.flow.firstOrNull
 
-suspend fun <T> BehaviourContext.processReply(
+suspend fun <T> BehaviourContext.processDialog(
+    message: ContentMessage<TextContent>,
+    botText: String,
+    replyMarkup: KeyboardMarkup? = null,
     answerConverter: (CommonMessage<MessageContent>) -> T?,
     logic: (T) -> Unit,
     formatAnswer: (T) -> EntitiesBuilderBody,
     outputTournamentInfo: Boolean,
-) {
+): ContentMessage<TextContent>? {
+    reply(
+        to = message,
+        text = botText,
+        replyMarkup = replyMarkup,
+    )
+
+    return processReply(answerConverter, logic, formatAnswer, outputTournamentInfo)
+}
+
+private suspend fun <T> BehaviourContext.processReply(
+    answerConverter: (CommonMessage<MessageContent>) -> T?,
+    logic: (T) -> Unit,
+    formatAnswer: (T) -> EntitiesBuilderBody,
+    outputTournamentInfo: Boolean,
+): ContentMessage<TextContent>? {
     val message = waitContentMessage().firstOrNull()
-    val answer = (message?.let { answerConverter(it) } ?: return) as T
-    try {
+    val answer = (message?.let { answerConverter(it) } ?: return null) as T
+    return try {
         logic(answer)
-        reply(message, buildEntities("", formatAnswer(answer)))
-        if (outputTournamentInfo) tournamentInfoMessage()
+        reply(message, buildEntities("", formatAnswer(answer))).also {
+            if (outputTournamentInfo) tournamentInfoMessage()
+        }
     } catch (e: IncorrectChangeException) {
         reply(message, buildEntities("") { +"Ошибка: ${e.message}" })
     }

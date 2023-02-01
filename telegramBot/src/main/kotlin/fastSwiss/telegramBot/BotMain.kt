@@ -1,7 +1,6 @@
 package fastSwiss.telegramBot
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
-import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
@@ -65,13 +64,10 @@ private suspend fun BehaviourContext.createTournament(
     var tablesCntMutable: Int? = null
     var res: MutableTournament<TopologicalRanking>? = null
 
-    reply(
-        to = message,
-        text = "Настроим новый турнир. Сколько полей есть в распоряжении?",
-        replyMarkup = keyboard1to16(),
-    )
-
-    processReply(
+    val firstAnswerMessage = processDialog(
+        message,
+        "Настроим новый турнир. Сколько полей есть в распоряжении?",
+        keyboard1to16(),
         { it.text?.toIntOrNull() },
         { tablesCntMutable = it },
         { { +"Отлично, будет задействовано " + underline("$it полей") + "." } },
@@ -79,13 +75,10 @@ private suspend fun BehaviourContext.createTournament(
     )
 
     tablesCntMutable?.let { tablesCnt ->
-        reply(
-            to = message,
-            text = "А сколько матчей должен сыграть каждый участник за время турнира?",
-            replyMarkup = keyboard1to16(),
-        )
-
-        processReply(
+        processDialog(
+            firstAnswerMessage!!,
+            "А сколько матчей должен сыграть каждый участник за время турнира?",
+            keyboard1to16(),
             { it.text?.toIntOrNull() },
             {
                 val t = MutableTournament(RANKER, PAIR_SORTER)
@@ -104,50 +97,40 @@ private suspend fun BehaviourContext.createTournament(
 private suspend fun BehaviourContext.fieldsCount(
     message: CommonMessage<TextContent>,
     t: MutableTournament<TopologicalRanking>,
-) {
-    reply(
-        to = message,
-        text = "Сколько полей есть в распоряжении?",
-        replyMarkup = keyboard1to16(),
-    )
-
-    processReply(
+) =
+    processDialog(
+        message,
+        "Сколько полей есть в распоряжении?",
+        keyboard1to16(),
         { it.text?.toIntOrNull() },
         { t.changeOverallTablesCnt(it) },
         { { +"Отлично, теперь задействовано " + underline("$it полей") + "." } },
         true,
     )
-}
 
 private suspend fun BehaviourContext.matchesCount(
     message: CommonMessage<TextContent>,
     t: MutableTournament<TopologicalRanking>,
-) {
-    reply(
-        to = message,
-        text = "Сколько матчей должен сыграть каждый участник за время турнира?",
-        replyMarkup = keyboard1to16(),
-    )
-
-    processReply(
+) =
+    processDialog(
+        message,
+        "Сколько матчей должен сыграть каждый участник за время турнира?",
+        keyboard1to16(),
         { it.text?.toIntOrNull() },
         { t.changeTournamentMatchesPerPlayerCnt(it, true) },
         { { +"Отлично, теперь каждый сыграет по " + formatTournamentSetting("$it матчей") + "." } },
         true,
     )
-}
+
 
 private suspend fun BehaviourContext.addPlayer(
     message: CommonMessage<TextContent>,
     t: MutableTournament<TopologicalRanking>,
-) {
-    reply(
-        to = message,
-        text = "Введите имя/название участника (повторяться нельзя):",
-        replyMarkup = replyForce(),
-    )
-
-    processReply(
+) =
+    processDialog(
+        message,
+        "Введите имя/название участника (повторяться нельзя):",
+        replyForce(),
         { it.text },
         {
             val player = MutablePlayerState(it, false, 0, 0, 0)
@@ -156,22 +139,18 @@ private suspend fun BehaviourContext.addPlayer(
         { { +"Отлично, участник " + formatPlayerName(it) + " добавлен в турнир" } },
         true,
     )
-}
+
 
 private suspend fun BehaviourContext.removePlayer(
     message: CommonMessage<TextContent>,
     t: MutableTournament<TopologicalRanking>,
-) {
-    reply(
-        to = message,
-        text = "Введите имя/название участника, которого надо  исключить из турнира:",
-        replyMarkup = replyForce(),
-    )
-
-    processReply(
+) =
+    processDialog(
+        message,
+        "Введите имя/название участника, которого надо  исключить из турнира:",
+        replyForce(),
         { it.text },
         { t.removePlayer(it, true) },
         { { +"Отлично, участник " + formatPlayerName(it) + " исключен из турнира" } },
         true,
     )
-}
