@@ -5,12 +5,12 @@ const val CREATE_TOURNAMENT_COMMAND = "create_tournament"
 const val FIELDS_COUNT_COMMAND = "fields_count"
 const val MATCHES_COUNT_COMMAND = "matches_count"
 const val ADD_PLAYER_COMMAND = "add_player"
-const val REMOVE_PLAYER_COMMAND = "remove_player"
+const val REMOVE_PLAYER_COMMAND = "delete_player"
 const val START_TOURNAMENT_COMMAND =
     "go" // TODO запуск турнира (после этого будут предлагаться новые матчи в ответ на любое изменение в турнире, либо надпись "турнир завершён")
-const val MATCH_RESULT_COMMAND = "result" // TODO реализовать
+const val MATCH_RESULT_COMMAND = "result"
 const val PAUSE_PLAYER_COMMAND = "pause_player"
-const val UNPAUSE_PLAYER_COMMAND = "resume_player"
+const val UNPAUSE_PLAYER_COMMAND = "unpause"
 
 /**
  * Выводит список команд для регистрации в BotFather.

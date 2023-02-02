@@ -24,6 +24,10 @@ class MutableTournament<R : Ranking>(
 
     private var tablesOccupied = 0
 
+    // Матчи, которые сейчас играются
+
+    private val activeMatches = ArrayList<Pair<String, String>>()
+
     // Внутренние методы
 
     private fun generateNextMatch(): Pair<MutablePlayerState, MutablePlayerState>? {
@@ -54,6 +58,8 @@ class MutableTournament<R : Ranking>(
 
     fun getPlayersImmutable(): List<ImmutablePlayerState> = allPlayers
 
+    fun getActiveMatches(): List<Pair<String, String>> = activeMatches
+
     /**
      * Старт матча между соперниками, имена которых перечислены в [names].
      * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
@@ -78,6 +84,8 @@ class MutableTournament<R : Ranking>(
         tablesOccupied++
         p1.startMatchWith(p2)
         p2.startMatchWith(p1)
+
+        activeMatches += names
     }
 
     /**
@@ -98,6 +106,9 @@ class MutableTournament<R : Ranking>(
         tablesOccupied--
         p1.endMatch(sets.first, sets.second)
         p2.endMatch(sets.second, sets.first)
+
+        activeMatches -= names
+        activeMatches -= names.second to names.first // На всякий случай, вдруг при создании матча игроки задавались в обратном порядке
     }
 
     /**

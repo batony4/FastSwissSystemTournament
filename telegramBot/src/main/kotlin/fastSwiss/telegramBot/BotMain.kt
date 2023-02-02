@@ -52,6 +52,7 @@ suspend fun main() {
         onCommand(PAUSE_PLAYER_COMMAND) { pausePlayer(it, t) } // Временно не назначать участника на новые матчи
         onCommand(UNPAUSE_PLAYER_COMMAND) { unpausePlayer(it, t) } // Снова назначать участника на новые матчи
         onCommand(START_TOURNAMENT_COMMAND) { startTournament(it, t) } // Начать турнир
+        onCommand(MATCH_RESULT_COMMAND) { matchResult(it, t) } // Указать результат матча
 
     }.join()
 }
@@ -91,7 +92,7 @@ private suspend fun BehaviourContext.createTournament(
         )
 
         newTournament?.let {
-            tournamentInfoMessage(secondAnswerMessage!!, it)
+            outputTournamentInfoMessage(secondAnswerMessage!!, it)
             res = it
         }
     }
@@ -210,5 +211,39 @@ private suspend fun BehaviourContext.startTournament(
         )
     } catch (e: IncorrectChangeException) {
         reply(message, buildEntities("") { +"Ошибка: ${e.message}" })
+    }
+}
+
+
+private suspend fun BehaviourContext.matchResult(
+    message: CommonMessage<TextContent>,
+    t: MutableTournament<TopologicalRanking>,
+) {
+    var pMutable: Pair<String, String>? = null
+
+    val firstAnswerMessage = processDialog(
+        message,
+        "Какой матч завершился?",
+        replyKeyboardOf(t.getActiveMatches().map { it.first + " — " + it.second }, 2),
+        // TODO нет проверки существования игроков и даже количества токенов
+        { it.text?.split(" — ")?.let { tok -> tok[0] to tok[1] } },
+        { pMutable = it },
+        { { +"Отлично, доигран матч " + underline("${it.first} — ${it.second}") + "." } },
+        null,
+    )
+
+    pMutable?.let { p ->
+        processDialog(
+            firstAnswerMessage!!,
+            "Напишите через пробел два числа: сколько очков набрал ${p.first} и ${p.second}:",
+            replyForce(),
+            // TODO нет проверки типов и даже количества токенов
+            { it.text?.split(" ")?.let { tok -> tok[0].toInt() to tok[1].toInt() } },
+            { score ->
+                t.endMatch(p, score, true)
+            },
+            { { +"Отлично, результат матча записан!" } },
+            t,
+        )
     }
 }
