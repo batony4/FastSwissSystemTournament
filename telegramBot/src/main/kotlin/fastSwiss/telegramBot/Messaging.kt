@@ -34,7 +34,7 @@ suspend fun <T> BehaviourContext.processDialog(
 }
 
 
-private suspend fun <T> BehaviourContext.processReply(
+suspend fun <T> BehaviourContext.processReply(
     answerConverter: (CommonMessage<MessageContent>) -> T?,
     logic: (T) -> Unit,
     formatAnswer: (T) -> EntitiesBuilderBody,
@@ -60,14 +60,14 @@ suspend fun BehaviourContext.tournamentInfoMessage(message: ContentMessage<TextC
     val players = t.getPlayersImmutable()
     reply(message, buildEntities("") {
         +"Настройки турнира:\n" +
-                "- будет задействовано " + formatTournamentSetting("${t.tablesCnt} полей") + " (поменять: /$FIELDS_COUNT_COMMAND);\n" +
-                "- каждый сыграет по " + formatTournamentSetting("${t.tournamentMatchesPerPlayerCnt} матчей") + " (поменять: /$MATCHES_COUNT_COMMAND).\n" +
+                "• будет задействовано " + formatTournamentSetting("${t.tablesCnt} полей") + " (поменять: /$FIELDS_COUNT_COMMAND);\n" +
+                "• каждый сыграет по " + formatTournamentSetting("${t.tournamentMatchesPerPlayerCnt} матчей") + " (поменять: /$MATCHES_COUNT_COMMAND).\n" +
                 "\n" +
                 (if (players.isEmpty())
                     "Участников нет. Добавьте их: /$ADD_PLAYER_COMMAND\n"
                 else
                     "Участники (добавить: /$ADD_PLAYER_COMMAND, удалить: /$REMOVE_PLAYER_COMMAND):\n") +
-                t.getPlayersImmutable().joinToString { "- ${if (it.isPaused) "(пауза) " else ""}${it.name}\n" } +
+                t.getPlayersImmutable().joinToString("") { "• ${if (it.isPaused) "(пауза) " else ""}${it.name}\n" } +
                 "\n" +
                 "Любые настройки можно поменять как до, так и во время турнира.\n" +
                 "Когда всё будет готово, запустите турнир: /$START_TOURNAMENT_COMMAND."
