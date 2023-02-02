@@ -11,6 +11,6 @@ class ScoreAndBergerScorePairSorter : PairSorter<ScoreAndBergerScoreRanking> {
 
     override fun assessPair(player1: MutablePlayerState, player2: MutablePlayerState, ranking: ScoreAndBergerScoreRanking) =
         abs(ranking.scoreWithHandicap[player1]!!.pointsAvgWithHandicap - ranking.scoreWithHandicap[player2]!!.pointsAvgWithHandicap) +
-                0.4 * (player1.matchesFinishedCnt + player2.matchesFinishedCnt)
+                0.4 * (player1.getMatchesFinishedCnt() + player2.getMatchesFinishedCnt())
 
 }

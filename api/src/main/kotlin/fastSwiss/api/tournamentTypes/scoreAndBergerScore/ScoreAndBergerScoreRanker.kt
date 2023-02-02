@@ -19,11 +19,11 @@ class ScoreAndBergerScoreRanker : Ranker<ScoreAndBergerScoreRanking> {
     override fun generate(allPlayers: List<MutablePlayerState>): ScoreAndBergerScoreRanking {
         val scoreWithHandicap = allPlayers.associateWith { p ->
             ScoreWithHandicap(
-                p.matchesFinishedCnt,
-                p.pointsCnt,
-                p.setsDiff,
-                if (p.matchesFinishedCnt < p.handicapTours) p.handicapWins else 0,
-                if (p.matchesFinishedCnt < p.handicapTours) p.handicapLosses else 0,
+                p.getMatchesFinishedCnt(),
+                p.getPointsCnt(),
+                p.getSetsDiff(),
+                if (p.getMatchesFinishedCnt() < p.handicapTours) p.handicapWins else 0,
+                if (p.getMatchesFinishedCnt() < p.handicapTours) p.handicapLosses else 0,
             )
         }
 
