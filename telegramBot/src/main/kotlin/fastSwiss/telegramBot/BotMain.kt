@@ -19,6 +19,10 @@ import fastSwiss.api.MutableTournament
 import fastSwiss.api.tournamentTypes.topological.TopologicalPairSorter
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanker
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanking
+import fastSwiss.telegramBot.Keyboards.replyForce
+import fastSwiss.telegramBot.Keyboards.replyKeyboard1to16
+import fastSwiss.telegramBot.Keyboards.replyKeyboardOf
+import fastSwiss.telegramBot.Keyboards.replyKeyboardOfPlayers
 
 // TODO всё привести к этому словарю по всему коду. Сам словарь сохранить в отдельном файле.
 /*
@@ -43,9 +47,7 @@ suspend fun main() {
 
         var t = MutableTournament(RANKER, PAIR_SORTER)
 
-        // Начать настройку нового турнира
-        onCommand(CREATE_TOURNAMENT_COMMAND) { createTournament(it)?.let { tournament -> t = tournament } }
-
+        onCommand(CREATE_TOURNAMENT_COMMAND) { createTournament(it)?.let { tournament -> t = tournament } } // Начать создание турнира
         onCommand(FIELDS_COUNT_COMMAND) { fieldsCount(it, t) } // Поменять количество полей
         onCommand(MATCHES_COUNT_COMMAND) { matchesCount(it, t) } // Поменять количество матчей
         onCommand(ADD_PLAYER_COMMAND) { addPlayer(it, t) } // Добавить участника

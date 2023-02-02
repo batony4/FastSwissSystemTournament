@@ -9,6 +9,8 @@ import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.content.MessageContent
 import dev.inmo.tgbotapi.types.message.content.TextContent
+import dev.inmo.tgbotapi.types.message.textsources.bold
+import dev.inmo.tgbotapi.types.message.textsources.underline
 import dev.inmo.tgbotapi.utils.EntitiesBuilderBody
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.code
@@ -16,6 +18,12 @@ import fastSwiss.api.IncorrectChangeException
 import fastSwiss.api.MutableTournament
 import kotlinx.coroutines.flow.firstOrNull
 
+// форматирование
+
+fun formatTournamentSetting(setting: String) = underline(setting)
+fun formatPlayerName(name: String) = bold(name)
+
+// комплексные процедуры управления диалогом
 
 suspend fun <T> BehaviourContext.processDialog(
     message: ContentMessage<MessageContent>,
