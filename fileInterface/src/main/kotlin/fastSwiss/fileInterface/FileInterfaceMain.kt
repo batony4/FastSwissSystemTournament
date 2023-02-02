@@ -24,7 +24,7 @@ object FileInterfaceMain {
         inputFile.delete()
         outputFile.renameTo(inputFile)
 
-        t.generateCurrentRanking().outputRanking()
+        println(t.generateCurrentRanking().outputRanking())
     }
 
 

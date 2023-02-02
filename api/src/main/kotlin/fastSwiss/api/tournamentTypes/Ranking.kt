@@ -5,6 +5,6 @@ package fastSwiss.api.tournamentTypes
  */
 interface Ranking {
 
-    fun outputRanking()
+    fun outputRanking(): String
 
 }

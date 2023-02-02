@@ -11,9 +11,10 @@ class TopologicalRanking(
     val score: Map<MutablePlayerState, Score>,
 ) : AbstractRanking() {
 
-    override fun outputRanking() {
+    override fun outputRanking(): String {
+        val res = StringBuilder()
         val maxNameLength = allPlayersSorted.maxOf { it.name.length } + 2
-        print(
+        res.append(
             "Место ".padEnd(6)
                     + "Ранг "
                     + "Игрок".padEnd(maxNameLength) + " "
@@ -21,22 +22,24 @@ class TopologicalRanking(
                     + "Очков".padEnd(11)
                     + "Сетов".padEnd(13)
         )
-        repeat(allPlayersSorted.size) { idx -> print(" ${idx + 1}".padEnd(5)) }
-        println()
+        repeat(allPlayersSorted.size) { idx -> res.append(" ${idx + 1}".padEnd(5)) }
+        res.appendLine()
 
         for ((index, player) in allPlayersSorted.withIndex()) {
-            print(
+            res.append(
                 ("" + (index + 1) + ". ").padStart(6)
                         + ("(${topSortRank[player]})").padStart(4) + " "
                         + player.name.padEnd(max(maxNameLength, "Игрок".length)) + " "
-                        + (player.matchesFinishedCnt.toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
+                        + (player.getMatchesFinishedCnt().toString() + if (player.isPlaysNow()) "*" else "").padEnd(5)
                         + (score[player]!!.points.toString() + " (%.2f)".format(score[player]!!.pointsAvg)).padEnd(11)
                         + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
             )
 
-            outputMatrixForPlayer(player, allPlayersSorted)
-            println()
+            outputMatrixForPlayer(res, player, allPlayersSorted)
+            res.appendLine()
         }
+
+        return res.toString()
     }
 
 }
