@@ -79,9 +79,9 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
 
         val score = allPlayers.associateWith { p ->
             Score(
-                p.matchesFinishedCnt,
-                p.pointsCnt,
-                p.setsDiff,
+                p.getMatchesFinishedCnt(),
+                p.getPointsCnt(),
+                p.getSetsDiff(),
             )
         }
 

@@ -16,15 +16,15 @@ class MutablePlayerState(
         private set
     val matchResults = HashMap<MutablePlayerState, PlayerMatchResult>()
 
-    val matchesFinishedCnt by lazy { matchResults.size }
-    val matchesStartedCnt by lazy { matchesFinishedCnt + (if (activeMatchWith != null) 1 else 0) }
+    fun getMatchesFinishedCnt() = matchResults.size
+    fun getMatchesStartedCnt() = getMatchesFinishedCnt() + (if (activeMatchWith != null) 1 else 0)
 
-    val matchesWonCnt by lazy { matchResults.values.sumOf { it.winsMy } }
-    val matchesDrawnCnt by lazy { matchResults.values.sumOf { it.drawsMy } }
-    val pointsCnt by lazy { matchResults.values.sumOf { it.pointsMy } }
-    val setsDiff by lazy { matchResults.values.sumOf { it.setsDiff } }
+    fun getMatchesWonCnt() = matchResults.values.sumOf { it.winsMy }
+    fun getMatchesDrawnCnt() = matchResults.values.sumOf { it.drawsMy }
+    fun getPointsCnt() = matchResults.values.sumOf { it.pointsMy }
+    fun getSetsDiff() = matchResults.values.sumOf { it.setsDiff }
 
-    fun isStartedTournament() = matchesStartedCnt > 0
+    fun isStartedTournament() = getMatchesStartedCnt() > 0
 
     fun getAllPlayersPlayedOrStarted(): List<MutablePlayerState> {
         val res = ArrayList(matchResults.keys)
