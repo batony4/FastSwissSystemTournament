@@ -37,7 +37,7 @@ class MutableTournament<R : Ranking>(
         val allEligible = allPlayers
             .filter { !it.isPlaysNow() }
             .filter { !it.isPaused }
-            .filter { it.matchesFinishedCnt < tournamentMatchesPerPlayerCnt }
+            .filter { it.getMatchesFinishedCnt() < tournamentMatchesPerPlayerCnt }
 
 
         val bestMatch = listAllPairs(allEligible)
@@ -151,7 +151,7 @@ class MutableTournament<R : Ranking>(
             ?: throw IncorrectChangeException("Игрок, которого мы пытаемся удалить, не участвует в турнире")
 
         if (check) {
-            if (player.isPlaysNow() || (player.matchesFinishedCnt > 0)) {
+            if (player.isPlaysNow() || (player.getMatchesFinishedCnt() > 0)) {
                 throw IncorrectChangeException("Невозможно удалить из турнира этого игрока, так как он уже начал играть")
             }
 
@@ -202,7 +202,7 @@ class MutableTournament<R : Ranking>(
     @Throws(IncorrectChangeException::class)
     fun changeTournamentMatchesPerPlayerCnt(newTournamentMatchesPerPlayerCnt: Int, check: Boolean) {
         if (check) {
-            if (allPlayers.any { it.matchesStartedCnt > newTournamentMatchesPerPlayerCnt }) {
+            if (allPlayers.any { it.getMatchesStartedCnt() > newTournamentMatchesPerPlayerCnt }) {
                 throw IncorrectChangeException("Невозможно установить такое количество матчей на турнире: кто-то уже сыграл больше матчей")
             }
 
