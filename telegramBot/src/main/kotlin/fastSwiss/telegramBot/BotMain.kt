@@ -3,6 +3,7 @@
 package fastSwiss.telegramBot
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
+import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
@@ -10,6 +11,8 @@ import dev.inmo.tgbotapi.extensions.utils.extensions.raw.text
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.message.textsources.underline
+import dev.inmo.tgbotapi.utils.buildEntities
+import fastSwiss.api.IncorrectChangeException
 import fastSwiss.api.MutablePlayerState
 import fastSwiss.api.MutableTournament
 import fastSwiss.api.tournamentTypes.topological.TopologicalPairSorter
@@ -48,6 +51,7 @@ suspend fun main() {
         onCommand(REMOVE_PLAYER_COMMAND) { removePlayer(it, t) } // Удалить участника
         onCommand(PAUSE_PLAYER_COMMAND) { pausePlayer(it, t) } // Временно не назначать участника на новые матчи
         onCommand(UNPAUSE_PLAYER_COMMAND) { unpausePlayer(it, t) } // Снова назначать участника на новые матчи
+        onCommand(START_TOURNAMENT_COMMAND) { startTournament(it, t) } // Начать турнир
 
     }.join()
 }
@@ -186,3 +190,25 @@ private suspend fun BehaviourContext.unpausePlayer(
         { { +"Отлично, участнику " + formatPlayerName(it) + " снова может быть назначен новый матч" } },
         t,
     )
+
+
+private suspend fun BehaviourContext.startTournament(
+    message: CommonMessage<TextContent>,
+    t: MutableTournament<TopologicalRanking>,
+) {
+    try {
+        val matches = t.generateAndStartMatches(true)
+        reply(
+            message,
+            buildEntities("") {
+                +"Отлично, турнир начался!\n" +
+                        "\n" +
+                        "На поля приглашаются:\n" +
+                        matches.joinToString("") { "• ${it.first.name} — ${it.second.name}\n" }
+            }
+
+        )
+    } catch (e: IncorrectChangeException) {
+        reply(message, buildEntities("") { +"Ошибка: ${e.message}" })
+    }
+}
