@@ -47,75 +47,22 @@ suspend fun main() {
 
         var t = MutableTournament(RANKER, PAIR_SORTER)
 
-        onCommand(CREATE_TOURNAMENT_COMMAND) { createTournament(it)?.let { tournament -> t = tournament } } // Начать создание турнира
-        onCommand(FIELDS_COUNT_COMMAND) { fieldsCount(it, t) } // Поменять количество полей
-        onCommand(MATCHES_COUNT_COMMAND) { matchesCount(it, t) } // Поменять количество матчей
-        onCommand(ADD_PLAYER_COMMAND) { addPlayer(it, t) } // Добавить участника
-        onCommand(REMOVE_PLAYER_COMMAND) { removePlayer(it, t) } // Удалить участника
-        onCommand(PAUSE_PLAYER_COMMAND) { pausePlayer(it, t) } // Временно не назначать участника на новые матчи
-        onCommand(UNPAUSE_PLAYER_COMMAND) { unpausePlayer(it, t) } // Снова назначать участника на новые матчи
-        onCommand(START_TOURNAMENT_COMMAND) { startTournament(it, t) } // Начать турнир
-        onCommand(MATCH_RESULT_COMMAND) { matchResult(it, t) } // Указать результат матча
+        CommandsEnum.values().forEach { v ->
+            onCommand(v.commandName) { t = runDialog(it, t, v.dialog) }
+        }
+
+//        onCommand(CREATE_TOURNAMENT_COMMAND) { createTournament(it)?.let { tournament -> t = tournament } } // Начать создание турнира
+//        onCommand(FIELDS_COUNT_COMMAND) { fieldsCount(it, t) } // Поменять количество полей
+//        onCommand(MATCHES_COUNT_COMMAND) { matchesCount(it, t) } // Поменять количество матчей
+//        onCommand(ADD_PLAYER_COMMAND) { addPlayer(it, t) } // Добавить участника
+//        onCommand(REMOVE_PLAYER_COMMAND) { removePlayer(it, t) } // Удалить участника
+//        onCommand(PAUSE_PLAYER_COMMAND) { pausePlayer(it, t) } // Временно не назначать участника на новые матчи
+//        onCommand(UNPAUSE_PLAYER_COMMAND) { unpausePlayer(it, t) } // Снова назначать участника на новые матчи
+//        onCommand(START_TOURNAMENT_COMMAND) { startTournament(it, t) } // Начать турнир
+//        onCommand(MATCH_RESULT_COMMAND) { matchResult(it, t) } // Указать результат матча
 
     }.join()
 }
-
-
-private suspend fun BehaviourContext.createTournament(
-    message: CommonMessage<TextContent>,
-): MutableTournament<TopologicalRanking>? {
-    var tablesCntMutable: Int? = null
-    var res: MutableTournament<TopologicalRanking>? = null
-
-    val firstDialog = processDialog(
-        message,
-        "Настроим новый турнир. Сколько полей есть в распоряжении?",
-        replyKeyboard1to16(),
-        { it.text?.toIntOrNull() },
-        { tablesCntMutable = it },
-        { { +"Отлично, будет задействовано " + underline("$it полей") + "." } },
-        null,
-    )
-
-    tablesCntMutable?.let { tablesCnt ->
-        var newTournament: MutableTournament<TopologicalRanking>? = null
-        val secondDialog = processDialog(
-            firstDialog!!.first,
-            "А сколько матчей должен сыграть каждый участник за время турнира?",
-            replyKeyboard1to16(),
-            { it.text?.toIntOrNull() },
-            {
-                val t = MutableTournament(RANKER, PAIR_SORTER)
-                t.changeOverallTablesCnt(tablesCnt)
-                t.changeTournamentMatchesPerPlayerCnt(it, true)
-                newTournament = t
-            },
-            { { +"Отлично, новый турнир создан!" } },
-            null,
-        )
-
-        newTournament?.let {
-            outputTournamentInfoMessage(secondDialog!!.first, it)
-            res = it
-        }
-    }
-    return res
-}
-
-
-private suspend fun BehaviourContext.fieldsCount(
-    message: CommonMessage<TextContent>,
-    t: MutableTournament<TopologicalRanking>,
-) =
-    processDialog(
-        message,
-        "Сколько полей есть в распоряжении?",
-        replyKeyboard1to16(),
-        { it.text?.toIntOrNull() },
-        { t.changeOverallTablesCnt(it) },
-        { { +"Отлично, теперь задействовано " + underline("$it полей") + "." } },
-        t,
-    )
 
 
 private suspend fun BehaviourContext.matchesCount(
