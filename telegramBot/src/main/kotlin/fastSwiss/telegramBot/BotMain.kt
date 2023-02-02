@@ -9,6 +9,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPoll
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.text
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.message.textsources.underline
 import dev.inmo.tgbotapi.utils.buildEntities
@@ -64,7 +65,7 @@ private suspend fun BehaviourContext.createTournament(
     var tablesCntMutable: Int? = null
     var res: MutableTournament<TopologicalRanking>? = null
 
-    val firstAnswerMessage = processDialog(
+    val firstDialog = processDialog(
         message,
         "Настроим новый турнир. Сколько полей есть в распоряжении?",
         replyKeyboard1to16(),
@@ -76,8 +77,8 @@ private suspend fun BehaviourContext.createTournament(
 
     tablesCntMutable?.let { tablesCnt ->
         var newTournament: MutableTournament<TopologicalRanking>? = null
-        val secondAnswerMessage = processDialog(
-            firstAnswerMessage!!,
+        val secondDialog = processDialog(
+            firstDialog!!.first,
             "А сколько матчей должен сыграть каждый участник за время турнира?",
             replyKeyboard1to16(),
             { it.text?.toIntOrNull() },
@@ -92,7 +93,7 @@ private suspend fun BehaviourContext.createTournament(
         )
 
         newTournament?.let {
-            outputTournamentInfoMessage(secondAnswerMessage!!, it)
+            outputTournamentInfoMessage(secondDialog!!.first, it)
             res = it
         }
     }
@@ -216,12 +217,13 @@ private suspend fun BehaviourContext.startTournament(
 
 
 private suspend fun BehaviourContext.matchResult(
-    message: CommonMessage<TextContent>,
+    message: ContentMessage<TextContent>,
     t: MutableTournament<TopologicalRanking>,
 ) {
     var pMutable: Pair<String, String>? = null
 
-    val firstAnswerMessage = processDialog(
+    // TODO нет проверки, завершился ли хотя бы один матч
+    val firstDialog = processDialog(
         message,
         "Какой матч завершился?",
         replyKeyboardOf(t.getActiveMatches().map { it.first + " — " + it.second }, 2),
@@ -234,7 +236,7 @@ private suspend fun BehaviourContext.matchResult(
 
     pMutable?.let { p ->
         processDialog(
-            firstAnswerMessage!!,
+            firstDialog!!.first,
             "Напишите через пробел два числа: сколько очков набрал ${p.first} и ${p.second}:",
             replyForce(),
             // TODO нет проверки типов и даже количества токенов
