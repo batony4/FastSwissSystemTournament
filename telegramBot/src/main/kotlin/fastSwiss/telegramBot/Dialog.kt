@@ -30,7 +30,7 @@ class Dialog<A, R : Ranking>(
     val botText: String?,
 
     /** Какую клавиатуру выставляем пользователю для ответа. */
-    val replyMarkup: KeyboardMarkup? = null,
+    val replyMarkup: ((MutableTournament<R>) -> KeyboardMarkup)? = null,
 
     /**
      * Как из ответа пользователя получить [A].
@@ -75,7 +75,7 @@ suspend fun <A, R : Ranking> BehaviourContext.runDialog(
         reply(
             to = userQueryMessage,
             text = d.botText,
-            replyMarkup = d.replyMarkup,
+            replyMarkup = d.replyMarkup?.invoke(t),
         )
 
         waitContentMessage().firstOrNull()

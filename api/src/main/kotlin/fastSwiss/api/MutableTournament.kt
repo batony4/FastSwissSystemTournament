@@ -197,7 +197,7 @@ class MutableTournament<R : Ranking>(
     /**
      * Снятие игрока с паузы. Это значит, что на него снова могут назначаться матчи.
      */
-    fun resumePlayer(name: String) {
+    fun unpausePlayer(name: String) {
         val player = findPlayerByName(name)
             ?: throw IncorrectChangeException("Игрок, которого мы пытаемся снять с паузы, не найден в списках турнира")
 

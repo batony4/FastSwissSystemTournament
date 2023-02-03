@@ -58,7 +58,7 @@ object FileInterfaceMain {
             } else if (lineTrimmed.lowercase().startsWith("Пауза".lowercase())) { // Пауза
                 t.pausePlayer(lineTrimmed.split(" ").last())
             } else if (lineTrimmed.lowercase().startsWith("Продолжи".lowercase())) { // Продолжить
-                t.resumePlayer(lineTrimmed.split(" ").last())
+                t.unpausePlayer(lineTrimmed.split(" ").last())
             } else if (lineTrimmed.lowercase().startsWith("Удал".lowercase())) { // Удалить из турнира
                 t.removePlayer(lineTrimmed.split(" ").last(), true)
             } else if (lineTrimmed.split(" ").first().let { name -> t.findPlayerByName(name) != null }) { // Результат матча
