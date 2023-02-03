@@ -238,8 +238,7 @@ class MutableTournament<R : Ranking>(
 
             // проверяем сходимость только если турнир начался
             if (isTournamentStarted) {
-                val s = createCurrentSimulation(allPlayers, newTournamentMatchesPerPlayerCnt)
-                if (!s.isCorrectNow()) {
+                if (!createCurrentSimulation(allPlayers, newTournamentMatchesPerPlayerCnt).isCorrectNow()) {
                     throw IncorrectChangeException("Если поменять таким образом количество матчей на турнире, то он перестаёт сходиться")
                 }
             }
@@ -260,7 +259,7 @@ class MutableTournament<R : Ranking>(
      * Сгенерировать максимум наилучших матчей, которые можно сыграть в текущих обстоятельствах (с учётом числа свободных столов,
      * а также, сходимости турнира), и начать их.
      * В случае, если при текущих ожидающих игроках никакой следующий матч не будет корректным, либо нет свободных столов,
-     * возвращает пусой список.
+     * возвращает пустой список.
      * Если [check] == `true`, то сначала будет проведена проверка, корректен ли в принципе турнир на данный момент и если окажется,
      * что он не может сойтись уже сейчас, то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
      * Если же [check] == `false`, то проверок сходимости производиться не будет, и метод вернёт
@@ -282,6 +281,8 @@ class MutableTournament<R : Ranking>(
         }
         return res
     }
+
+    fun isTournamentFinished() = createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt).isFinishedNow()
 
     fun hasFreeTables() = tablesOccupied < tablesCnt
 

@@ -103,9 +103,20 @@ suspend fun <A, R : Ranking> BehaviourContext.runDialog(
                             matches.joinToString("") { "• ${it.first.name} — ${it.second.name}\n" }
                 })
             } else {
-                // TODO проверка 2 вариантов:
-                //  1) нет матчей, но турнир не завершён,
-                //  2) нет матчей, турнир завершён
+                if (t.isTournamentFinished()) {
+                    sendMessage(userQueryMessage.chat, buildEntities("") { +"Турнир завершён!" })
+                } else {
+                    if (t.hasFreeTables()) {
+                        sendMessage(
+                            userQueryMessage.chat,
+                            buildEntities("") {
+                                +"В данный момент невозможно запустить матч между кем-то из ожидающих участников." +
+                                        "Необходимо дождаться, когда доиграет кто-то ещё"
+                            })
+                    } else {
+                        sendMessage(userQueryMessage.chat, buildEntities("") { +"Все поля заняты" })
+                    }
+                }
             }
         }
 
