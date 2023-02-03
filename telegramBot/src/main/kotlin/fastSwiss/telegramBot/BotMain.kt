@@ -3,7 +3,6 @@
 package fastSwiss.telegramBot
 
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
-import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
@@ -12,8 +11,6 @@ import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.types.message.textsources.underline
-import dev.inmo.tgbotapi.utils.buildEntities
-import fastSwiss.api.IncorrectChangeException
 import fastSwiss.api.MutablePlayerState
 import fastSwiss.api.MutableTournament
 import fastSwiss.api.tournamentTypes.topological.TopologicalPairSorter
@@ -141,29 +138,6 @@ private suspend fun BehaviourContext.unpausePlayer(
         { { +"Отлично, участнику " + formatPlayerName(it) + " снова может быть назначен новый матч" } },
         t,
     )
-
-
-private suspend fun BehaviourContext.startTournament(
-    message: CommonMessage<TextContent>,
-    t: MutableTournament<TopologicalRanking>,
-) {
-    try {
-        t.startTournament()
-        val matches = t.generateAndStartMatches(true)
-        reply(
-            message,
-            buildEntities("") {
-                +"Отлично, турнир начался!\n" +
-                        "\n" +
-                        "На поля приглашаются:\n" +
-                        matches.joinToString("") { "• ${it.first.name} — ${it.second.name}\n" }
-            }
-
-        )
-    } catch (e: IncorrectChangeException) {
-        reply(message, buildEntities("") { +"Ошибка: ${e.message}" })
-    }
-}
 
 
 private suspend fun BehaviourContext.matchResult(

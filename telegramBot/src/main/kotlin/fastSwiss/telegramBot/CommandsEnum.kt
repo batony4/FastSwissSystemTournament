@@ -58,6 +58,21 @@ enum class CommandsEnum(
             shouldGenerateMatchesIfTournamentStarted = true,
         ),
     ),
+
+    START_TOURNAMENT_COMMAND(
+        "start_tournament",
+        "Запустить турнир",
+        Dialog(
+            null,
+            null,
+            { null },
+            { _, t, _ -> t.startTournament(); t },
+            { { +"Отлично, турнир запущен!" } },
+            shouldOutputTournamentInfo = false,
+            shouldGenerateMatchesIfTournamentStarted = true,
+        ),
+    ),
+
     ;
 }
 
@@ -65,10 +80,12 @@ enum class CommandsEnum(
 const val MATCHES_COUNT_COMMAND = "matches_count"
 const val ADD_PLAYER_COMMAND = "add_player"
 const val REMOVE_PLAYER_COMMAND = "delete_player"
+const val TOURNAMENT_INFO_COMMAND = "info" // TODO реализовать. просто выводит инфу о турнире
 const val START_TOURNAMENT_COMMAND = "go"
 const val MATCH_RESULT_COMMAND = "result"
 const val PAUSE_PLAYER_COMMAND = "pause_player"
 const val UNPAUSE_PLAYER_COMMAND = "unpause"
+
 
 /**
  * Выводит список команд для регистрации в BotFather.
