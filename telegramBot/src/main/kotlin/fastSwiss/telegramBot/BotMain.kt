@@ -148,6 +148,7 @@ private suspend fun BehaviourContext.startTournament(
     t: MutableTournament<TopologicalRanking>,
 ) {
     try {
+        t.startTournament()
         val matches = t.generateAndStartMatches(true)
         reply(
             message,

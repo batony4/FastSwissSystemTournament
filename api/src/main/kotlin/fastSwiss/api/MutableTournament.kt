@@ -12,6 +12,10 @@ class MutableTournament<R : Ranking>(
 
     // Настройки турнира
 
+    // TODO в FileInterfaceMain явно начинать турнир с указанием первого матча
+    var isTournamentStarted: Boolean = false
+        private set
+
     var tablesCnt: Int = 1
         private set
 
@@ -52,7 +56,13 @@ class MutableTournament<R : Ranking>(
 
     // ----- API -----
 
-    fun isTournamentStarted(): Boolean = allPlayers.any { it.isStartedTournament() }
+    fun startTournament() {
+        if (isTournamentStarted) {
+            throw IncorrectChangeException("Турнир уже начат")
+        }
+
+        isTournamentStarted = true
+    }
 
     fun findPlayerByName(name: String): MutablePlayerState? = allPlayers.firstOrNull { it.name == name }
 
@@ -68,6 +78,10 @@ class MutableTournament<R : Ranking>(
      */
     @Throws(IncorrectChangeException::class)
     fun startMatch(names: Pair<String, String>, check: Boolean) {
+        if (!isTournamentStarted) {
+            throw IncorrectChangeException("Необходимо запустить турнир")
+        }
+
         val p1 = findPlayerByName(names.first) ?: throw IncorrectChangeException("Игрок ${names.first} не найден")
         val p2 = findPlayerByName(names.second) ?: throw IncorrectChangeException("Игрок ${names.second} не найден")
 
@@ -125,7 +139,7 @@ class MutableTournament<R : Ranking>(
             if (allPlayers.contains(player)) throw IncorrectChangeException("Игрок $player уже существует")
 
             // проверяем сходимость только если турнир начался
-            if (isTournamentStarted()) {
+            if (isTournamentStarted) {
                 val newAllPlayers = ArrayList(allPlayers) + player
                 if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
                     throw IncorrectChangeException("Если добавить нового игрока, то турнир не сходится")
@@ -156,7 +170,7 @@ class MutableTournament<R : Ranking>(
             }
 
             // проверяем сходимость только если турнир начался
-            if (isTournamentStarted()) {
+            if (isTournamentStarted) {
                 val newAllPlayers = ArrayList(allPlayers) - player
                 if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
                     throw IncorrectChangeException("Если удалить из турнира этого игрока, то турнир не сходится")
@@ -207,7 +221,7 @@ class MutableTournament<R : Ranking>(
             }
 
             // проверяем сходимость только если турнир начался
-            if (isTournamentStarted()) {
+            if (isTournamentStarted) {
                 val s = createCurrentSimulation(allPlayers, newTournamentMatchesPerPlayerCnt)
                 if (!s.isCorrectNow()) {
                     throw IncorrectChangeException("Если поменять таким образом количество матчей на турнире, то он перестаёт сходиться")

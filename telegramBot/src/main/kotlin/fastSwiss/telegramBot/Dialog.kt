@@ -87,7 +87,7 @@ suspend fun <A, R : Ranking> BehaviourContext.runDialog(
             outputTournamentInfoMessage(userAnswerMessage.chat, res)
         }
 
-        if (d.shouldGenerateMatchesIfTournamentStarted) {
+        if (t.isTournamentStarted && d.shouldGenerateMatchesIfTournamentStarted) {
             // TODO
         }
 
