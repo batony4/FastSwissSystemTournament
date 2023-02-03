@@ -12,7 +12,6 @@ class MutableTournament<R : Ranking>(
 
     // Настройки турнира
 
-    // TODO в FileInterfaceMain явно начинать турнир с указанием первого матча
     var isTournamentStarted: Boolean = false
         private set
 
