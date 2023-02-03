@@ -121,16 +121,25 @@ enum class CommandsEnum(
         Dialog(
             "Какой матч завершился?",
             { t -> replyKeyboardOf(t.getActiveMatches().map { it.first + " — " + it.second }, 2) },
-            // TODO нет проверки существования игроков и даже количества токенов
-            { it.text?.split(" ")?.let { tok -> tok[0] to tok[1] } },
+            { it.text?.split(" ")?.let { tok -> if (tok.size != 2) null else (tok[0] to tok[1]) } },
             { ansMsg, t, p ->
 
                 runInteraction(
                     ansMsg, t, Dialog(
                         "Напишите через пробел два числа: сколько очков набрал ${p.first} и ${p.second}:",
                         { replyForce() },
-                        // TODO нет проверки типов и даже количества токенов
-                        { it.text?.split(" ")?.let { tok -> tok[0].toInt() to tok[1].toInt() } },
+                        {
+                            it.text?.split(" ")?.let { tok ->
+                                if (tok.size != 2)
+                                    null
+                                else
+                                    (tok[0].toIntOrNull()?.let { t0 ->
+                                        tok[1].toIntOrNull()?.let { t1 ->
+                                            t0 to t1
+                                        }
+                                    })
+                            }
+                        },
                         { _, _, score ->
                             t.endMatch(p, score, true)
                             t
