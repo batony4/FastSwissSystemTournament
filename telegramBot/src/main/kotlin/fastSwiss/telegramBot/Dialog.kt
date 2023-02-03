@@ -4,7 +4,6 @@ import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
 import dev.inmo.tgbotapi.types.buttons.KeyboardMarkup
-import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.content.MessageContent
 import dev.inmo.tgbotapi.utils.EntitiesBuilderBody
@@ -23,8 +22,11 @@ import kotlinx.coroutines.flow.firstOrNull
  */
 class Dialog<A, R : Ranking>(
 
-    /** Текст вопроса, который задаёт бот в ответ на команду пользователя (или в ответ на какое-то предыдущее сообщение пользователя. */
-    val botText: String,
+    /**
+     * Текст вопроса, который задаёт бот в ответ на команду пользователя (или в ответ на какое-то предыдущее сообщение пользователя).
+     * Если `null`, то вопрос не задаётся и ответ от пользователя не ожидается, а сразу вызывается [logic].
+     */
+    val botText: String?,
 
     /** Какую клавиатуру выставляем пользователю для ответа. */
     val replyMarkup: KeyboardMarkup? = null,
@@ -35,7 +37,7 @@ class Dialog<A, R : Ranking>(
      * `null` должен возвращаться в случае, если не удалось получить корректный ответ.
      * В этом случае, [logic] не будет вызвана, а вместо этого отобразится ошибка.
      */
-    val answerExtractor: (CommonMessage<MessageContent>) -> A?,
+    val answerExtractor: (ContentMessage<MessageContent>) -> A?,
 
     /**
      * Логика обработки ответа пользователя в случае, если удалось извлечь ответ в корректном формате.
@@ -46,7 +48,7 @@ class Dialog<A, R : Ranking>(
      *
      * Возвращается обновлённый турнир.
      */
-    val logic: suspend BehaviourContext.(CommonMessage<MessageContent>, MutableTournament<R>, A) -> MutableTournament<R>,
+    val logic: suspend BehaviourContext.(ContentMessage<MessageContent>, MutableTournament<R>, A) -> MutableTournament<R>,
 
     /** Нужно ли по итогам ответа пользователя боту вывести какое-то своё сообщение? Если нет, то `null`. */
     val finalMessage: ((A) -> EntitiesBuilderBody)?,
@@ -68,13 +70,18 @@ suspend fun <A, R : Ranking> BehaviourContext.runDialog(
     d: Dialog<A, R>,
 ): MutableTournament<R> {
 
-    reply(
-        to = userQueryMessage,
-        text = d.botText,
-        replyMarkup = d.replyMarkup,
-    )
+    val userAnswerMessage = if (d.botText != null) {
+        reply(
+            to = userQueryMessage,
+            text = d.botText,
+            replyMarkup = d.replyMarkup,
+        )
 
-    val userAnswerMessage = waitContentMessage().firstOrNull()
+        waitContentMessage().firstOrNull()
+    } else {
+        userQueryMessage
+    }
+
     val answer = (userAnswerMessage?.let { d.answerExtractor(it) } ?: return t) as A // TODO: вывести ошибку, что некорректный ввод юзера
     try {
         val res = d.logic(this, userAnswerMessage, t, answer)
@@ -84,7 +91,7 @@ suspend fun <A, R : Ranking> BehaviourContext.runDialog(
         }
 
         if (d.shouldOutputTournamentInfo) {
-            outputTournamentInfoMessage(userAnswerMessage.chat, res)
+            outputTournamentInfoMessage(userQueryMessage.chat, res)
         }
 
         if (t.isTournamentStarted && d.shouldGenerateMatchesIfTournamentStarted) {
