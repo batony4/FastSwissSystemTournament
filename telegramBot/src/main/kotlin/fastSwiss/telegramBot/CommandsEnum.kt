@@ -13,7 +13,7 @@ import fastSwiss.telegramBot.Keyboards.replyKeyboardOfPlayers
 enum class CommandsEnum(
     val commandName: String,
     val commentRus: String,
-    val dialog: Dialog<*, TopologicalRanking>,
+    val interaction: Interaction<*, TopologicalRanking>,
 ) {
     CREATE_TOURNAMENT_COMMAND(
         "create_tournament",
@@ -24,7 +24,7 @@ enum class CommandsEnum(
             { it.text?.toIntOrNull() },
             { ansMsg, t, fieldsCnt ->
 
-                runDialog(
+                runInteraction(
                     ansMsg, t, Dialog(
                         "А сколько матчей должен сыграть каждый участник за время турнира?",
                         { replyKeyboard1to16() },
@@ -42,7 +42,7 @@ enum class CommandsEnum(
                 )
 
             },
-            finalMessage = null,
+            finalBotMessage = null,
             shouldOutputTournamentInfo = false,
             shouldGenerateMatchesIfTournamentStarted = false,
         ),
@@ -107,10 +107,7 @@ enum class CommandsEnum(
     START_TOURNAMENT_COMMAND(
         "go",
         "Запустить турнир",
-        Dialog(
-            null,
-            null,
-            { null },
+        JustAction(
             { _, t, _ -> t.startTournament(true); t },
             { { +"Отлично, турнир запущен!" } },
             shouldOutputTournamentInfo = false,
@@ -128,7 +125,7 @@ enum class CommandsEnum(
             { it.text?.split(" ")?.let { tok -> tok[0] to tok[1] } },
             { ansMsg, t, p ->
 
-                runDialog(
+                runInteraction(
                     ansMsg, t, Dialog(
                         "Напишите через пробел два числа: сколько очков набрал ${p.first} и ${p.second}:",
                         { replyForce() },

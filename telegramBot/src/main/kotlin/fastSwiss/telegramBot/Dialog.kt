@@ -1,18 +1,12 @@
 package fastSwiss.telegramBot
 
-import dev.inmo.tgbotapi.extensions.api.send.reply
-import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
 import dev.inmo.tgbotapi.types.buttons.KeyboardMarkup
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.content.MessageContent
 import dev.inmo.tgbotapi.utils.EntitiesBuilderBody
-import dev.inmo.tgbotapi.utils.buildEntities
-import fastSwiss.api.IncorrectChangeException
 import fastSwiss.api.MutableTournament
 import fastSwiss.api.tournamentTypes.Ranking
-import kotlinx.coroutines.flow.firstOrNull
 
 /**
  * Логика:
@@ -25,9 +19,8 @@ class Dialog<A, R : Ranking>(
 
     /**
      * Текст вопроса, который задаёт бот в ответ на команду пользователя (или в ответ на какое-то предыдущее сообщение пользователя).
-     * Если `null`, то вопрос не задаётся и ответ от пользователя не ожидается, а сразу вызывается [logic].
      */
-    val botText: String?,
+    val botText: String,
 
     /** Какую клавиатуру выставляем пользователю для ответа. */
     val replyMarkup: ((MutableTournament<R>) -> KeyboardMarkup)? = null,
@@ -49,83 +42,17 @@ class Dialog<A, R : Ranking>(
      *
      * Возвращается обновлённый турнир.
      */
-    val logic: suspend BehaviourContext.(ContentMessage<MessageContent>, MutableTournament<R>, A) -> MutableTournament<R>,
+    override val logic: suspend BehaviourContext.(ContentMessage<MessageContent>, MutableTournament<R>, A) -> MutableTournament<R>,
 
     /** Нужно ли по итогам ответа пользователя боту вывести какое-то своё сообщение? Если нет, то `null`. */
-    val finalMessage: ((A) -> EntitiesBuilderBody)?,
+    override val finalBotMessage: ((A) -> EntitiesBuilderBody)?,
 
     /** Надо ли вслед за успешным выполнением всего вышеперечисленного вывести информацию о турнире? */
-    val shouldOutputTournamentInfo: Boolean,
+    override val shouldOutputTournamentInfo: Boolean,
 
     /**
      * Надо ли попытаться сгенерировать очередные матчи для турнира (в случае, если он уже стартовал),
      * либо констатировать, что турнир завершён.
      */
-    val shouldGenerateMatchesIfTournamentStarted: Boolean,
-)
-
-
-suspend fun <A, R : Ranking> BehaviourContext.runDialog(
-    userQueryMessage: ContentMessage<MessageContent>,
-    t: MutableTournament<R>,
-    d: Dialog<A, R>,
-): MutableTournament<R> {
-
-    val userAnswerMessage = if (d.botText != null) {
-        reply(
-            to = userQueryMessage,
-            text = d.botText,
-            replyMarkup = d.replyMarkup?.invoke(t),
-        )
-
-        waitContentMessage().firstOrNull()
-    } else {
-        userQueryMessage
-    }
-
-    val answer = (userAnswerMessage?.let { d.answerExtractor(it) } ?: return t) // TODO: вывести ошибку, что некорректный ввод юзера
-    try {
-        val res = d.logic(this, userAnswerMessage, t, answer)
-
-        d.finalMessage?.let {
-            reply(userAnswerMessage, buildEntities("", it(answer)))
-        }
-
-        if (d.shouldOutputTournamentInfo) {
-            outputTournamentInfoMessage(userQueryMessage.chat, res)
-        }
-
-        if (t.isTournamentStarted && d.shouldGenerateMatchesIfTournamentStarted) {
-            val matches = t.generateAndStartMatches(true)
-            if (matches.isNotEmpty()) {
-                sendMessage(userQueryMessage.chat, buildEntities("") {
-                    +"На поля приглашаются:\n" +
-                            matches.joinToString("") { "• ${it.first.name} — ${it.second.name}\n" }
-                })
-            } else {
-                if (t.isTournamentFinished()) {
-                    sendMessage(userQueryMessage.chat, buildEntities("") { +"Турнир завершён!" })
-                } else {
-                    if (t.hasFreeTables()) {
-                        sendMessage(
-                            userQueryMessage.chat,
-                            buildEntities("") {
-                                +"В данный момент невозможно запустить матч между кем-то из ожидающих участников." +
-                                        "Необходимо дождаться, когда доиграет кто-то ещё"
-                            })
-                    } else {
-                        sendMessage(userQueryMessage.chat, buildEntities("") { +"Все поля заняты" })
-                    }
-                }
-            }
-        }
-
-        return res
-    } catch (e: IncorrectChangeException) {
-
-        reply(userAnswerMessage, buildEntities("") { +"Ошибка: ${e.message}" })
-        return t
-
-    }
-}
-
+    override val shouldGenerateMatchesIfTournamentStarted: Boolean,
+) : Interaction<A, R>

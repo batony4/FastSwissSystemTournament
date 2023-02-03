@@ -33,7 +33,7 @@ suspend fun main() {
             onCommand(v.commandName) {
                 val chatId = it.chat.id.chatId
                 val t = tournaments.getOrDefault(chatId, MutableTournament(RANKER, PAIR_SORTER))
-                tournaments[chatId] = runDialog(it, t, v.dialog)
+                tournaments[chatId] = runInteraction(it, t, v.interaction)
             }
         }
     }.join()
