@@ -104,7 +104,9 @@ suspend fun <A, R : Ranking> BehaviourContext.runInteraction(
                 })
             } else {
                 if (t.isTournamentFinished()) {
-                    sendMessage(userQueryMessage.chat, buildEntities("") { +"Турнир завершён!" })
+                    sendMessage(
+                        userQueryMessage.chat,
+                        buildEntities("") { +"Турнир завершён! С окончательными результатами вы можете познакомиться по ссылке выше." })
                 } else {
                     if (t.hasFreeTables()) {
                         sendMessage(
