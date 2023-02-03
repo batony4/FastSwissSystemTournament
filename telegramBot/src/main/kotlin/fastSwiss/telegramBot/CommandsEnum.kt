@@ -32,7 +32,7 @@ enum class CommandsEnum(
                         { _, _, tablesCnt ->
                             val res = fastSwiss.api.MutableTournament(RANKER, PAIR_SORTER)
                             res.changeTournamentMatchesPerPlayerCnt(fieldsCnt, true)
-                            res.changeOverallTablesCnt(tablesCnt)
+                            res.changeOverallTablesCnt(tablesCnt, true)
                             res
                         },
                         { { +"Отлично, новый турнир создан!" } },
@@ -55,7 +55,7 @@ enum class CommandsEnum(
             "Сколько полей есть в распоряжении?",
             { replyKeyboard1to16() },
             { it.text?.toIntOrNull() },
-            { _, t, fieldsCnt -> t.changeOverallTablesCnt(fieldsCnt); t },
+            { _, t, fieldsCnt -> t.changeOverallTablesCnt(fieldsCnt, true); t },
             { { +"Отлично, теперь задействовано " + underline("$it полей") + "." } },
             shouldOutputTournamentInfo = true,
             shouldGenerateMatchesIfTournamentStarted = true,

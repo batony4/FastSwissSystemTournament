@@ -178,7 +178,7 @@ class MutableTournament<R : Ranking>(
     @Throws(IncorrectChangeException::class)
     fun removePlayer(name: String, check: Boolean) {
         val player = findPlayerByName(name)
-            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся удалить, не участвует в турнире")
+            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся удалить, не найден в турнире")
 
         if (check) {
             if (player.isPlaysNow() || (player.getMatchesFinishedCnt() > 0)) {
@@ -205,7 +205,7 @@ class MutableTournament<R : Ranking>(
      */
     fun pausePlayer(name: String) {
         val player = findPlayerByName(name)
-            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся приостановить, не найден в списках турнира")
+            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся приостановить, не найден в турнире")
 
         player.isPaused = true
     }
@@ -215,7 +215,7 @@ class MutableTournament<R : Ranking>(
      */
     fun unpausePlayer(name: String) {
         val player = findPlayerByName(name)
-            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся снять с паузы, не найден в списках турнира")
+            ?: throw IncorrectChangeException("Игрок, которого мы пытаемся снять с паузы, не найден в турнире")
 
         player.isPaused = false
     }
@@ -236,8 +236,16 @@ class MutableTournament<R : Ranking>(
                 throw IncorrectChangeException("Невозможно установить такое количество матчей на турнире: кто-то уже сыграл больше матчей")
             }
 
+            if (newTournamentMatchesPerPlayerCnt < 1) {
+                throw IncorrectChangeException("Количество матчей должно быть больше 0")
+            }
+
             // проверяем сходимость только если турнир начался
             if (isTournamentStarted) {
+                if (newTournamentMatchesPerPlayerCnt > allPlayers.size - 1) {
+                    throw IncorrectChangeException("Столько матчей не получится сыграть, даже если каждый участник сыграет со всеми остальными")
+                }
+
                 if (!createCurrentSimulation(allPlayers, newTournamentMatchesPerPlayerCnt).isCorrectNow()) {
                     throw IncorrectChangeException("Если поменять таким образом количество матчей на турнире, то он перестаёт сходиться")
                 }
@@ -250,8 +258,16 @@ class MutableTournament<R : Ranking>(
     /**
      * Изменение общего количества столов на турнире в данный момент.
      * Если количество столов уменьшено и получается, что занято больше столов, чем есть в наличии, это считается корректным.
+     * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
+     * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
      */
-    fun changeOverallTablesCnt(newOverallTablesCnt: Int) {
+    fun changeOverallTablesCnt(newOverallTablesCnt: Int, check: Boolean) {
+        if (check) {
+            if (newOverallTablesCnt < 0) {
+                throw IncorrectChangeException("Количество полей должно быть не меньше 0")
+            }
+        }
         tablesCnt = newOverallTablesCnt
     }
 

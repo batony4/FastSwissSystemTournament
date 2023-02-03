@@ -43,7 +43,7 @@ object FileInterfaceMain {
             } else if (lineTrimmed.startsWith("#")) { // пропускаем комменты
                 continue
             } else if (lineTrimmed.lowercase().startsWith("Стол".lowercase())) { // Столов
-                t.changeOverallTablesCnt(lineTrimmed.split(" ").last().toInt())
+                t.changeOverallTablesCnt(lineTrimmed.split(" ").last().toInt(), false)
             } else if (lineTrimmed.lowercase().startsWith("Матч".lowercase())) { // Матчей
                 t.changeTournamentMatchesPerPlayerCnt(lineTrimmed.split(" ").last().toInt(), false)
             } else if (lineTrimmed.lowercase().startsWith("Гандикап".lowercase())) { // ГандикапИгр
