@@ -1,6 +1,7 @@
 package fastSwiss.telegramBot
 
 import dev.inmo.tgbotapi.extensions.api.send.reply
+import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitContentMessage
 import dev.inmo.tgbotapi.types.buttons.KeyboardMarkup
@@ -95,7 +96,17 @@ suspend fun <A, R : Ranking> BehaviourContext.runDialog(
         }
 
         if (t.isTournamentStarted && d.shouldGenerateMatchesIfTournamentStarted) {
-            // TODO
+            val matches = t.generateAndStartMatches(true)
+            if (matches.isNotEmpty()) {
+                sendMessage(userQueryMessage.chat, buildEntities("") {
+                    +"На поля приглашаются:\n" +
+                            matches.joinToString("") { "• ${it.first.name} — ${it.second.name}\n" }
+                })
+            } else {
+                // TODO проверка 2 вариантов:
+                //  1) нет матчей, но турнир не завершён,
+                //  2) нет матчей, турнир завершён
+            }
         }
 
         return res
