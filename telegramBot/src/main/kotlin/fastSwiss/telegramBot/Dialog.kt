@@ -83,7 +83,7 @@ suspend fun <A, R : Ranking> BehaviourContext.runDialog(
         userQueryMessage
     }
 
-    val answer = (userAnswerMessage?.let { d.answerExtractor(it) } ?: return t) as A // TODO: вывести ошибку, что некорректный ввод юзера
+    val answer = (userAnswerMessage?.let { d.answerExtractor(it) } ?: return t) // TODO: вывести ошибку, что некорректный ввод юзера
     try {
         val res = d.logic(this, userAnswerMessage, t, answer)
 
