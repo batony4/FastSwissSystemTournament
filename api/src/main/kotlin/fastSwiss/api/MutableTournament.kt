@@ -56,9 +56,25 @@ class MutableTournament<R : Ranking>(
 
     // ----- API -----
 
-    fun startTournament() {
+    /**
+     * Старт турнира.
+     * Если [check] == `true`, то сначала будет проведена проверка корректности этого действия и, если оно окажется некорректным,
+     * то метод не выполнит никаких действий и вернёт исключение [IncorrectChangeException].
+     * Если же [check] == `false`, то никаких проверок производиться не будет и действие метода будет выполнено в любом случае.
+     */
+    @Throws(IncorrectChangeException::class)
+    fun startTournament(check: Boolean) {
         if (isTournamentStarted) {
             throw IncorrectChangeException("Турнир уже начат")
+        }
+
+        if (check) {
+            if (allPlayers.size < 2) {
+                throw IncorrectChangeException("Нужно хотя бы 2 участника для проведения турнира, а сейчас их ${allPlayers.size}")
+            }
+            if (allPlayers.size - 1 < tournamentMatchesPerPlayerCnt) {
+                throw IncorrectChangeException("Чтобы каждый участник сыграл $tournamentMatchesPerPlayerCnt матчей, нужно хотя бы ${tournamentMatchesPerPlayerCnt + 1} участников, а сейчас их ${allPlayers.size}")
+            }
         }
 
         isTournamentStarted = true

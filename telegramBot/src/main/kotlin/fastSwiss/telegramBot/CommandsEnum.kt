@@ -111,7 +111,7 @@ enum class CommandsEnum(
             null,
             null,
             { null },
-            { _, t, _ -> t.startTournament(); t },
+            { _, t, _ -> t.startTournament(true); t },
             { { +"Отлично, турнир запущен!" } },
             shouldOutputTournamentInfo = false,
             shouldGenerateMatchesIfTournamentStarted = true,
