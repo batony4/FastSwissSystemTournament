@@ -65,7 +65,7 @@ suspend fun <T> BehaviourContext.processReply(
 // TODO если турнир уже начат — то таблица и матчи, которые сейчас играются, а также настройки, ссылка на полную таблицу
 suspend fun BehaviourContext.outputTournamentInfoMessage(chat: Chat, t: MutableTournament<*>) {
     val players = t.getPlayersImmutable()
-    if (t.isTournamentStarted()) {
+    if (t.isTournamentStarted) {
         sendMessage(chat, buildEntities("") {
             +"" + code(t.generateCurrentRanking().outputRanking())
         })
