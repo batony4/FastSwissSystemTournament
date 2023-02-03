@@ -77,6 +77,9 @@ object FileInterfaceMain {
         val tok = line.split(" ")
         val p = tok[0] to tok[1]
 
+        // если турнир ещё не начался, то начинаем его
+        if (!t.isTournamentStarted) t.startTournament(false)
+
         // начинаем матч
         t.startMatch(p, false)
 
