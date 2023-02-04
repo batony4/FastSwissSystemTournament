@@ -7,6 +7,12 @@ interface Ranking {
 
     fun outputRanking(): String
 
+    fun outputRankingAsHtml() =
+        HTML_STYLE_MONOSPACE +
+                outputRanking()
+                    .replace("\n", "<br>")
+                    .replace(" ", "&nbsp;")
+
     companion object {
 
         const val HTML_STYLE_MONOSPACE =

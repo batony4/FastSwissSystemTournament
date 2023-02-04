@@ -4,7 +4,6 @@ import dev.inmo.tgbotapi.extensions.api.telegramBot
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import fastSwiss.api.MutableTournament
-import fastSwiss.api.tournamentTypes.Ranking.Companion.HTML_STYLE_MONOSPACE
 import fastSwiss.api.tournamentTypes.topological.TopologicalPairSorter
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanker
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanking
@@ -43,12 +42,7 @@ suspend fun main() {
                             return@get
                         }
 
-                        val ranking = it.generateCurrentRanking()
-                        val str = HTML_STYLE_MONOSPACE +
-                                ranking.outputRanking()
-                                    .replace("\n", "<br>")
-                                    .replace(" ", "&nbsp;")
-                        call.respondText(str, ContentType.Text.Html)
+                        call.respondText(it.generateCurrentRanking().outputRankingAsHtml(), ContentType.Text.Html)
                     } ?: call.respondText("В чате $chatId не было взаимодействия с ботом", ContentType.Text.Html)
                 }
             }
