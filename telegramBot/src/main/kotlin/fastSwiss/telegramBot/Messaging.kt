@@ -18,7 +18,6 @@ fun formatPlayerName(name: String) = bold(name)
 
 // комплексные процедуры управления диалогом
 
-// TODO если турнир уже начат — то таблица и матчи, которые сейчас играются, а также настройки, ссылка на полную таблицу
 suspend fun BehaviourContext.outputTournamentInfoMessage(chat: Chat, t: MutableTournament<*>) {
     val players = t.getPlayersImmutable()
     if (t.isTournamentStarted) {
