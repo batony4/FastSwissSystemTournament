@@ -121,7 +121,7 @@ enum class CommandsEnum(
         Dialog(
             "Какой матч завершился?",
             { t -> replyKeyboardOf(t.getActiveMatches().map { it.first + " — " + it.second }, 2) },
-            { it.text?.split(" ")?.let { tok -> if (tok.size != 2) null else (tok[0] to tok[1]) } },
+            { it.text?.split(" — ")?.let { tok -> if (tok.size != 2) null else (tok[0] to tok[1]) } },
             { ansMsg, t, p ->
 
                 runInteraction(
@@ -129,7 +129,7 @@ enum class CommandsEnum(
                         "Напишите через пробел два числа: сколько очков набрал ${p.first} и ${p.second}:",
                         { replyForce() },
                         {
-                            it.text?.split(" — ")?.let { tok ->
+                            it.text?.split(" ")?.let { tok ->
                                 if (tok.size != 2)
                                     null
                                 else
