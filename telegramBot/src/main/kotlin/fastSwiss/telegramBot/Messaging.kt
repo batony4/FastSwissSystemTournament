@@ -4,10 +4,12 @@ import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.chat.Chat
 import dev.inmo.tgbotapi.types.message.textsources.bold
+import dev.inmo.tgbotapi.types.message.textsources.link
 import dev.inmo.tgbotapi.types.message.textsources.underline
 import dev.inmo.tgbotapi.utils.buildEntities
 import dev.inmo.tgbotapi.utils.code
 import fastSwiss.api.MutableTournament
+import fastSwiss.telegramBot.Constants.TABLE_URL_PREFIX
 
 // форматирование
 
@@ -21,7 +23,8 @@ suspend fun BehaviourContext.outputTournamentInfoMessage(chat: Chat, t: MutableT
     val players = t.getPlayersImmutable()
     if (t.isTournamentStarted) {
         sendMessage(chat, buildEntities("") {
-            +"" + code(t.generateCurrentRanking().outputRanking())
+            +"" + code(t.generateCurrentRanking().outputRanking()) + "\n\n" +
+                    "Таблица подробнее: " + link("$TABLE_URL_PREFIX${chat.id.chatId}")
         })
     } else {
         sendMessage(chat, buildEntities("") {
