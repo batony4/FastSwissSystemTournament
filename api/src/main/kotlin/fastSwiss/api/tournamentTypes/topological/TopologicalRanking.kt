@@ -14,30 +14,47 @@ class TopologicalRanking(
 
     override fun outputRanking(shortNotFull: Boolean): String {
         val res = StringBuilder()
-        val maxNameLength = allPlayersSorted.maxOf { it.name.length } + 2
-        res.append(
-            "Место ".padEnd(6)
-                    + "Ранг "
-                    + "Участник".padEnd(maxNameLength) + " "
-                    + "Матчей".padEnd(7)
-                    + "Очков".padEnd(11)
-                    + "Счёт".padEnd(13)
-        )
-        repeat(allPlayersSorted.size) { idx -> res.append(" ${idx + 1}".padEnd(5)) }
-        res.appendLine()
 
-        for ((index, player) in allPlayersSorted.withIndex()) {
+        if (shortNotFull) {
+
+            res.append("Место [Ранг]. Участник (матчей | очков | счёт)")
+            for ((index, player) in allPlayersSorted.withIndex()) {
+                res.appendLine(
+                    "${index + 1} [${topSortRank[player]}]. ${if (player.isPaused) "-" else ""}${player.name}" +
+                            " (${player.getMatchesFinishedCnt()}${if (player.isPlaysNow()) "*" else ""}" +
+                            " | ${score[player]!!.points}" +
+                            (" | %+d)").format(score[player]!!.setsDiff)
+                )
+            }
+
+        } else {
+
+            val maxNameLength = allPlayersSorted.maxOf { it.name.length } + 2
             res.append(
-                ("" + (index + 1) + ". ").padStart(6)
-                        + ("(${topSortRank[player]})").padStart(4) + " "
-                        + player.name.padEnd(max(maxNameLength, "Участник".length)) + " "
-                        + (player.getMatchesFinishedCnt().toString() + if (player.isPlaysNow()) "*" else "").padEnd(7)
-                        + (score[player]!!.points.toString() + " (%.2f)".format(score[player]!!.pointsAvg)).padEnd(11)
-                        + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
+                "Место ".padEnd(6)
+                        + "Ранг "
+                        + "Участник".padEnd(maxNameLength) + " "
+                        + "Матчей".padEnd(7)
+                        + "Очков".padEnd(11)
+                        + "Счёт".padEnd(13)
             )
-
-            outputMatrixForPlayer(res, player, allPlayersSorted)
+            repeat(allPlayersSorted.size) { idx -> res.append(" ${idx + 1}".padEnd(5)) }
             res.appendLine()
+
+            for ((index, player) in allPlayersSorted.withIndex()) {
+                res.append(
+                    ("" + (index + 1) + ". ").padStart(6)
+                            + ("[${topSortRank[player]}]").padStart(4) + " "
+                            + player.name.padEnd(max(maxNameLength, "Участник".length)) + " "
+                            + (player.getMatchesFinishedCnt().toString() + if (player.isPlaysNow()) "*" else "").padEnd(7)
+                            + (score[player]!!.points.toString() + " (%.2f)".format(score[player]!!.pointsAvg)).padEnd(11)
+                            + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)
+                )
+
+                outputMatrixForPlayer(res, player, allPlayersSorted)
+                res.appendLine()
+            }
+
         }
 
         return res.toString()

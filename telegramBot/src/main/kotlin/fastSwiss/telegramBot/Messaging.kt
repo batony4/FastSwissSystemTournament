@@ -23,6 +23,9 @@ suspend fun BehaviourContext.outputTournamentInfoMessage(chat: Chat, t: MutableT
     if (t.isTournamentStarted) {
         sendMessage(chat, buildEntities("") {
             +"" + code(t.generateCurrentRanking().outputRanking(true)) + "\n\n" +
+                    "Минус перед именем участника — участник на паузе.\n" +
+                    "Звёздочка после количества сыгранных матчей — играет сейчас.\n" +
+                    "\n" +
                     "Таблица подробнее: " + link("$TABLE_URL_PREFIX${chat.id.chatId}")
         })
     } else {
