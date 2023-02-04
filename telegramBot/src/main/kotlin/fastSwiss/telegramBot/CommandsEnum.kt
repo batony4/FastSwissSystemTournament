@@ -129,7 +129,7 @@ enum class CommandsEnum(
                         "Напишите через пробел два числа: сколько очков набрал ${p.first} и ${p.second}:",
                         { replyForce() },
                         {
-                            it.text?.split(" ")?.let { tok ->
+                            it.text?.split(" — ")?.let { tok ->
                                 if (tok.size != 2)
                                     null
                                 else
