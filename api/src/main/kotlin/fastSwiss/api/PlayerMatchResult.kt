@@ -1,3 +1,5 @@
+@file:Suppress("KotlinConstantConditions")
+
 package fastSwiss.api
 
 /**
@@ -18,7 +20,7 @@ data class PlayerMatchResult(
     val setsDiff = setsMy - setsOther
 
     companion object {
-        const val WIN_POINTS = 2
-        const val DRAW_POINTS = 1
+        const val WIN_POINTS = 1
+        const val DRAW_POINTS = 0
     }
 }
