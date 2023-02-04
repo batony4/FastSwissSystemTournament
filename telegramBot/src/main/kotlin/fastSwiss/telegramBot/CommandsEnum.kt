@@ -29,10 +29,10 @@ enum class CommandsEnum(
                         "А сколько матчей должен сыграть каждый участник за время турнира?",
                         { replyKeyboard1to16() },
                         { it.text?.toIntOrNull() },
-                        { _, _, tablesCnt ->
+                        { _, _, matchesCnt ->
                             val res = fastSwiss.api.MutableTournament(RANKER, PAIR_SORTER)
-                            res.changeTournamentMatchesPerPlayerCnt(fieldsCnt, true)
-                            res.changeOverallTablesCnt(tablesCnt, true)
+                            res.changeTournamentMatchesPerPlayerCnt(matchesCnt, true)
+                            res.changeOverallTablesCnt(fieldsCnt, true)
                             res
                         },
                         { { +"Отлично, новый турнир создан!" } },
