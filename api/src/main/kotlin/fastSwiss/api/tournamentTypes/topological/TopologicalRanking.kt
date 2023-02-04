@@ -17,13 +17,13 @@ class TopologicalRanking(
 
         if (shortNotFull) {
 
-            res.append("Место [Ранг]. Участник (матчей | очков | счёт)")
+            res.append("Место [Ранг]. Участник (М|О|С)")
             for ((index, player) in allPlayersSorted.withIndex()) {
                 res.appendLine(
                     "${index + 1} [${topSortRank[player]}]. ${if (player.isPaused) "-" else ""}${player.name}" +
                             " (${player.getMatchesFinishedCnt()}${if (player.isPlaysNow()) "*" else ""}" +
-                            " | ${score[player]!!.points}" +
-                            (" | %+d)").format(score[player]!!.setsDiff)
+                            "|${score[player]!!.points}" +
+                            ("|%+d)").format(score[player]!!.setsDiff)
                 )
             }
 
