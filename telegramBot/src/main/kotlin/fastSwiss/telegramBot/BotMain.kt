@@ -8,16 +8,6 @@ import fastSwiss.api.tournamentTypes.topological.TopologicalPairSorter
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanker
 import fastSwiss.api.tournamentTypes.topological.TopologicalRanking
 
-// TODO всё привести к этому словарю по всему коду. Сам словарь сохранить в отдельном файле.
-/*
-Словарь:
-- турнир (а не соревнование)
-- поле (а не стол)
-- матч (а не игра)
-- участник (а не игрок)
-- счёт (а не сеты)
- */
-
 val RANKER = TopologicalRanker()
 val PAIR_SORTER = TopologicalPairSorter()
 

@@ -87,7 +87,7 @@ class Simulation(
     @Throws(IncorrectChangeException::class)
     fun play(p: Pair<MutablePlayerState, MutablePlayerState>, check: Boolean) {
         if (check) {
-            if (!isCorrectWithMatch(p)) throw IncorrectChangeException("Невозможно поставить за стол данную пару: турнир в таком случае не сходится")
+            if (!isCorrectWithMatch(p)) throw IncorrectChangeException("Невозможно начать матч между этими участниками: сетка турнира в таком случае не сходится")
         }
 
         val i1 = allPlayers.indexOf(p.first)
