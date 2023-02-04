@@ -22,7 +22,7 @@ suspend fun BehaviourContext.outputTournamentInfoMessage(chat: Chat, t: MutableT
     val players = t.getPlayersImmutable()
     if (t.isTournamentStarted) {
         sendMessage(chat, buildEntities("") {
-            +"" + code(t.generateCurrentRanking().outputRanking()) + "\n\n" +
+            +"" + code(t.generateCurrentRanking().outputRanking(true)) + "\n\n" +
                     "Таблица подробнее: " + link("$TABLE_URL_PREFIX${chat.id.chatId}")
         })
     } else {
