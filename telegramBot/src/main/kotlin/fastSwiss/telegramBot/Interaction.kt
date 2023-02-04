@@ -91,12 +91,15 @@ suspend fun <A, R : Ranking> BehaviourContext.runInteraction(
             reply(lastUserMessage, buildEntities("", it(answer)))
         }
 
+        val matches = if (t.isTournamentStarted && interaction.shouldGenerateMatchesIfTournamentStarted) {
+            t.generateAndStartMatches(true)
+        } else null
+
         if (interaction.shouldOutputTournamentInfo) {
             outputTournamentInfoMessage(userQueryMessage.chat, res)
         }
 
-        if (t.isTournamentStarted && interaction.shouldGenerateMatchesIfTournamentStarted) {
-            val matches = t.generateAndStartMatches(true)
+        matches?.let {
             if (matches.isNotEmpty()) {
                 sendMessage(userQueryMessage.chat, buildEntities("") {
                     +"На поля приглашаются:\n" +
