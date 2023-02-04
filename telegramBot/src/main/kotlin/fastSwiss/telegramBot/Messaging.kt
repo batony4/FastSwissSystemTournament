@@ -7,7 +7,6 @@ import dev.inmo.tgbotapi.types.message.textsources.bold
 import dev.inmo.tgbotapi.types.message.textsources.link
 import dev.inmo.tgbotapi.types.message.textsources.underline
 import dev.inmo.tgbotapi.utils.buildEntities
-import dev.inmo.tgbotapi.utils.code
 import fastSwiss.api.MutableTournament
 import fastSwiss.telegramBot.Constants.TABLE_URL_PREFIX
 
@@ -22,9 +21,9 @@ suspend fun BehaviourContext.outputTournamentInfoMessage(chat: Chat, t: MutableT
     val players = t.getPlayersImmutable()
     if (t.isTournamentStarted) {
         sendMessage(chat, buildEntities("") {
-            +"" + code(t.generateCurrentRanking().outputRanking(true)) + "\n\n" +
-                    "Минус перед именем участника — участник на паузе.\n" +
-                    "Звёздочка после количества сыгранных матчей — играет сейчас.\n" +
+            +"" + t.generateCurrentRanking().outputRanking(true) + "\n" +
+                    "• минус перед именем — участник на паузе.\n" +
+                    "• звёздочка после количества матчей — играет сейчас.\n" +
                     "\n" +
                     "Таблица подробнее: " + link("$TABLE_URL_PREFIX${chat.id.chatId}")
         })
