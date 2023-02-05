@@ -18,7 +18,8 @@ dependencies {
     implementation("io.ktor:ktor-server-core:2.2.3")
     implementation("io.ktor:ktor-server-netty:2.2.3")
 }
+
 application {
     // Define the main class for the application.
-    mainClass.set("fastSwiss.telegramBot.AppKt")
+    mainClass.set("fastSwiss.telegramBot.BotMainKt")
 }
