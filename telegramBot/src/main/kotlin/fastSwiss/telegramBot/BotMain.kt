@@ -20,6 +20,7 @@ val RANKER = TopologicalRanker()
 val PAIR_SORTER = TopologicalPairSorter()
 
 suspend fun main() {
+    println("Main started!!11")
 
     val tournaments = mutableMapOf<Long, MutableTournament<TopologicalRanking>>()
 
