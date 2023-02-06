@@ -20,8 +20,9 @@ val RANKER = TopologicalRanker()
 val PAIR_SORTER = TopologicalPairSorter()
 
 suspend fun main() {
-    val port = System.getenv("http.port").toIntOrNull()
-    println("Main started!!11 on port $port")
+    val port = System.getenv("http.port")?.toIntOrNull()
+    val abc = System.getenv("abc")?.toIntOrNull()
+    println("Main started!!11 on port=$port, abc=$abc")
     val tournaments = mutableMapOf<Long, MutableTournament<TopologicalRanking>>()
 
     // стартуем сервер, чтобы показывать полную таблицу
