@@ -30,6 +30,8 @@ enum class CommandsEnum(
                         { replyKeyboard1to16() },
                         { it.text?.toIntOrNull() },
                         { _, _, matchesCnt ->
+                            println("Created tournament in chat '${ansMsg.chat.id.chatId}'")
+
                             val res = fastSwiss.api.MutableTournament(RANKER, PAIR_SORTER)
                             res.changeTournamentMatchesPerPlayerCnt(matchesCnt, true)
                             res.changeOverallTablesCnt(fieldsCnt, true)
