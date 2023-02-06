@@ -88,7 +88,7 @@ enum class CommandsEnum(
             { _, t, names ->
                 names.split("\n").forEach {
                     if (it.isNotBlank()) {
-                        t.addPlayer(fastSwiss.api.MutablePlayerState(names, false, 0, 0, 0), true)
+                        t.addPlayer(fastSwiss.api.MutablePlayerState(it, false, 0, 0, 0), true)
                     }
                 }
                 t
