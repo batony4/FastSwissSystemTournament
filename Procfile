@@ -1,1 +1,1 @@
-web: java -Dhttp.port=$PORT -Dabc=1 -jar telegramBot/build/libs/telegramBot.jar
+web: java -Dhttp.port=$PORT -jar telegramBot/build/libs/telegramBot.jar

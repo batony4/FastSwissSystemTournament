@@ -20,19 +20,16 @@ val RANKER = TopologicalRanker()
 val PAIR_SORTER = TopologicalPairSorter()
 
 suspend fun main() {
-    val port = System.getProperty("http.port")?.toIntOrNull()
-    val abc = System.getProperty("abc")?.toIntOrNull()
-    println("Main started!!11 on port=$port, abc=$abc")
+//    val port = System.getProperty("http.port")?.toIntOrNull()
+//    val abc = System.getProperty("abc")?.toIntOrNull()
+//    println("Main started!!11 on port=$port, abc=$abc")
     val tournaments = mutableMapOf<Long, MutableTournament<TopologicalRanking>>()
 
     // стартуем сервер, чтобы показывать полную таблицу
     thread {
-        println("Thread started!!11")
-        embeddedServer(Netty, port!!) {
-            println("Server started!!11")
+        embeddedServer(Netty) {
             routing {
                 get("/table/{chatId}") {
-                    println("Server got!!11")
                     val chatId = call.parameters["chatId"]?.toLongOrNull() ?: run {
                         call.respondText(
                             "Неверный идентификатор чата: '${call.parameters["chatId"]}'. Идентификатор должен быть числовым",
