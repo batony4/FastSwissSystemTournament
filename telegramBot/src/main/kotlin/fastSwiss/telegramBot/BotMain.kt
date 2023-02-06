@@ -21,14 +21,16 @@ val PAIR_SORTER = TopologicalPairSorter()
 
 suspend fun main() {
     println("Main started!!11")
-
     val tournaments = mutableMapOf<Long, MutableTournament<TopologicalRanking>>()
 
     // стартуем сервер, чтобы показывать полную таблицу
     thread {
+        println("Thread started!!11")
         embeddedServer(Netty) {
+            println("Server started!!11")
             routing {
                 get("/table/{chatId}") {
+                    println("Server got!!11")
                     val chatId = call.parameters["chatId"]?.toLongOrNull() ?: run {
                         call.respondText(
                             "Неверный идентификатор чата: '${call.parameters["chatId"]}'. Идентификатор должен быть числовым",
