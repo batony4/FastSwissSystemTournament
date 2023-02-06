@@ -124,6 +124,17 @@ enum class CommandsEnum(
         ),
     ),
 
+    INFO_COMMAND(
+        "info",
+        "Информация о текущем турнире",
+        JustAction(
+            { _, t, _ -> t },
+            null,
+            shouldOutputTournamentInfo = true,
+            shouldGenerateMatchesIfTournamentStarted = false,
+        ),
+    ),
+
     MATCH_RESULT_COMMAND(
         "result",
         "Указать результат матча",
