@@ -26,7 +26,7 @@ suspend fun main() {
 
     // стартуем сервер, чтобы показывать полную таблицу
     thread {
-        embeddedServer(Netty, 8080) {
+        embeddedServer(Netty) {
             routing {
                 get("/table/{chatId}") {
                     val chatId = call.parameters["chatId"]?.toLongOrNull() ?: run {
