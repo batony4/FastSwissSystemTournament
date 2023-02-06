@@ -80,10 +80,17 @@ enum class CommandsEnum(
         "add_player",
         "Добавить участника",
         Dialog(
-            "Введите имя/название участника, повторяться нельзя:",
+            "Введите имя/название участника, повторяться нельзя. Можно добавить сразу нескольких, по одному на строчку:",
             { replyForce() },
             { it.text },
-            { _, t, name -> t.addPlayer(fastSwiss.api.MutablePlayerState(name, false, 0, 0, 0), true); t },
+            { _, t, names ->
+                names.split("\n").forEach {
+                    if (it.isNotBlank()) {
+                        t.addPlayer(fastSwiss.api.MutablePlayerState(names, false, 0, 0, 0), true)
+                    }
+                }
+                t
+            },
             { { +"Отлично, участник " + formatPlayerName(it) + " добавлен в турнир" } },
             shouldOutputTournamentInfo = true,
             shouldGenerateMatchesIfTournamentStarted = true,
