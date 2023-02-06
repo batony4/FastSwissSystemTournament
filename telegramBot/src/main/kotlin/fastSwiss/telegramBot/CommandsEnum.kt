@@ -84,16 +84,16 @@ enum class CommandsEnum(
         Dialog(
             "Введите имя/название участника, повторяться нельзя. Можно добавить сразу нескольких, по одному на строчку:",
             { replyForce() },
-            { it.text },
+            { it.text?.split("\n")?.map { name -> name.trim() } },
             { _, t, names ->
-                names.split("\n").forEach {
-                    if (it.isNotBlank()) {
-                        t.addPlayer(fastSwiss.api.MutablePlayerState(it, false, 0, 0, 0), true)
+                names.forEach { name ->
+                    if (name.isNotBlank()) {
+                        t.addPlayer(fastSwiss.api.MutablePlayerState(name, false, 0, 0, 0), true)
                     }
                 }
                 t
             },
-            { { +"Отлично, следующий участник или участники добавлены в турнир:\n" + formatPlayerName(it) } },
+            { { +"Отлично, следующий участник или участники добавлены в турнир:\n" + formatPlayerName(it.joinToString { "\n" }) } },
             shouldOutputTournamentInfo = true,
             shouldGenerateMatchesIfTournamentStarted = true,
         ),
@@ -105,7 +105,7 @@ enum class CommandsEnum(
         Dialog(
             "Выберите участника, которого надо исключить из турнира:",
             { t -> replyKeyboardOfPlayers(t.getPlayersImmutable()) },
-            { it.text },
+            { it.text?.trim() },
             { _, t, name -> t.removePlayer(name, true); t },
             { { +"Отлично, участник " + formatPlayerName(it) + " исключен из турнира" } },
             shouldOutputTournamentInfo = true,
@@ -130,7 +130,7 @@ enum class CommandsEnum(
         Dialog(
             "Какой матч завершился?",
             { t -> replyKeyboardOf(t.getActiveMatches().map { it.first + " — " + it.second }, 2) },
-            { it.text?.split(" — ")?.let { tok -> if (tok.size != 2) null else (tok[0] to tok[1]) } },
+            { it.text?.split(" — ")?.let { tok -> if (tok.size != 2) null else (tok[0].trim() to tok[1].trim()) } },
             { ansMsg, t, p ->
 
                 runInteraction(
@@ -142,8 +142,8 @@ enum class CommandsEnum(
                                 if (tok.size != 2)
                                     null
                                 else
-                                    (tok[0].toIntOrNull()?.let { t0 ->
-                                        tok[1].toIntOrNull()?.let { t1 ->
+                                    (tok[0].trim().toIntOrNull()?.let { t0 ->
+                                        tok[1].trim().toIntOrNull()?.let { t1 ->
                                             t0 to t1
                                         }
                                     })
@@ -172,7 +172,7 @@ enum class CommandsEnum(
         Dialog(
             "Введите имя/название участника, который отошёл:",
             { t -> replyKeyboardOfPlayers(t.getPlayersImmutable().filter { !it.isPaused }) },
-            { it.text },
+            { it.text?.trim() },
             { _, t, name -> t.pausePlayer(name); t },
             { { +"Отлично, участнику " + formatPlayerName(it) + " пока не будут назначаться новые матчи" } },
             shouldOutputTournamentInfo = false,
@@ -186,7 +186,7 @@ enum class CommandsEnum(
         Dialog(
             "Введите имя/название участника, который вернулся:",
             { t -> replyKeyboardOfPlayers(t.getPlayersImmutable().filter { it.isPaused }) },
-            { it.text },
+            { it.text?.trim() },
             { _, t, name -> t.unpausePlayer(name); t },
             { { +"Отлично, участнику " + formatPlayerName(it) + " снова может быть назначен новый матч" } },
             shouldOutputTournamentInfo = false,
