@@ -31,7 +31,7 @@ class TopologicalRanking(
             res.append(
                 "Место ".padEnd(6)
                         + "Ранг "
-                        + "Участник".padEnd(maxNameLength) + " "
+                        + "Участник".padEnd(max(maxNameLength + 1, "Участник".length)) + " "
                         + "Матчей".padEnd(7)
                         + "Очков".padEnd(11)
                         + "Счёт".padEnd(13)
@@ -43,7 +43,7 @@ class TopologicalRanking(
                 res.append(
                     ("" + (index + 1) + ". ").padStart(6)
                             + ("[${topSortRank[player]}]").padStart(4) + " "
-                            + player.name.padEnd(max(maxNameLength, "Участник".length)) + " "
+                            + ((if (player.isPaused) "-" else "") + player.name).padEnd(max(maxNameLength + 1, "Участник".length)) + " "
                             + (player.getMatchesFinishedCnt().toString() + if (player.isPlaysNow()) "*" else "").padEnd(7)
                             + (score[player]!!.points.toString() + " (%.2f)".format(score[player]!!.pointsAvg)).padEnd(11)
                             + ("%+d".format(score[player]!!.setsDiff) + " (%+.2f)".format(score[player]!!.setsDiffAvg)).padEnd(13)

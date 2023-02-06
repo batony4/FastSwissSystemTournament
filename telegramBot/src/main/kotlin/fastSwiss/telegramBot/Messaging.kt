@@ -37,7 +37,9 @@ suspend fun BehaviourContext.outputTournamentInfoMessage(chat: Chat, t: MutableT
                         "Участников нет. Добавьте их: /${CommandsEnum.ADD_PLAYER_COMMAND.commandName}\n"
                     else
                         "Участники (добавить: /${CommandsEnum.ADD_PLAYER_COMMAND.commandName}, удалить: /${CommandsEnum.DELETE_PLAYER_COMMAND.commandName}):\n") +
-                    t.getPlayersImmutable().joinToString("") { "• ${if (it.isPaused) "(пауза) " else ""}${it.name}\n" } +
+                    t.getPlayersImmutable()
+                        .mapIndexed { i, p -> "${i + 1}. ${if (p.isPaused) "-" else ""}${p.name}" }
+                        .joinToString("\n") +
                     "\n" +
                     "Любые настройки можно поменять как до, так и во время турнира.\n" +
                     "Когда всё будет готово, запустите турнир: /${CommandsEnum.START_TOURNAMENT_COMMAND.commandName}."
