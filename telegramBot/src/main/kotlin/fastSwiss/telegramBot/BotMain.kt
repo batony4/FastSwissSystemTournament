@@ -20,14 +20,12 @@ val RANKER = TopologicalRanker()
 val PAIR_SORTER = TopologicalPairSorter()
 
 suspend fun main() {
-//    val port = System.getProperty("http.port")?.toIntOrNull()
-//    val abc = System.getProperty("abc")?.toIntOrNull()
-//    println("Main started!!11 on port=$port, abc=$abc")
+    val port = System.getProperty("http.port")?.toIntOrNull() ?: throw IllegalArgumentException("Не указан порт")
     val tournaments = mutableMapOf<Long, MutableTournament<TopologicalRanking>>()
 
     // стартуем сервер, чтобы показывать полную таблицу
     thread {
-        embeddedServer(Netty) {
+        embeddedServer(Netty, port) {
             routing {
                 get("/table/{chatId}") {
                     val chatId = call.parameters["chatId"]?.toLongOrNull() ?: run {
