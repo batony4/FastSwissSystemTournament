@@ -297,7 +297,11 @@ class MutableTournament<R : Ranking>(
         return res
     }
 
-    fun isTournamentFinished() = createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt).isFinishedNow()
+    /**
+     * Турнир закончен, когда все матчи турнира начаты, и при этом активных матчей нет (все закончены).
+     */
+    fun isTournamentFinished() =
+        createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt).isAllMatchesStartedNow() && activeMatches.isEmpty()
 
     fun hasFreeTables() = tablesOccupied < tablesCnt
 

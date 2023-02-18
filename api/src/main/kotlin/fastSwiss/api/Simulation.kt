@@ -34,9 +34,10 @@ class Simulation(
     // ----- API -----
 
     /**
-     * Проверяем, кончился ли турнир.
+     * Проверяем, должны ли до конца турнира быть начаты ещё какие-то матчи.
+     * Если нет — это значит, что все матчи турнира уже начались?
      */
-    fun isFinishedNow(): Boolean {
+    fun isAllMatchesStartedNow(): Boolean {
         if (cnt.all { it >= tournamentMatchesPerPlayerCnt }) return true
 
         // в случае нечётного количества игроков, допускаем ситуацию, когда один игрок не сыграет один матч
@@ -49,7 +50,7 @@ class Simulation(
      * Пытаемся симулировать, получится ли полностью составить план матчей из текущей ситуации.
      */
     fun isCorrectNow(): Boolean {
-        if (isFinishedNow()) return true
+        if (isAllMatchesStartedNow()) return true
 
         for (i in m.indices.shuffled().sortedBy { cnt[it] }) {
             if (cnt[i] >= tournamentMatchesPerPlayerCnt) continue
