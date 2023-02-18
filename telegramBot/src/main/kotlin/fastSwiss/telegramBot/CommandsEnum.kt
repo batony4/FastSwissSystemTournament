@@ -93,7 +93,7 @@ enum class CommandsEnum(
                 }
                 t
             },
-            { { +"Отлично, следующий участник или участники добавлены в турнир:\n" + formatPlayerName(it.joinToString(",\n")) } },
+            { { +"Отлично, следующий участник или участники добавлены в турнир:\n" + formatPlayerName(it.joinToString("\n")) } },
             shouldOutputTournamentInfo = true,
             shouldGenerateMatchesIfTournamentStarted = true,
         ),
