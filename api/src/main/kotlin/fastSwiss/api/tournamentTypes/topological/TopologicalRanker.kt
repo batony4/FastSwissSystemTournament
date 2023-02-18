@@ -7,6 +7,8 @@ import fastSwiss.api.tournamentTypes.Ranker
 
 /**
  * Сортирует с помощью топологической сортировки.
+ * В случае равенства рангов — сортирует по проценту побед в личных встречах, а при равенстве — по разнице сетов per match в личных встречах.
+ * Если и здесь равенство, то применяется процент побед и разница сетов per match соответственно во всех матчах.
  */
 class TopologicalRanker : Ranker<TopologicalRanking> {
 
@@ -49,23 +51,27 @@ class TopologicalRanker : Ranker<TopologicalRanking> {
             val minRankSortedList = ArrayList(minRankSet)
                 .map { player ->
                     // результат в личных встречах: процент_побед, разница_сетов_per_match
-                    val commonMatches = player.matchResults.values.filter { it.otherPlayer in minRankSet }
+                    val allMatches = player.matchResults.values
+                    val allMatchesCnt = allMatches.size
+                    val allPointsCnt = allMatches.sumOf { it.pointsMy }
+                    val allSetsDiff = allMatches.sumOf { it.setsDiff }
+                    val allScore = Score(allMatchesCnt, allPointsCnt, allSetsDiff)
+
+                    val commonMatches = allMatches.filter { it.otherPlayer in minRankSet }
                     val commonMatchesCnt = commonMatches.size
                     val commonPointsCnt = commonMatches.sumOf { it.pointsMy }
                     val commonSetsDiff = commonMatches.sumOf { it.setsDiff }
+                    val commonScore = Score(commonMatchesCnt, commonPointsCnt, commonSetsDiff)
 
-                    player to if (commonMatchesCnt == 0) {
-                        (PlayerMatchResult.WIN_POINTS / 2.0) to 0.0
-                    } else {
-                        commonPointsCnt.toDouble() / commonMatchesCnt to commonSetsDiff.toDouble() / commonMatchesCnt
-                    }
+                    player to (commonScore to allScore)
                 }
                 .sortedWith { o1, o2 ->
-                    val rankWinsDiff = o2.second.first.compareTo(o1.second.first)
-                    if (rankWinsDiff != 0) {
-                        rankWinsDiff
+                    // сравниваем сначала по матчам между собой, затем по всем матчам
+                    val commonDiff = o1.second.first.compareTo(o2.second.first)
+                    if (commonDiff != 0) {
+                        commonDiff
                     } else {
-                        o2.second.second.compareTo(o1.second.second)
+                        o1.second.second.compareTo(o2.second.second)
                     }
                 }
                 .map { it.first }
