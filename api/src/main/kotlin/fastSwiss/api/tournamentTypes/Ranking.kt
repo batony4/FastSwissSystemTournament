@@ -27,6 +27,7 @@ interface Ranking {
 
         fun outputMatrixForPlayer(res: StringBuilder, player: MutablePlayerState, allPlayersSorted: List<MutablePlayerState>) {
             val index = allPlayersSorted.indexOf(player)
+            val playsNowWith = player.activeMatchWith
             for ((otherIndex, otherPlayer) in allPlayersSorted.withIndex()) {
                 val match = player.matchResults[otherPlayer]
                 if (index == otherIndex) {
@@ -42,7 +43,11 @@ interface Ranking {
 
                     res.append("${match.setsMy}$delimiter${match.setsOther}".padEnd(5))
                 } else {
-                    res.append(" •".padEnd(5))
+                    if (playsNowWith == otherPlayer) {
+                        res.append(" *".padEnd(5))
+                    } else {
+                        res.append(" •".padEnd(5))
+                    }
                 }
             }
         }
