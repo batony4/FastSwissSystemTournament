@@ -6,7 +6,7 @@ import kotlin.math.min
 /**
  * Симуляция возможности расстановки пар до конца турнира с учётом уже сыгранных пар и предлагаемой следующей пары.
  */
-class Simulation(
+class Simulation private constructor(
     private val allPlayers: List<MutablePlayerState>,
     private val tournamentMatchesPerPlayerCnt: Int,
 ) {
@@ -95,6 +95,22 @@ class Simulation(
         val i2 = allPlayers.indexOf(p.second)
 
         play(min(i1, i2), max(i1, i2))
+    }
+
+    companion object {
+
+        fun createCurrentSimulation(allPlayers: List<MutablePlayerState>, tournamentMatchesPerPlayerCnt: Int): Simulation {
+            val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
+            allPlayers.forEachIndexed { idx1, p1 ->
+                p1.getAllPlayersPlayedOrStarted()
+                    .filter { allPlayers.indexOf(it) > idx1 }
+                    .forEach { p2 ->
+                        s.play(p1 to p2, false)
+                    }
+            }
+            return s
+        }
+
     }
 
 }

@@ -34,7 +34,7 @@ class MutableTournament<R : Ranking>(
     // Внутренние методы
 
     private fun generateNextMatch(): Pair<MutablePlayerState, MutablePlayerState>? {
-        val s = createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt)
+        val s = Simulation.createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt)
         val r = ranker.generate(allPlayers)
 
         val allEligible = allPlayers
@@ -101,7 +101,7 @@ class MutableTournament<R : Ranking>(
         val p2 = findPlayerByName(names.second) ?: throw IncorrectChangeException("Участник ${names.second} не найден")
 
         if (check) {
-            val s = createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt)
+            val s = Simulation.createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt)
             if (!s.isCorrectWithMatch(p1 to p2)) {
                 throw IncorrectChangeException(
                     "Участники ${names.first} и ${names.second} не могут сыграть между собой:" +
@@ -156,7 +156,7 @@ class MutableTournament<R : Ranking>(
             // проверяем сходимость только если турнир начался
             if (isTournamentStarted) {
                 val newAllPlayers = ArrayList(allPlayers) + player
-                if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
+                if (!Simulation.createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
                     throw IncorrectChangeException("Если добавить нового участника, то турнир не сходится")
                 }
             }
@@ -187,7 +187,7 @@ class MutableTournament<R : Ranking>(
             // проверяем сходимость только если турнир начался
             if (isTournamentStarted) {
                 val newAllPlayers = ArrayList(allPlayers) - player
-                if (!createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
+                if (!Simulation.createCurrentSimulation(newAllPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
                     throw IncorrectChangeException("Если удалить из турнира этого участника, то сетка турнира не сходится")
                 }
             }
@@ -245,7 +245,7 @@ class MutableTournament<R : Ranking>(
                     throw IncorrectChangeException("Столько матчей не получится сыграть, даже если каждый участник сыграет со всеми остальными")
                 }
 
-                if (!createCurrentSimulation(allPlayers, newTournamentMatchesPerPlayerCnt).isCorrectNow()) {
+                if (!Simulation.createCurrentSimulation(allPlayers, newTournamentMatchesPerPlayerCnt).isCorrectNow()) {
                     throw IncorrectChangeException("Если поменять таким образом количество матчей на турнире, то сетка турнира перестаёт сходиться")
                 }
             }
@@ -283,7 +283,7 @@ class MutableTournament<R : Ranking>(
     @Throws(IncorrectChangeException::class)
     fun generateAndStartMatches(check: Boolean): List<Pair<MutablePlayerState, MutablePlayerState>> {
         if (check) {
-            if (!createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
+            if (!Simulation.createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt).isCorrectNow()) {
                 throw IncorrectChangeException("Сетка турнира не сходится")
             }
         }
@@ -301,25 +301,13 @@ class MutableTournament<R : Ranking>(
      * Турнир закончен, когда все матчи турнира начаты, и при этом активных матчей нет (все закончены).
      */
     fun isTournamentFinished() =
-        createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt).isAllMatchesStartedNow() && activeMatches.isEmpty()
+        Simulation.createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt).isAllMatchesStartedNow() && activeMatches.isEmpty()
 
     fun hasFreeTables() = tablesOccupied < tablesCnt
 
     fun generateCurrentRanking() = ranker.generate(allPlayers)
 
     companion object {
-
-        private fun createCurrentSimulation(allPlayers: List<MutablePlayerState>, tournamentMatchesPerPlayerCnt: Int): Simulation {
-            val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
-            allPlayers.forEachIndexed { idx1, p1 ->
-                p1.getAllPlayersPlayedOrStarted()
-                    .filter { allPlayers.indexOf(it) > idx1 }
-                    .forEach { p2 ->
-                        s.play(p1 to p2, false)
-                    }
-            }
-            return s
-        }
 
         private fun listAllPairs(curEligible: List<MutablePlayerState>) = curEligible
             .flatMapIndexed { i1, player1 ->
