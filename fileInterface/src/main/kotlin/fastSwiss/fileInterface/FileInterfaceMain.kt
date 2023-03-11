@@ -70,6 +70,8 @@ object FileInterfaceMain {
         }
         sc.close()
 
+        if (!t.isTournamentStarted) t.startTournament(false)
+
         return t
     }
 

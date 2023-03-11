@@ -34,7 +34,7 @@ class MutableTournament<R : Ranking>(
     // Внутренние методы
 
     private fun generateNextMatch(): Pair<MutablePlayerState, MutablePlayerState>? {
-        val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
+        val s = createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt)
         val r = ranker.generate(allPlayers)
 
         val allEligible = allPlayers
@@ -101,7 +101,7 @@ class MutableTournament<R : Ranking>(
         val p2 = findPlayerByName(names.second) ?: throw IncorrectChangeException("Участник ${names.second} не найден")
 
         if (check) {
-            val s = Simulation(allPlayers, tournamentMatchesPerPlayerCnt)
+            val s = createCurrentSimulation(allPlayers, tournamentMatchesPerPlayerCnt)
             if (!s.isCorrectWithMatch(p1 to p2)) {
                 throw IncorrectChangeException(
                     "Участники ${names.first} и ${names.second} не могут сыграть между собой:" +
